@@ -427,11 +427,26 @@ h2.title em{color:var(--gold-bright); font-style:italic}
 .rf-mean{color:var(--cream-dim); font-size:14px; line-height:1.5}
 @media (max-width:900px){
   .reading-grid{grid-template-columns:1fr; gap:3vh; padding:3vh 6vw}
-  .board{width:min(58vh,400px)}
+  .board{width:min(72vw,400px)}
   .panel{text-align:center; align-items:center}
   .panel-body{min-height:0}
   .rc-card{justify-content:center}
   .panel-actions{justify-content:center}
+}
+@media (max-width:680px){
+  /* No celular a cena rola de cima p/ baixo (sem o corte do centramento),
+     dando um único contexto de rolagem — assim o toque rola a página em vez
+     de trocar de cena, e o conteúdo inteiro fica acessível.
+     Seletores reforçados p/ vencer as regras-base definidas mais abaixo. */
+  .film .scene-scroll{display:block}
+  .film .scene .act{margin:0}
+  .film .scene .reading{align-items:flex-start}
+  .reading-grid{align-items:start; padding:5vh 7vw 8vh}
+  .board{width:min(84vw,330px)}
+  .reading-full{max-height:none; overflow:visible}
+  .panel-body{min-height:0}
+  .tk-badge{width:16px; height:16px; font-size:8px}
+  .audioguide{margin-top:6px}
 }
 
 /* ===================================================================
