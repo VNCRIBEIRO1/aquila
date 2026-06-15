@@ -1,0 +1,490 @@
+/* ============================================================
+   OS ARCANOS — Esmeralda Etérea
+   Cinematic tarot showcase
+   ============================================================ */
+
+:root {
+  --void:   #03100a;
+  --bg:     #061410;
+  --bg-2:   #0a2017;
+  --bg-3:   #0e2c20;
+  --mint:   #7af0cf;
+  --mint-2: #5ad9b7;
+  --jade:   #2dd4bf;
+  --emerald:#34d399;
+  --gold:   #e7d3a6;
+  --gold-2: #c9a96a;
+  --gold-deep:#9b8048;
+  --text:   #e9f6ef;
+  --muted:  #7f9c8e;
+  --muted-2:#5d7b6e;
+  --line:   rgba(122,240,207,0.14);
+
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --sans:  "Outfit", system-ui, sans-serif;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --maxw: 1180px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  cursor: none;
+}
+
+@media (max-width: 720px) { body { cursor: auto; } }
+
+::selection { background: rgba(122,240,207,0.25); color: #fff; }
+
+/* ---------- Fixed cosmic backdrop ---------- */
+.cosmos {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(140% 100% at 50% -20%, #0c2c20 0%, #071a12 38%, var(--void) 72%);
+}
+#stars { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+
+/* breathing aurora veils */
+.aurora {
+  position: fixed;
+  inset: -25%;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(70px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+.aurora span {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, var(--c) 0%, transparent 68%);
+  animation: drift var(--d) var(--ease-soft) infinite alternate;
+}
+.aurora .a1 { --c: rgba(45,212,191,0.40); --d: 17s; width: 46vw; height: 46vw; left: 4%;  top: 8%; }
+.aurora .a2 { --c: rgba(52,211,153,0.30); --d: 23s; width: 52vw; height: 52vw; right: 0%; top: 26%; }
+.aurora .a3 { --c: rgba(122,240,207,0.18); --d: 29s; width: 40vw; height: 40vw; left: 30%; bottom: 0%; }
+.aurora .a4 { --c: rgba(201,169,106,0.14); --d: 21s; width: 30vw; height: 30vw; right: 22%; top: 4%; }
+
+@keyframes drift {
+  0%   { transform: translate3d(0,0,0) scale(1); }
+  50%  { transform: translate3d(4vw,-3vw,0) scale(1.14); }
+  100% { transform: translate3d(-3vw,4vw,0) scale(0.94); }
+}
+
+/* slow grain to keep gradients from banding */
+.grain {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  opacity: 0.05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- drifting mist clouds ---------- */
+.clouds { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.cloud {
+  position: absolute; top: 0; left: 0;
+  border-radius: 50%;
+  filter: blur(46px);
+  mix-blend-mode: screen;
+  opacity: 0;
+  will-change: translate, transform;
+  animation:
+    cloudX var(--dx, 60s) linear var(--delay, 0s) infinite,
+    cloudBob var(--db, 12s) ease-in-out infinite alternate;
+}
+@keyframes cloudX { from { translate: var(--x0, -300px) 0; } to { translate: var(--x1, 110vw) 0; } }
+@keyframes cloudBob { 0%, 100% { transform: translateY(calc(var(--bob, 16px) * -1)); } 50% { transform: translateY(var(--bob, 16px)); } }
+
+/* ---------- wandering celestial symbols ---------- */
+.symbols { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.symbol {
+  position: absolute; top: 0; left: 0;
+  display: grid; place-items: center;
+  opacity: 0;
+  will-change: translate, rotate, opacity;
+  animation:
+    symX var(--dx, 28s) linear var(--delay, 0s) infinite,
+    symSpin var(--ds, 40s) linear infinite,
+    symFade var(--dx, 28s) linear var(--delay, 0s) infinite;
+}
+.symbol svg { width: 100%; height: 100%; overflow: visible; }
+@keyframes symX { from { translate: var(--x0, -60px) 0; } to { translate: var(--x1, 110vw) 0; } }
+@keyframes symSpin { to { rotate: var(--turn, 360deg); } }
+@keyframes symFade { 0% { opacity: 0; } 10% { opacity: var(--op, .4); } 86% { opacity: var(--op, .4); } 100% { opacity: 0; } }
+
+/* ---------- filmic vignette + light bloom ---------- */
+.vignette {
+  position: fixed; inset: 0; z-index: 6; pointer-events: none;
+  background:
+    radial-gradient(125% 100% at 50% 48%, transparent 52%, rgba(2,8,5,0.45) 86%, rgba(1,5,3,0.7) 100%);
+  mix-blend-mode: multiply;
+}
+
+/* ---------- custom cursor ---------- */
+.cursor {
+  position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
+  width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%;
+  border: 1px solid rgba(122,240,207,0.6);
+  transition: width .3s var(--ease), height .3s var(--ease), background .3s, border-color .3s;
+  mix-blend-mode: screen;
+}
+.cursor::after {
+  content: ""; position: absolute; inset: 12px; border-radius: 50%;
+  background: var(--mint); box-shadow: 0 0 12px var(--mint);
+}
+.cursor.big { width: 70px; height: 70px; margin: -35px 0 0 -35px; border-color: rgba(231,211,166,0.7); }
+.cursor.big::after { inset: 30px; background: var(--gold); box-shadow: 0 0 16px var(--gold); }
+
+/* ---------- Layout shell ---------- */
+.page { position: relative; z-index: 3; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 7vw; }
+
+section { position: relative; }
+
+.eyebrow {
+  font-family: var(--sans);
+  font-size: clamp(10px, 1.1vw, 12px);
+  font-weight: 300;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--mint-2);
+  display: inline-flex; align-items: center; gap: 1.1em;
+}
+.eyebrow::before, .eyebrow.flanked::after {
+  content: ""; width: 34px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--mint-2), transparent);
+}
+.eyebrow.solo::before { display: none; }
+
+h1, h2, h3 { font-weight: 500; line-height: 1.02; letter-spacing: -0.01em; }
+em { font-style: italic; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 12vh 7vw 9vh;
+  overflow: hidden;
+}
+.hero-inner { position: relative; display: grid; justify-items: center; gap: clamp(1.2rem, 2.4vh, 2.2rem); }
+
+.hero .eyebrow { opacity: 0; transform: translateY(14px); animation: rise 1.4s var(--ease) 0.3s forwards; }
+
+.hero-title {
+  font-size: clamp(58px, 14.5vw, 212px);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  background: linear-gradient(180deg, #fbf6e9 0%, var(--gold) 42%, var(--gold-2) 76%, var(--gold-deep) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 80px rgba(231,211,166,0.18);
+  position: relative;
+}
+.hero-title .l { display: inline-block; opacity: 0; transform: translateY(40px) rotate(4deg); }
+.hero-sub {
+  max-width: 28ch;
+  font-size: clamp(16px, 1.9vw, 23px);
+  color: var(--text);
+  font-style: italic;
+  opacity: 0; transform: translateY(20px); animation: rise 1.6s var(--ease) 1.1s forwards;
+}
+.hero-sub b { color: var(--mint); font-weight: 500; font-style: normal; }
+
+.scroll-cue {
+  position: absolute; bottom: 3.4vh; left: 50%; transform: translateX(-50%);
+  display: grid; justify-items: center; gap: 0.7rem;
+  font-family: var(--sans); font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0; animation: rise 1.6s var(--ease) 1.8s forwards;
+}
+.scroll-cue .rail { width: 1px; height: 56px; background: linear-gradient(var(--mint-2), transparent); position: relative; overflow: hidden; }
+.scroll-cue .rail::after { content:""; position:absolute; top:-40%; left:0; width:1px; height:40%; background: var(--mint); animation: fall 2.4s var(--ease-soft) infinite; }
+@media (max-height: 680px) { .scroll-cue { display: none; } .hero-card { opacity: 0.6 !important; } }
+
+@keyframes fall { 0%{ top:-40%; } 100%{ top:120%; } }
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+/* floating hero card */
+.hero-card-stage {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  perspective: 1400px; z-index: -1; pointer-events: none;
+}
+.hero-card {
+  width: clamp(170px, 21vw, 290px);
+  aspect-ratio: 5 / 8.4;
+  transform-style: preserve-3d;
+  animation: floatCard 11s ease-in-out infinite;
+  opacity: 0;
+  filter: drop-shadow(0 40px 80px rgba(0,0,0,0.6));
+}
+.hero-card.lit { animation: floatCard 11s ease-in-out infinite, fadeCard 2s var(--ease) 0.6s forwards; }
+@keyframes fadeCard { to { opacity: 0.92; } }
+@keyframes floatCard {
+  0%   { transform: translateY(-2.5%) rotateY(-13deg) rotateX(5deg); }
+  50%  { transform: translateY(3.5%) rotateY(13deg) rotateX(-4deg); }
+  100% { transform: translateY(-2.5%) rotateY(-13deg) rotateX(5deg); }
+}
+
+/* ============================================================
+   CARD FACE (shared)
+   ============================================================ */
+.card-face {
+  position: absolute; inset: 0;
+  border-radius: 14px;
+  transform: rotateY(0deg);
+  background:
+    radial-gradient(120% 80% at 50% 0%, #103325 0%, #0a2418 55%, #061a12 100%);
+  border: 1px solid rgba(231,211,166,0.4);
+  box-shadow: inset 0 0 0 1px rgba(231,211,166,0.12), inset 0 0 40px rgba(0,0,0,0.5);
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-face::before { /* inner ornamental frame */
+  content: ""; position: absolute; inset: 9px; border-radius: 7px;
+  border: 1px solid rgba(231,211,166,0.28);
+  pointer-events: none;
+}
+.card-face::after { /* foil sweep */
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.16) 48%, rgba(122,240,207,0.10) 52%, transparent 65%);
+  background-size: 280% 280%;
+  animation: foil 6s var(--ease-soft) infinite;
+  mix-blend-mode: screen;
+}
+@keyframes foil { 0%{ background-position: 130% 0; } 100%{ background-position: -60% 0; } }
+
+.card-emblem svg, .spread .glyph svg, .card-back .sigil svg, .sigil-spin svg, [data-sigil] svg {
+  filter: drop-shadow(0 0 4px rgba(122,240,207,0.32));
+}
+.card-emblem { position: absolute; inset: 11% 11% 20%; display: grid; place-items: center; }
+.card-emblem svg { width: 100%; height: 100%; overflow: visible; }
+.card-roman {
+  position: absolute; top: 6.5%; left: 0; right: 0; text-align: center;
+  font-family: var(--sans); font-size: 0.62rem; letter-spacing: 0.5em;
+  color: var(--gold); text-transform: uppercase; opacity: 0.85;
+}
+.card-name {
+  position: absolute; bottom: 7%; left: 6%; right: 6%; text-align: center;
+  font-style: italic; font-size: clamp(13px, 1.5vw, 19px); color: var(--gold);
+  letter-spacing: 0.02em;
+}
+
+/* card back (pattern) */
+.card-back {
+  position: absolute; inset: 0; border-radius: 14px;
+  transform: rotateY(180deg);
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%, #0a2418 0deg 9deg, #0d2a1d 9deg 18deg);
+  border: 1px solid rgba(231,211,166,0.4);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: grid; place-items: center;
+}
+.card-back .sigil { width: 54%; opacity: 0.85; }
+
+/* ============================================================
+   GENERIC SECTION + REVEALS
+   ============================================================ */
+.reveal { opacity: 0; transform: translateY(38px); transition: opacity 1.1s var(--ease), transform 1.1s var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: .12s; }
+.reveal.d2 { transition-delay: .24s; }
+.reveal.d3 { transition-delay: .36s; }
+.reveal.d4 { transition-delay: .48s; }
+
+/* ---------- Manifesto ---------- */
+.manifesto { padding: 22vh 0 18vh; }
+.manifesto .wrap { display: grid; gap: 3rem; max-width: 920px; }
+.manifesto h2 {
+  font-size: clamp(34px, 6vw, 78px);
+  font-style: italic; line-height: 1.04;
+  text-wrap: balance;
+}
+.manifesto h2 .glow { color: var(--mint); }
+.lead {
+  font-size: clamp(19px, 2.3vw, 27px);
+  color: #cfe3d9; max-width: 60ch; line-height: 1.6;
+}
+.lead .drop { float: left; font-size: 3.6em; line-height: 0.72; padding: 0.06em 0.12em 0 0; color: var(--gold); font-style: italic; }
+.rule { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent); }
+
+/* floating moon decoration */
+.moon-deco { position: absolute; right: -6vw; top: 8vh; width: clamp(180px, 34vw, 520px); opacity: 0.5; pointer-events: none; will-change: transform; }
+.moon-deco svg { width: 100%; height: auto; }
+
+/* ============================================================
+   ARCANA GALLERY
+   ============================================================ */
+.gallery { padding: 12vh 0 16vh; }
+.gallery .head { display: grid; gap: 1.9rem; justify-items: center; text-align: center; margin-bottom: 8vh; }
+.gallery .head h2 + p, .gallery .head p { margin-top: 0.3rem; }
+.gallery .head h2 { font-size: clamp(40px, 8vw, 110px); font-style: italic; }
+.gallery .head p { color: var(--muted); max-width: 46ch; font-size: clamp(16px,1.8vw,20px); }
+
+.deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: clamp(20px, 3vw, 46px);
+}
+
+.tarot {
+  position: relative;
+  aspect-ratio: 5 / 8.4;
+  perspective: 1200px;
+  cursor: none;
+}
+.tarot .flipper {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 1s var(--ease);
+  will-change: transform;
+}
+.tarot.flipped .flipper { transform: rotateY(180deg); }
+.tarot.flipped .card-face { opacity: 0; }
+.tarot.flipped .meaning { opacity: 1; }
+.tarot:hover .flipper { transform: rotateY(8deg) rotateX(6deg) translateZ(20px); }
+.tarot.flipped:hover .flipper { transform: rotateY(188deg) rotateX(-6deg) translateZ(20px); }
+
+/* meaning side */
+.tarot .card-face { transition: opacity 0s linear .5s; }
+.tarot .meaning {
+  position: absolute; inset: 0; border-radius: 14px;
+  transform: rotateY(180deg); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  opacity: 0; transition: opacity 0s linear .5s;
+  background: radial-gradient(120% 90% at 50% 0%, #0e2c20, #061a12);
+  border: 1px solid rgba(231,211,166,0.4);
+  padding: 12% 11%; display: grid; align-content: center; gap: 1rem; text-align: center;
+}
+.tarot .meaning::before { content:""; position:absolute; inset:9px; border:1px solid rgba(231,211,166,0.24); border-radius:7px; }
+.tarot .meaning .m-num { font-family: var(--sans); font-size: 10px; letter-spacing: 0.4em; color: var(--gold-2); text-transform: uppercase; }
+.tarot .meaning .m-name { font-style: italic; font-size: clamp(18px, 2vw, 24px); color: var(--gold); }
+.tarot .meaning .m-key { font-family: var(--sans); font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--mint); }
+.tarot .meaning .m-text { font-size: clamp(14px, 1.5vw, 16px); color: #c2d8cd; line-height: 1.5; }
+
+/* reveal stagger for cards */
+.tarot { opacity: 0; transform: translateY(46px) scale(0.96); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.tarot.in { opacity: 1; transform: none; }
+
+.gallery .hint { text-align: center; margin-top: 6vh; font-family: var(--sans); font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--muted-2); }
+
+/* ============================================================
+   CINEMATIC FEATURE SPREADS
+   ============================================================ */
+.spread {
+  min-height: 108vh;
+  display: grid;
+  align-items: center;
+  padding: 16vh 7vw;
+  overflow: hidden;
+}
+.spread .stage { max-width: var(--maxw); margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 6vw, 90px); align-items: center; }
+.spread.flip .stage { grid-template-columns: 1fr 1fr; }
+.spread.flip .art { order: 2; }
+
+.spread .art { display: grid; place-items: center; }
+.spread .art .glyph { width: min(80%, 460px); aspect-ratio: 1; position: relative; will-change: transform; }
+.spread .art .glyph svg { width: 100%; height: 100%; overflow: visible; }
+.spread .art .halo {
+  position: absolute; inset: -20%; border-radius: 50%;
+  background: radial-gradient(circle, var(--haloc, rgba(122,240,207,0.22)) 0%, transparent 62%);
+  filter: blur(20px); z-index: -1; animation: pulseHalo 7s ease-in-out infinite;
+}
+@keyframes pulseHalo { 0%,100%{ transform: scale(1); opacity: .7; } 50%{ transform: scale(1.12); opacity: 1; } }
+
+.spread .copy { display: grid; gap: 1.6rem; }
+.spread .copy .num { font-family: var(--sans); font-size: 12px; letter-spacing: 0.5em; color: var(--gold-2); text-transform: uppercase; }
+.spread .copy h2 { font-size: clamp(46px, 8vw, 116px); font-style: italic; line-height: 0.92; }
+.spread .copy h2 .accent { color: var(--mint); }
+.spread .copy p { font-size: clamp(17px, 2vw, 22px); color: #cadfd4; max-width: 42ch; line-height: 1.6; }
+.spread .copy .keys { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.4rem; }
+.spread .copy .keys span {
+  font-family: var(--sans); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--mint-2); border: 1px solid var(--line); border-radius: 100px; padding: 0.5em 1.1em;
+}
+
+.spread-quote { padding: 26vh 7vw; text-align: center; }
+.spread-quote blockquote { max-width: 24ch; margin: 0 auto; font-size: clamp(34px, 6.5vw, 92px); font-style: italic; line-height: 1.06; text-wrap: balance; }
+.spread-quote blockquote .glow { color: var(--mint); }
+.spread-quote cite { display: block; margin-top: 2.4rem; font-family: var(--sans); font-style: normal; font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--muted); }
+
+/* ============================================================
+   CLOSING
+   ============================================================ */
+.closing { min-height: 100svh; display: grid; place-items: center; text-align: center; padding: 16vh 7vw; }
+.closing .inner { display: grid; justify-items: center; gap: 2.4rem; }
+.closing h2 { font-size: clamp(44px, 10vw, 150px); font-style: italic;
+  background: linear-gradient(180deg, #fbf6e9, var(--gold) 50%, var(--gold-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.closing p { color: var(--muted); max-width: 40ch; font-size: clamp(17px,2vw,21px); }
+.sigil-spin { width: clamp(90px, 14vw, 170px); animation: spinSigil 40s linear infinite; opacity: 0.9; }
+@keyframes spinSigil { to { transform: rotate(360deg); } }
+
+footer { padding: 5vh 7vw 6vh; text-align: center; font-family: var(--sans); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted-2); border-top: 1px solid var(--line); }
+footer .dot { color: var(--mint-2); margin: 0 0.8em; }
+
+/* ---------- side progress constellation ---------- */
+.progress { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 40; display: grid; gap: 16px; }
+@media (max-width: 860px){ .progress { display: none; } }
+.progress a { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--muted-2); display: block; position: relative; transition: all .4s var(--ease); }
+.progress a::after { content: attr(data-l); position: absolute; right: 20px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: var(--sans); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); opacity: 0; transition: opacity .3s; }
+.progress a:hover::after { opacity: 1; }
+.progress a.active { background: var(--mint); border-color: var(--mint); box-shadow: 0 0 12px var(--mint); }
+
+/* top reading-progress line */
+.scrollbar { position: fixed; left: 0; top: 0; height: 2px; width: 0; z-index: 50; background: linear-gradient(90deg, var(--jade), var(--mint), var(--gold)); box-shadow: 0 0 12px var(--mint); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 820px) {
+  .spread .stage { grid-template-columns: 1fr; gap: 5vh; text-align: center; }
+  .spread.flip .art { order: 0; }
+  .spread .copy { justify-items: center; }
+  .spread .copy p { max-width: 50ch; }
+  .moon-deco { opacity: 0.3; top: 2vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important; transition-delay: 0s !important;
+  }
+  .reveal, .tarot { opacity: 1 !important; transform: none !important; }
+  .hero-title .l, .hero .eyebrow, .hero-sub, .scroll-cue { opacity: 1 !important; transform: none !important; }
+  /* The user asked for a *film*: keep the ambient cinematic motion alive
+     even under reduced-motion (entrance reveals stay instant above). */
+  .hero-card { opacity: 0.92 !important; animation: floatCard 11s ease-in-out infinite !important; }
+  .aurora span { animation: drift var(--d) cubic-bezier(0.4,0,0.2,1) infinite alternate !important; }
+  .cloud {
+    animation:
+      cloudX var(--dx, 60s) linear var(--delay, 0s) infinite,
+      cloudBob var(--db, 12s) ease-in-out infinite alternate !important;
+  }
+  .symbol {
+    animation:
+      symX var(--dx, 28s) linear var(--delay, 0s) infinite,
+      symSpin var(--ds, 40s) linear infinite,
+      symFade var(--dx, 28s) linear var(--delay, 0s) infinite !important;
+  }
+  .card-face::after { animation: foil 6s cubic-bezier(0.4,0,0.2,1) infinite !important; }
+}

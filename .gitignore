@@ -1,0 +1,12 @@
+# Imagens de trabalho / não usadas pelo site
+uploads/
+screenshots/
+.thumbnail
+
+# Vercel / Node
+.vercel/
+node_modules/
+
+# SO
+Thumbs.db
+.DS_Store
