@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#070504;}
+  ::selection{background:rgba(216,166,87,.3);color:#fff}
+  @keyframes spinSlow{to{transform:rotate(360deg)}}
+  @keyframes spinRev{to{transform:rotate(-360deg)}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  @keyframes pulseGlow{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:.9;transform:scale(1.05)}}
+  @keyframes twinkle{0%,100%{opacity:.2}50%{opacity:.85}}
+  @keyframes breathe{0%,100%{box-shadow:0 0 0 1px rgba(240,205,138,.45),0 18px 70px rgba(216,166,87,.28)}50%{box-shadow:0 0 0 1px rgba(240,205,138,.75),0 18px 90px rgba(216,166,87,.5)}}
+  @keyframes driftUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @keyframes cardReveal{0%{opacity:0;transform:translateY(14px) scale(.84) rotate(-3deg)}60%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
+  @keyframes drawLine{to{stroke-dashoffset:0}}
+  @keyframes constPulse{0%,100%{box-shadow:0 0 44px rgba(150,120,230,.45),inset 0 0 24px rgba(200,180,255,.28);transform:scale(1)}50%{box-shadow:0 0 72px rgba(170,140,250,.72),inset 0 0 30px rgba(210,190,255,.42);transform:scale(1.045)}}
+  @keyframes sunPulse{0%,100%{box-shadow:0 0 56px rgba(245,200,110,.55),0 0 120px rgba(232,170,70,.3),inset 0 0 30px rgba(255,225,160,.4);transform:scale(1)}50%{box-shadow:0 0 78px rgba(248,210,130,.78),0 0 150px rgba(232,170,70,.42),inset 0 0 34px rgba(255,232,180,.5);transform:scale(1.04)}}
+  @keyframes orbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @keyframes orbitRev{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+  @keyframes spinSun{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @keyframes beam{0%,100%{opacity:.35;transform:translateX(-50%) scaleY(1)}50%{opacity:.7;transform:translateX(-50%) scaleY(1.08)}}
+  @keyframes filmIn{0%{opacity:0;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+  @keyframes filmInSoft{from{opacity:0}to{opacity:1}}
+  @keyframes scrollUp{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+  @keyframes scrollDown{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+</style>
+</helmet>
+
+<div style="position:relative;width:100%;height:100vh;overflow:hidden;background:#070504;font-family:'Jost',sans-serif;">
+
+  <!-- ============ THE FILM ============ -->
+  <div style="position:absolute;inset:0;overflow:hidden;opacity:{{ homeOpacity }};transform:{{ homeScale }};transform-origin:50% 46%;transition:opacity 6s cubic-bezier(.4,0,.2,1), transform 6.4s cubic-bezier(.33,0,.2,1);">
+
+    <div class="track" style="position:absolute;inset:0;">
+
+      <!-- ================= SLIDE 0 · HOME ================= -->
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <section data-screen-label="I · A Soleira" style="position:absolute;inset:0;overflow:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(120% 90% at 50% 8%, #1d140d 0%, #0c0807 46%, #070504 100%);display:flex;align-items:center;justify-content:center;padding:88px clamp(26px,7vw,104px) 92px;">
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.5px 1.5px at 12% 22%, rgba(255,244,224,.8), transparent),radial-gradient(1px 1px at 78% 14%, rgba(255,244,224,.55), transparent),radial-gradient(1.5px 1.5px at 30% 70%, rgba(255,244,224,.5), transparent),radial-gradient(1px 1px at 88% 66%, rgba(255,244,224,.6), transparent),radial-gradient(1px 1px at 62% 30%, rgba(255,244,224,.4), transparent),radial-gradient(1.5px 1.5px at 20% 86%, rgba(255,244,224,.5), transparent),radial-gradient(1px 1px at 50% 6%, rgba(255,244,224,.45), transparent),radial-gradient(1px 1px at 92% 38%, rgba(255,244,224,.45), transparent);animation:twinkle 8s ease-in-out infinite;"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(125% 100% at 50% 42%, transparent 50%, rgba(0,0,0,.58) 100%);"></div>
+
+        <div style="position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:clamp(34px,5vw,80px);flex-wrap:wrap;max-width:1140px;width:100%;">
+          <div style="position:relative;width:clamp(184px,21vw,256px);height:clamp(220px,40vh,356px);flex:none;display:flex;align-items:flex-start;justify-content:center;animation:floaty 10s ease-in-out infinite;">
+            <div style="position:absolute;top:-6%;left:50%;transform:translateX(-50%);width:132%;height:118%;border-radius:999px 999px 30px 30px;background:radial-gradient(60% 55% at 50% 42%, rgba(216,166,87,.55), rgba(216,166,87,0) 70%);filter:blur(10px);animation:pulseGlow 7s ease-in-out infinite;"></div>
+            <div style="position:absolute;top:-30%;left:50%;width:46%;height:150%;background:linear-gradient(180deg, rgba(240,205,138,0) 0%, rgba(240,205,138,.22) 55%, rgba(240,205,138,0) 100%);filter:blur(12px);animation:beam 6s ease-in-out infinite;transform-origin:50% 80%;"></div>
+            <div style="position:absolute;inset:-11px;border-radius:999px 999px 20px 20px;border:1px solid rgba(240,205,138,.45);box-shadow:0 0 0 1px rgba(216,166,87,.12), 0 24px 90px rgba(216,166,87,.3);"></div>
+            <div style="position:relative;width:100%;height:100%;border-radius:999px 999px 14px 14px;overflow:hidden;box-shadow:inset 0 0 70px rgba(216,166,87,.5), inset 0 -30px 50px rgba(11,8,7,.6);">
+              <video src="portal.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+              <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(7,5,4,0) 55%, rgba(7,5,4,.45) 100%);"></div>
+            </div>
+            <div style="position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);width:150%;height:50px;background:radial-gradient(50% 100% at 50% 0%, rgba(240,205,138,.5), rgba(240,205,138,0) 72%);filter:blur(7px);"></div>
+          </div>
+
+          <div style="flex:1 1 340px;min-width:288px;max-width:540px;text-align:left;">
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#caa765;font-weight:300;">Taróloga Aquila</div>
+            <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;color:#f4ecdc;font-size:clamp(27px,3.3vw,46px);line-height:1.1;letter-spacing:.004em;margin:14px 0 0;max-width:18ch;text-wrap:balance;">Quando as respostas não aparecem, o invisível pode revelar <span style="font-style:italic;color:#e8c074;">novos caminhos.</span></h1>
+            <p style="font-family:'Jost',sans-serif;font-weight:300;color:#a1937f;font-size:clamp(13.5px,1.25vw,15.5px);line-height:1.55;margin:clamp(17px,2.5vh,23px) 0 0;max-width:46ch;">Uma travessia íntima entre o que você vive e o que ainda não consegue ver — conduzida com escuta, intuição e mais de dez oráculos.</p>
+            <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:clamp(18px,2.8vh,30px);">
+              <a href="{{ waLink }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:13px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:17px 40px;border-radius:40px;text-decoration:none;font-weight:500;animation:breathe 5s ease-in-out infinite;">Agendar consulta</a>
+              <button onClick="{{ next }}" style="font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#caa765;background:transparent;border:none;cursor:pointer;font-weight:400;display:inline-flex;align-items:center;gap:9px;">O que você encontrará <span style="font-size:15px;">→</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+      </sc-if>
+
+      <!-- ================= CHAPTER II · AS SEIS CENAS (full-bleed) ================= -->
+      <sc-if value="{{ isChapters }}" hint-placeholder-val="{{ false }}">
+        <section data-screen-label="{{ chScreenLabel }}" style="position:absolute;inset:0;overflow:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 50%, #15100a 0%, #0a0706 56%, #050403 100%);display:flex;align-items:center;justify-content:center;">
+
+          <!-- FULL-BLEED EFFECT -->
+          <canvas data-scene="chapter" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;"></canvas>
+
+          <!-- faint stars -->
+          <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background-image:radial-gradient(1px 1px at 16% 26%, rgba(255,244,224,.5), transparent),radial-gradient(1px 1px at 70% 18%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 86% 60%, rgba(255,244,224,.45), transparent),radial-gradient(1px 1px at 38% 78%, rgba(255,244,224,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
+          <!-- vignette + legibility scrim -->
+          <div style="position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(135% 105% at 50% 50%, transparent 26%, rgba(7,5,4,.5) 70%, rgba(7,5,4,.9) 100%);"></div>
+
+          <!-- giant number watermark -->
+          <div style="position:absolute;z-index:2;left:{{ chNumX }};top:50%;transform:translate(-50%,-50%);font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(200px,46vh,520px);line-height:.8;color:rgba(216,166,87,.06);pointer-events:none;user-select:none;opacity:{{ txtOpacity }};transition:opacity .5s ease;">{{ chN }}</div>
+
+          <!-- CENTERED TEXT (fades out/in on change) -->
+          <div style="position:relative;z-index:3;max-width:640px;text-align:center;padding:0 clamp(24px,6vw,72px);display:flex;flex-direction:column;align-items:center;opacity:{{ txtOpacity }};transform:{{ txtTransform }};filter:{{ txtFilter }};transition:opacity .5s ease, transform .75s cubic-bezier(.3,0,.2,1), filter .6s ease;">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(17px,1.9vw,24px);color:#e8c074;letter-spacing:.04em;text-shadow:0 2px 30px rgba(216,166,87,.45);">{{ chCap }}</div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:14px;">
+              <div style="height:1px;width:clamp(20px,4vw,46px);background:linear-gradient(90deg, transparent, rgba(216,166,87,.6));"></div>
+              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:#caa765;font-weight:300;white-space:nowrap;">{{ chEyebrow }}</div>
+              <div style="height:1px;width:clamp(20px,4vw,46px);background:linear-gradient(90deg, rgba(216,166,87,.6), transparent);"></div>
+            </div>
+            <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f6efe0;font-size:clamp(30px,4.4vw,60px);line-height:1.08;margin:18px 0 0;max-width:16ch;text-wrap:balance;text-shadow:0 4px 40px rgba(0,0,0,.6);">{{ chTitle }}</h2>
+            <p style="font-family:'Jost',sans-serif;font-weight:300;color:#b6a991;font-size:clamp(13px,1.3vw,16px);line-height:1.55;margin:clamp(16px,2.4vh,24px) 0 0;max-width:34ch;letter-spacing:.03em;">{{ chSub }}</p>
+            <sc-if value="{{ chLast }}" hint-placeholder-val="{{ false }}">
+              <a href="{{ waLink }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;margin-top:clamp(22px,3.4vh,34px);font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:16px 38px;border-radius:40px;text-decoration:none;font-weight:500;animation:breathe 5s ease-in-out infinite;">Agendar consulta</a>
+            </sc-if>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- ================= SLIDE 7 · DEPOIMENTOS ================= -->
+      <sc-if value="{{ isDepo }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="III · Depoimentos" style="position:absolute;inset:0;overflow:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(120% 90% at 50% -8%, #1d140d 0%, #0c0807 48%, #070504 100%);display:flex;flex-direction:column;align-items:center;padding:84px clamp(22px,5vw,72px) 92px;">
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1px 1px at 16% 26%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 72% 14%, rgba(255,244,224,.35), transparent),radial-gradient(1px 1px at 86% 64%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 32% 80%, rgba(255,244,224,.35), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
+
+        <div style="position:relative;z-index:2;text-align:center;max-width:760px;flex:none;">
+          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#caa765;font-weight:300;">Capítulo III</div>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecdc;font-size:clamp(26px,3.4vw,46px);line-height:1.12;margin:12px 0 0;text-wrap:balance;">Quem atravessou — e voltou para <span style="color:#e8c074;">contar.</span></h2>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9b8f7c;font-size:clamp(12.5px,1.2vw,14.5px);line-height:1.5;margin:10px 0 0;letter-spacing:.02em;">Mensagens reais de quem consultou o Portal do Invisível.</p>
+        </div>
+
+        <div style="position:relative;z-index:2;width:100%;max-width:1180px;flex:1;min-height:0;margin-top:clamp(18px,3vh,30px);display:flex;gap:clamp(12px,1.4vw,20px);align-items:flex-start;-webkit-mask:linear-gradient(180deg, transparent 0, #000 9%, #000 88%, transparent 100%);mask:linear-gradient(180deg, transparent 0, #000 9%, #000 88%, transparent 100%);">
+          <div style="flex:1;min-width:0;overflow:hidden;height:100%;">
+            <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px);animation:scrollUp 46s linear infinite;will-change:transform;">
+              <sc-for list="{{ col1 }}" as="t" hint-placeholder-count="0">
+                <sc-if value="{{ t }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#0d0a08;border:1px solid rgba(216,166,87,.22);border-radius:14px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55);"><img src="{{ t }}" loading="lazy" decoding="async" style="width:100%;display:block;" /></div></sc-if>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;overflow:hidden;height:100%;">
+            <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px);animation:scrollDown 58s linear infinite;will-change:transform;">
+              <sc-for list="{{ col2 }}" as="t" hint-placeholder-count="0">
+                <sc-if value="{{ t }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#0d0a08;border:1px solid rgba(216,166,87,.22);border-radius:14px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55);"><img src="{{ t }}" loading="lazy" decoding="async" style="width:100%;display:block;" /></div></sc-if>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;overflow:hidden;height:100%;">
+            <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px);animation:scrollUp 52s linear infinite;will-change:transform;">
+              <sc-for list="{{ col3 }}" as="t" hint-placeholder-count="0">
+                <sc-if value="{{ t }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#0d0a08;border:1px solid rgba(216,166,87,.22);border-radius:14px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55);"><img src="{{ t }}" loading="lazy" decoding="async" style="width:100%;display:block;" /></div></sc-if>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <a href="{{ waLink }}" target="_blank" rel="noopener" style="position:relative;z-index:2;flex:none;margin-top:clamp(14px,2vh,22px);display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:14px 34px;border-radius:40px;text-decoration:none;font-weight:500;">Quero a minha leitura</a>
+      </section>
+      </sc-if>
+
+      <!-- ================= SLIDE 8 · LEITURA DE TARÔ ================= -->
+      <sc-if value="{{ isTarot }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="IV · Leitura" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(120% 95% at 50% 6%, #1e150d 0%, #0c0807 50%, #070504 100%);">
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1px 1px at 18% 24%, rgba(255,244,224,.45), transparent),radial-gradient(1px 1px at 74% 16%, rgba(255,244,224,.35), transparent),radial-gradient(1px 1px at 84% 66%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 30% 82%, rgba(255,244,224,.35), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(120% 100% at 50% 48%, transparent 52%, rgba(0,0,0,.55) 100%);"></div>
+        <div style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:78px clamp(20px,5vw,72px) 92px;box-sizing:border-box;">
+
+        <!-- header -->
+        <div style="position:relative;z-index:2;text-align:center;max-width:680px;flex:none;">
+          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#caa765;font-weight:300;">Capítulo IV</div>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecdc;font-size:clamp(24px,3.2vw,42px);line-height:1.12;margin:10px 0 0;text-wrap:balance;">{{ tarotTitle }}</h2>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9b8f7c;font-size:clamp(12px,1.15vw,14px);line-height:1.5;margin:9px 0 0;letter-spacing:.02em;">{{ tarotHint }}</p>
+        </div>
+
+        <!-- spread (3 slots) -->
+        <sc-if value="{{ showSpread }}" hint-placeholder-val="{{ true }}">
+        <div style="position:relative;z-index:2;display:flex;justify-content:center;align-items:flex-start;gap:clamp(14px,3vw,46px);margin-top:clamp(16px,3vh,30px);flex:none;">
+          <sc-for list="{{ slots }}" as="s" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:clamp(96px,11vw,140px);">
+              <div style="font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#9f7a3e;">{{ s.pos }}</div>
+              <div style="position:relative;width:100%;height:clamp(146px,21vh,210px);perspective:1200px;">
+                <sc-if value="{{ s.filled }}" hint-placeholder-val="{{ false }}">
+                  <!-- carta REAL revelada direto (sem virar verso) -->
+                  <div style="position:absolute;inset:0;border-radius:12px;overflow:hidden;border:1px solid rgba(240,205,138,.7);background:#15100a;box-shadow:0 0 46px rgba(216,166,87,.5);animation:cardReveal .75s cubic-bezier(.2,.75,.2,1) both;">
+                    {{ s.imgEl }}
+                    <div style="position:absolute;left:0;right:0;bottom:0;padding:16px 6px 8px;background:linear-gradient(180deg,transparent,rgba(8,5,3,.94));text-align:center;">
+                      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;font-size:clamp(11px,1.2vw,14px);color:#f7ecd2;line-height:1.05;text-shadow:0 1px 8px rgba(0,0,0,.9);">{{ s.name }}</div>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ s.empty }}" hint-placeholder-val="{{ true }}">
+                  <div style="position:absolute;inset:0;border-radius:12px;overflow:hidden;border:1px solid rgba(216,166,87,.45);box-shadow:0 0 28px rgba(120,110,180,.22);">
+                    <img src="card-back.png" alt="" loading="eager" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:.96;" />
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        </sc-if>
+
+        <!-- deck fan (pick) -->
+        <sc-if value="{{ showDeck }}" hint-placeholder-val="{{ true }}">
+          <div style="position:relative;z-index:2;display:flex;justify-content:center;align-items:flex-end;margin-top:clamp(18px,3.2vh,34px);height:clamp(96px,15vh,140px);flex:none;">
+            <sc-for list="{{ fan }}" as="c" hint-placeholder-count="22">
+              <div onClick="{{ c.pick }}" style="position:relative;overflow:hidden;width:clamp(50px,5.2vw,72px);height:clamp(78px,12vh,112px);margin-left:{{ c.ml }};transform:rotate({{ c.rot }}) translateY({{ c.ty }});transform-origin:50% 120%;transition:transform .35s ease, opacity .35s ease;cursor:pointer;opacity:{{ c.op }};border-radius:9px;border:1px solid rgba(216,166,87,.5);box-shadow:0 8px 22px rgba(0,0,0,.5);" style-hover="transform:rotate({{ c.rot }}) translateY(-16px);">
+                <img src="card-back.png" alt="" loading="eager" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;" />
+              </div>
+            </sc-for>
+          </div>
+          <div style="position:relative;z-index:2;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:#7d7058;margin-top:14px;flex:none;">{{ pickHint }}</div>
+        </sc-if>
+
+        <!-- loading -->
+        <sc-if value="{{ showLoading }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:clamp(20px,3.4vh,32px);flex:none;animation:driftUp .5s ease both;">
+            <div style="width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(216,166,87,.25);border-top-color:#f0cd8a;animation:spinSlow 1s linear infinite;"></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(15px,1.6vw,20px);color:#cbb89a;letter-spacing:.02em;">Consultando o invisível…</div>
+          </div>
+        </sc-if>
+
+        <!-- result -->
+        <sc-if value="{{ showResult }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative;z-index:2;width:100%;max-width:660px;margin-top:clamp(14px,2.2vh,22px);flex:none;display:flex;flex-direction:column;gap:clamp(10px,1.6vh,15px);animation:driftUp .7s ease both;">
+            <div style="text-align:center;font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:#caa765;font-weight:300;">Breve interpretação</div>
+            <div style="display:flex;flex-direction:column;gap:clamp(9px,1.3vh,13px);text-align:left;">
+              <div style="display:flex;gap:14px;align-items:flex-start;">
+                <div style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(240,205,138,.5);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:16px;font-family:'Cormorant Garamond',serif;">♡</div>
+                <div>
+                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Amor</div>
+                  <p style="font-family:'Jost',sans-serif;font-weight:300;color:#cdbfa9;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingAmor }}</p>
+                </div>
+              </div>
+              <div style="display:flex;gap:14px;align-items:flex-start;">
+                <div style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(240,205,138,.5);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:16px;font-family:'Cormorant Garamond',serif;">✦</div>
+                <div>
+                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Trabalho</div>
+                  <p style="font-family:'Jost',sans-serif;font-weight:300;color:#cdbfa9;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingTrabalho }}</p>
+                </div>
+              </div>
+              <div style="display:flex;gap:14px;align-items:flex-start;">
+                <div style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(240,205,138,.5);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:16px;font-family:'Cormorant Garamond',serif;">☽</div>
+                <div>
+                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Vida</div>
+                  <p style="font-family:'Jost',sans-serif;font-weight:300;color:#cdbfa9;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingVida }}</p>
+                </div>
+              </div>
+            </div>
+            <div style="padding:13px 18px;border:1px solid rgba(216,166,87,.2);border-radius:14px;background:rgba(216,166,87,.05);text-align:center;">
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(11.5px,1.05vw,13px);line-height:1.5;color:#9b8f7c;margin:0;">Esta é uma tiragem rápida, gratuita e de caráter geral — um retrato das energias do momento. Para uma leitura aprofundada e feita só para você, vamos conversar.</p>
+            </div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+              <a href="{{ waLink }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:14px 32px;border-radius:40px;text-decoration:none;font-weight:500;text-align:center;">Entre em contato e faça sua tiragem completa</a>
+              <button onClick="{{ tarotReset }}" style="display:inline-flex;align-items:center;gap:10px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#e8c074;background:transparent;border:1px solid rgba(216,166,87,.45);padding:14px 28px;border-radius:40px;cursor:pointer;font-weight:400;">Nova tiragem</button>
+            </div>
+          </div>
+        </sc-if>
+        </div>
+      </section>
+      </sc-if>
+
+      <!-- ================= SLIDE 9 · DIFERENCIAIS DO PORTAL ================= -->
+      <sc-if value="{{ isDiferenciais }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="V · Diferenciais" style="position:absolute;inset:0;overflow:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 42%, #171331 0%, #0c0917 48%, #060409 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px clamp(16px,5vw,64px) 50px;box-sizing:border-box;">
+        <!-- stars -->
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.3px 1.3px at 12% 22%, rgba(222,226,255,.75), transparent),radial-gradient(1px 1px at 78% 15%, rgba(222,226,255,.55), transparent),radial-gradient(1px 1px at 88% 58%, rgba(222,226,255,.6), transparent),radial-gradient(1.4px 1.4px at 28% 74%, rgba(222,226,255,.5), transparent),radial-gradient(1px 1px at 64% 84%, rgba(222,226,255,.5), transparent),radial-gradient(1px 1px at 46% 36%, rgba(222,226,255,.45), transparent),radial-gradient(1px 1px at 8% 50%, rgba(222,226,255,.4), transparent),radial-gradient(1px 1px at 94% 40%, rgba(222,226,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
+        <!-- nebula tint -->
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(58% 50% at 50% 50%, rgba(96,74,168,.2), transparent 72%);"></div>
+        <!-- vignette -->
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(132% 106% at 50% 50%, transparent 38%, rgba(4,3,9,.72) 100%);"></div>
+
+        <!-- header -->
+        <div style="position:relative;z-index:5;text-align:center;flex:none;">
+          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo V</div>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">Por que o Portal é diferente</h2>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(12px,1.15vw,14.5px);margin:6px 0 0;letter-spacing:.03em;">Seis forças que tornam cada leitura única.</p>
+        </div>
+
+        <!-- solar system 3D · WebGL -->
+        <div class="solar" id="solar-stage" style="position:relative;z-index:2;width:min(97vw,78vh,1000px);height:min(97vw,78vh,1000px);margin-top:clamp(2px,1vh,10px);flex:none;">
+          <canvas id="solar-canvas" style="position:absolute;inset:0;width:100%;height:100%;display:block;"></canvas>
+          <div id="solar-overlay" style="position:absolute;inset:0;z-index:2;pointer-events:none;overflow:visible;">
+            <div id="solar-label-sun" style="position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.1vw,28px);color:#f3d79a;letter-spacing:.04em;text-shadow:0 2px 18px rgba(232,170,70,.85);opacity:0;">O Portal</div>
+
+            <div id="solar-label-0" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Mais de 10 oráculos</div>
+              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Tarô, baralho cigano, runas e muito mais.</div>
+            </div>
+
+            <div id="solar-label-1" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Atendimento humanizado</div>
+              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Acolhimento de verdade, sem respostas prontas.</div>
+            </div>
+
+            <div id="solar-label-2" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Leituras personalizadas</div>
+              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Cada tiragem feita só para o seu momento.</div>
+            </div>
+
+            <div id="solar-label-3" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Escuta ativa antes da leitura</div>
+              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Primeiro eu te ouço, depois as cartas falam.</div>
+            </div>
+
+            <div id="solar-label-4" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Consultas online — Brasil e exterior</div>
+              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">De onde você estiver, o portal te alcança.</div>
+            </div>
+
+            <div id="solar-label-5" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Perguntas sobre terceiros</div>
+              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Traga também quem caminha ao seu lado.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      </sc-if>
+
+      <!-- ================= SLIDE 10 · METODOLOGIA ================= -->
+      <sc-if value="{{ isMetodologia }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="VI · Metodologia" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 40%, #1a1530 0%, #0d0a1a 50%, #060409 100%);">
+        <canvas data-scene="methodbg" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;"></canvas>
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.2px 1.2px at 14% 22%, rgba(226,224,255,.6), transparent),radial-gradient(1px 1px at 72% 16%, rgba(226,224,255,.5), transparent),radial-gradient(1px 1px at 86% 62%, rgba(226,224,255,.5), transparent),radial-gradient(1.3px 1.3px at 30% 78%, rgba(226,224,255,.45), transparent),radial-gradient(1px 1px at 60% 86%, rgba(226,224,255,.45), transparent),radial-gradient(1px 1px at 44% 34%, rgba(226,224,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(132% 108% at 50% 50%, transparent 40%, rgba(4,3,9,.72) 100%);"></div>
+
+        <div id="method-wrap" style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px clamp(16px,5vw,56px) 54px;box-sizing:border-box;">
+        <!-- header -->
+        <div style="position:relative;z-index:5;text-align:center;flex:none;">
+          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#c2a86a;font-weight:300;">Capítulo VI</div>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f6efe0;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">A Metodologia</h2>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9b8f7c;font-size:clamp(12px,1.15vw,14.5px);margin:7px 0 0;letter-spacing:.03em;max-width:46ch;">Nada aqui é mecânico. A consulta é um caminho que percorremos juntos — um fio que se desenha, passo a passo.</p>
+        </div>
+
+        <!-- journey stage -->
+        <div id="method-stage" style="position:relative;z-index:2;width:min(96vw,1140px);height:min(58vh,540px);margin-top:clamp(6px,2vh,20px);flex:none;">
+          <svg id="method-svg" viewBox="0 0 1200 540" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:1;">
+            <path id="method-ghost" d="M 70,312 C 170,250 240,198 332,206 C 452,216 478,346 582,344 C 694,342 700,200 800,200 C 912,200 930,344 1022,338 C 1092,333 1118,300 1140,278" style="fill:none;stroke:rgba(236,200,130,.14);stroke-width:1.4px;"></path>
+            <path id="method-thread" d="M 70,312 C 170,250 240,198 332,206 C 452,216 478,346 582,344 C 694,342 700,200 800,200 C 912,200 930,344 1022,338 C 1092,333 1118,300 1140,278" style="fill:none;stroke:#f0c25c;stroke-width:2.4px;stroke-linecap:round;filter:drop-shadow(0 0 8px rgba(244,194,96,.8)) drop-shadow(0 0 18px rgba(232,160,60,.4));"></path>
+            <circle id="method-mote2" cx="70" cy="312" r="3.6" style="fill:rgba(255,240,200,.75);filter:drop-shadow(0 0 7px rgba(244,196,110,.8));"></circle>
+            <circle id="method-mote" cx="70" cy="312" r="6" style="fill:#fff5da;filter:drop-shadow(0 0 14px rgba(250,208,120,.95)) drop-shadow(0 0 26px rgba(240,180,80,.6));"></circle>
+          </svg>
+
+          <div style="position:absolute;inset:0;z-index:2;pointer-events:none;overflow:visible;">
+            <!-- NODES -->
+            <div id="method-node-0" style="position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:clamp(58px,6.2vw,80px);height:clamp(58px,6.2vw,80px);opacity:0;will-change:transform,opacity;"><div style="position:absolute;inset:-26%;border-radius:50%;background:radial-gradient(circle, rgba(248,200,108,.32) 0%, rgba(236,168,72,.12) 44%, rgba(240,180,80,0) 72%);filter:blur(3px);"></div><div style="position:absolute;inset:-6%;border-radius:50%;background:conic-gradient(from 0deg, rgba(255,234,168,0), rgba(255,220,138,.6), rgba(196,118,38,.06), rgba(255,240,186,.48), rgba(255,226,158,.12), rgba(255,234,168,0));filter:blur(6px);-webkit-mask:radial-gradient(circle, #000 12%, transparent 70%);mask:radial-gradient(circle, #000 12%, transparent 70%);animation:spinSlow 17s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 210deg, rgba(255,242,196,0), rgba(248,204,116,.32), rgba(255,236,176,0), rgba(248,204,116,.26), rgba(255,242,196,0));filter:blur(8px);-webkit-mask:radial-gradient(circle, #000 6%, transparent 62%);mask:radial-gradient(circle, #000 6%, transparent 62%);animation:spinRev 23s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 46%, rgba(255,250,228,.9) 0%, rgba(248,206,116,.46) 28%, rgba(240,180,80,0) 60%);"></div></div>
+            <div id="method-node-1" style="position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:clamp(58px,6.2vw,80px);height:clamp(58px,6.2vw,80px);opacity:0;will-change:transform,opacity;"><div style="position:absolute;inset:-26%;border-radius:50%;background:radial-gradient(circle, rgba(248,200,108,.32) 0%, rgba(236,168,72,.12) 44%, rgba(240,180,80,0) 72%);filter:blur(3px);"></div><div style="position:absolute;inset:-6%;border-radius:50%;background:conic-gradient(from 0deg, rgba(255,234,168,0), rgba(255,220,138,.6), rgba(196,118,38,.06), rgba(255,240,186,.48), rgba(255,226,158,.12), rgba(255,234,168,0));filter:blur(6px);-webkit-mask:radial-gradient(circle, #000 12%, transparent 70%);mask:radial-gradient(circle, #000 12%, transparent 70%);animation:spinSlow 17s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 210deg, rgba(255,242,196,0), rgba(248,204,116,.32), rgba(255,236,176,0), rgba(248,204,116,.26), rgba(255,242,196,0));filter:blur(8px);-webkit-mask:radial-gradient(circle, #000 6%, transparent 62%);mask:radial-gradient(circle, #000 6%, transparent 62%);animation:spinRev 23s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 46%, rgba(255,250,228,.9) 0%, rgba(248,206,116,.46) 28%, rgba(240,180,80,0) 60%);"></div></div>
+            <div id="method-node-2" style="position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:clamp(58px,6.2vw,80px);height:clamp(58px,6.2vw,80px);opacity:0;will-change:transform,opacity;"><div style="position:absolute;inset:-26%;border-radius:50%;background:radial-gradient(circle, rgba(248,200,108,.32) 0%, rgba(236,168,72,.12) 44%, rgba(240,180,80,0) 72%);filter:blur(3px);"></div><div style="position:absolute;inset:-6%;border-radius:50%;background:conic-gradient(from 0deg, rgba(255,234,168,0), rgba(255,220,138,.6), rgba(196,118,38,.06), rgba(255,240,186,.48), rgba(255,226,158,.12), rgba(255,234,168,0));filter:blur(6px);-webkit-mask:radial-gradient(circle, #000 12%, transparent 70%);mask:radial-gradient(circle, #000 12%, transparent 70%);animation:spinSlow 17s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 210deg, rgba(255,242,196,0), rgba(248,204,116,.32), rgba(255,236,176,0), rgba(248,204,116,.26), rgba(255,242,196,0));filter:blur(8px);-webkit-mask:radial-gradient(circle, #000 6%, transparent 62%);mask:radial-gradient(circle, #000 6%, transparent 62%);animation:spinRev 23s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 46%, rgba(255,250,228,.9) 0%, rgba(248,206,116,.46) 28%, rgba(240,180,80,0) 60%);"></div></div>
+            <div id="method-node-3" style="position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:clamp(58px,6.2vw,80px);height:clamp(58px,6.2vw,80px);opacity:0;will-change:transform,opacity;"><div style="position:absolute;inset:-26%;border-radius:50%;background:radial-gradient(circle, rgba(248,200,108,.32) 0%, rgba(236,168,72,.12) 44%, rgba(240,180,80,0) 72%);filter:blur(3px);"></div><div style="position:absolute;inset:-6%;border-radius:50%;background:conic-gradient(from 0deg, rgba(255,234,168,0), rgba(255,220,138,.6), rgba(196,118,38,.06), rgba(255,240,186,.48), rgba(255,226,158,.12), rgba(255,234,168,0));filter:blur(6px);-webkit-mask:radial-gradient(circle, #000 12%, transparent 70%);mask:radial-gradient(circle, #000 12%, transparent 70%);animation:spinSlow 17s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 210deg, rgba(255,242,196,0), rgba(248,204,116,.32), rgba(255,236,176,0), rgba(248,204,116,.26), rgba(255,242,196,0));filter:blur(8px);-webkit-mask:radial-gradient(circle, #000 6%, transparent 62%);mask:radial-gradient(circle, #000 6%, transparent 62%);animation:spinRev 23s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 46%, rgba(255,250,228,.9) 0%, rgba(248,206,116,.46) 28%, rgba(240,180,80,0) 60%);"></div></div>
+            <div id="method-node-4" style="position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:clamp(58px,6.2vw,80px);height:clamp(58px,6.2vw,80px);opacity:0;will-change:transform,opacity;"><div style="position:absolute;inset:-26%;border-radius:50%;background:radial-gradient(circle, rgba(248,200,108,.32) 0%, rgba(236,168,72,.12) 44%, rgba(240,180,80,0) 72%);filter:blur(3px);"></div><div style="position:absolute;inset:-6%;border-radius:50%;background:conic-gradient(from 0deg, rgba(255,234,168,0), rgba(255,220,138,.6), rgba(196,118,38,.06), rgba(255,240,186,.48), rgba(255,226,158,.12), rgba(255,234,168,0));filter:blur(6px);-webkit-mask:radial-gradient(circle, #000 12%, transparent 70%);mask:radial-gradient(circle, #000 12%, transparent 70%);animation:spinSlow 17s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 210deg, rgba(255,242,196,0), rgba(248,204,116,.32), rgba(255,236,176,0), rgba(248,204,116,.26), rgba(255,242,196,0));filter:blur(8px);-webkit-mask:radial-gradient(circle, #000 6%, transparent 62%);mask:radial-gradient(circle, #000 6%, transparent 62%);animation:spinRev 23s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 46%, rgba(255,250,228,.9) 0%, rgba(248,206,116,.46) 28%, rgba(240,180,80,0) 60%);"></div></div>
+            <div id="method-node-5" style="position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:clamp(58px,6.2vw,80px);height:clamp(58px,6.2vw,80px);opacity:0;will-change:transform,opacity;"><div style="position:absolute;inset:-26%;border-radius:50%;background:radial-gradient(circle, rgba(248,200,108,.32) 0%, rgba(236,168,72,.12) 44%, rgba(240,180,80,0) 72%);filter:blur(3px);"></div><div style="position:absolute;inset:-6%;border-radius:50%;background:conic-gradient(from 0deg, rgba(255,234,168,0), rgba(255,220,138,.6), rgba(196,118,38,.06), rgba(255,240,186,.48), rgba(255,226,158,.12), rgba(255,234,168,0));filter:blur(6px);-webkit-mask:radial-gradient(circle, #000 12%, transparent 70%);mask:radial-gradient(circle, #000 12%, transparent 70%);animation:spinSlow 17s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 210deg, rgba(255,242,196,0), rgba(248,204,116,.32), rgba(255,236,176,0), rgba(248,204,116,.26), rgba(255,242,196,0));filter:blur(8px);-webkit-mask:radial-gradient(circle, #000 6%, transparent 62%);mask:radial-gradient(circle, #000 6%, transparent 62%);animation:spinRev 23s linear infinite;"></div><div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 46%, rgba(255,250,228,.9) 0%, rgba(248,206,116,.46) 28%, rgba(240,180,80,0) 60%);"></div></div>
+
+            <!-- LABELS -->
+            <div id="method-label-0" style="position:absolute;left:0;top:0;transform:translate(-50%,-128%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
+              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Escuta</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu te escuto primeiro</div>
+            </div>
+            <div id="method-label-1" style="position:absolute;left:0;top:0;transform:translate(-50%,28%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
+              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Perguntas</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu te ajudo a perguntar</div>
+            </div>
+            <div id="method-label-2" style="position:absolute;left:0;top:0;transform:translate(-50%,-128%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
+              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Oráculos</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu escolho o oráculo certo</div>
+            </div>
+            <div id="method-label-3" style="position:absolute;left:0;top:0;transform:translate(-50%,28%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
+              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Leitura</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu conduzo a leitura</div>
+            </div>
+            <div id="method-label-4" style="position:absolute;left:0;top:0;transform:translate(-50%,-128%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
+              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Interpretação</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu reúno as energias</div>
+            </div>
+            <div id="method-label-5" style="position:absolute;left:0;top:0;transform:translate(-50%,28%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
+              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Direcionamento</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu aponto um caminho</div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+      </sc-if>
+
+      <!-- ================= SLIDE 11 · CLUBE DO PORTAL + CTA FINAL ================= -->
+      <sc-if value="{{ isFinale }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="VIII · Clube" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 30%, #1c1535 0%, #0d0a1c 50%, #060409 100%);">
+        <canvas data-scene="finale" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;"></canvas>
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.3px 1.3px at 14% 20%, rgba(228,224,255,.6), transparent),radial-gradient(1px 1px at 76% 14%, rgba(228,224,255,.5), transparent),radial-gradient(1px 1px at 88% 58%, rgba(228,224,255,.5), transparent),radial-gradient(1.4px 1.4px at 28% 78%, rgba(228,224,255,.45), transparent),radial-gradient(1px 1px at 62% 86%, rgba(228,224,255,.45), transparent),radial-gradient(1px 1px at 46% 36%, rgba(228,224,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(130% 108% at 50% 62%, transparent 36%, rgba(4,3,9,.74) 100%);"></div>
+
+        <div style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px clamp(20px,5vw,52px) 92px;box-sizing:border-box;">
+
+          <!-- CLUBE DO PORTAL -->
+          <div style="text-align:center;flex:none;max-width:760px;">
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VIII</div>
+            <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:7px 0 0;text-wrap:balance;">Clube do Portal</h2>
+            <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(12.5px,1.2vw,15px);margin:9px 0 0;letter-spacing:.02em;max-width:42ch;margin-left:auto;margin-right:auto;">Um grupo exclusivo no WhatsApp — um encontro contínuo, no seu tempo, entre uma consulta e outra.</p>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(10px,1.6vw,16px);margin-top:clamp(20px,3vh,30px);max-width:820px;flex:none;">
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(12px,1.1vw,13.5px);">Acesso antecipado às vagas</span></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(12px,1.1vw,13.5px);">Conteúdos exclusivos</span></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(12px,1.1vw,13.5px);">Reflexões para momentos de pausa</span></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(12px,1.1vw,13.5px);">Benefícios especiais para membros</span></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(12px,1.1vw,13.5px);">Novidades em primeira mão</span></div>
+          </div>
+
+          <!-- divider -->
+          <div style="display:flex;align-items:center;gap:16px;margin:clamp(30px,5vh,52px) 0 clamp(14px,2.4vh,26px);flex:none;">
+            <div style="height:1px;width:clamp(40px,8vw,90px);background:linear-gradient(90deg, transparent, rgba(216,166,87,.5));"></div>
+            <div style="color:#caa765;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.3em;">✦</div>
+            <div style="height:1px;width:clamp(40px,8vw,90px);background:linear-gradient(90deg, rgba(216,166,87,.5), transparent);"></div>
+          </div>
+
+          <!-- CTA FINAL -->
+          <div style="position:relative;flex:none;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:680px;">
+            <blockquote style="position:relative;z-index:2;margin:0;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f6efe0;font-size:clamp(24px,3.4vw,44px);line-height:1.2;text-wrap:balance;text-shadow:0 4px 40px rgba(0,0,0,.6);">Talvez as respostas que você procura não estejam tão distantes quanto parecem.</blockquote>
+
+            <a href="{{ waLink }}" target="_blank" rel="noopener" style="margin-top:clamp(26px,4vh,40px);display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:17px 44px;border-radius:40px;text-decoration:none;font-weight:500;animation:breathe 5s ease-in-out infinite;">Agendar consulta</a>
+            <a href="{{ waLink }}" target="_blank" rel="noopener" style="margin-top:18px;font-family:'Jost',sans-serif;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#caa765;text-decoration:none;border-bottom:1px solid rgba(216,166,87,.3);padding-bottom:3px;">Entrar no Clube do Portal</a>
+          </div>
+        </div>
+      </section>
+      </sc-if>
+
+      <!-- ================= SLIDE 12 · FAQ ================= -->
+      <sc-if value="{{ isFaq }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="IX · FAQ" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 16%, #181230 0%, #0c0918 52%, #060409 100%);">
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.2px 1.2px at 16% 20%, rgba(226,224,255,.55), transparent),radial-gradient(1px 1px at 74% 14%, rgba(226,224,255,.45), transparent),radial-gradient(1px 1px at 86% 60%, rgba(226,224,255,.5), transparent),radial-gradient(1.3px 1.3px at 30% 80%, rgba(226,224,255,.4), transparent),radial-gradient(1px 1px at 58% 88%, rgba(226,224,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(132% 108% at 50% 44%, transparent 42%, rgba(4,3,9,.72) 100%);"></div>
+
+        <div style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:84px clamp(20px,5vw,48px) 92px;box-sizing:border-box;">
+          <!-- header -->
+          <div style="text-align:center;flex:none;margin-bottom:clamp(18px,3vh,34px);">
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo IX</div>
+            <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">Perguntas frequentes</h2>
+            <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(12px,1.15vw,14.5px);margin:7px 0 0;letter-spacing:.03em;">Toque numa pergunta para abrir o portal da resposta.</p>
+          </div>
+
+          <!-- accordion -->
+          <div style="position:relative;width:100%;max-width:780px;flex:none;">
+            <div style="position:absolute;left:21px;top:34px;bottom:34px;width:1px;background:linear-gradient(180deg, transparent, rgba(216,166,87,.4) 14%, rgba(216,166,87,.22) 86%, transparent);z-index:0;"></div>
+            <sc-for list="{{ faqItems }}" as="it" hint-placeholder-count="6">
+              <div onClick="{{ it.toggle }}" style="position:relative;z-index:1;display:flex;gap:clamp(16px,2.4vw,26px);align-items:flex-start;cursor:pointer;padding:clamp(15px,2vh,21px) 2px;border-bottom:1px solid rgba(216,166,87,.12);">
+                <div style="flex:none;position:relative;width:44px;height:44px;margin-top:1px;">
+                  <div style="position:absolute;inset:0;transition:transform .5s ease, opacity .5s ease;transform:scale({{ it.orbScale }});opacity:{{ it.orbOp }};">
+                    <div style="position:absolute;inset:-22%;border-radius:50%;background:radial-gradient(circle, rgba(248,200,108,.32), rgba(240,180,80,0) 70%);filter:blur(3px);"></div>
+                    <div style="position:absolute;inset:-4%;border-radius:50%;background:conic-gradient(from 0deg, rgba(255,234,168,0), rgba(255,222,140,.6), rgba(196,118,38,.08), rgba(255,240,186,.5), rgba(255,234,168,0));filter:blur(4px);-webkit-mask:radial-gradient(circle, #000 14%, transparent 68%);mask:radial-gradient(circle, #000 14%, transparent 68%);animation:spinSlow 15s linear infinite;"></div>
+                    <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 46%, rgba(255,250,228,.9), rgba(248,206,116,.45) 30%, rgba(240,180,80,0) 62%);"></div>
+                  </div>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;">
+                    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:clamp(18px,2.1vw,26px);line-height:1.22;color:{{ it.qColor }};transition:color .4s ease;">{{ it.q }}</div>
+                    <div style="flex:none;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(22px,2.4vw,28px);color:#caa765;line-height:1;">{{ it.sign }}</div>
+                  </div>
+                  <div style="overflow:hidden;max-height:{{ it.maxH }};opacity:{{ it.op }};transition:max-height .55s cubic-bezier(.3,0,.2,1), opacity .45s ease;">
+                    <p style="font-family:'Jost',sans-serif;font-weight:300;color:#a89c86;font-size:clamp(13px,1.2vw,15px);line-height:1.6;margin:10px 0 4px;max-width:58ch;">{{ it.a }}</p>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <a href="{{ waLink }}" target="_blank" rel="noopener" style="margin-top:clamp(26px,4vh,42px);flex:none;display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:15px 36px;border-radius:40px;text-decoration:none;font-weight:500;">Ainda tem dúvidas? Fale comigo</a>
+        </div>
+      </section>
+      </sc-if>
+
+    </div>
+  </div>
+
+  <!-- ============ FIXED HEADER ============ -->
+  <header style="position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(22px,5vw,56px);pointer-events:none;background:linear-gradient(180deg, rgba(7,5,4,.82) 0%, rgba(7,5,4,.46) 55%, rgba(7,5,4,0) 100%);">
+    <div onClick="{{ goHome }}" style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:10px;">
+      <span style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,205,138,.6);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:13px;font-family:'Cormorant Garamond',serif;">✦</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#f0e6d4;letter-spacing:.04em;white-space:nowrap;">Portal do Invisível</span>
+    </div>
+    <a href="{{ waLink }}" target="_blank" rel="noopener" style="pointer-events:auto;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#e8c074;text-decoration:none;border:1px solid rgba(216,166,87,.4);padding:11px 22px;border-radius:30px;">Agendar</a>
+  </header>
+
+  <!-- ============ PROGRESS + LABEL ============ -->
+  <div style="position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:55;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;width:min(280px,60vw);">
+    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#e8c074;letter-spacing:.02em;">{{ pageMark }}</div>
+    <div style="width:100%;height:2px;background:rgba(216,166,87,.18);border-radius:2px;overflow:hidden;">
+      <div style="height:100%;width:{{ progress }};background:linear-gradient(90deg,#d2992f,#f4d99b);border-radius:2px;transition:width 1s cubic-bezier(.72,0,.18,1);"></div>
+    </div>
+  </div>
+
+  <!-- ============ FILM ARROWS ============ -->
+  <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ prev }}" style="position:absolute;bottom:22px;left:clamp(18px,5vw,46px);z-index:55;width:46px;height:46px;border-radius:50%;border:1px solid rgba(216,166,87,.36);background:rgba(11,8,7,.5);color:#e8c074;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;">←</button>
+  </sc-if>
+  <sc-if value="{{ showNext }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ next }}" style="position:absolute;bottom:22px;right:clamp(18px,5vw,46px);z-index:55;width:46px;height:46px;border-radius:50%;border:1px solid rgba(240,205,138,.55);background:linear-gradient(180deg,rgba(244,217,155,.22),rgba(210,153,47,.18));color:#f4d99b;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;animation:pulseGlow 4s ease-in-out infinite;">→</button>
+  </sc-if>
+
+  <!-- ============ LOADING SCREEN (video) ============ -->
+  <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;z-index:200;background:#000;overflow:hidden;">
+      <video ref="{{ setVideo }}" src="portal.mp4" autoplay muted playsinline onEnded="{{ onEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 46%, rgba(0,0,0,0) 30%, rgba(0,0,0,.45) 100%);pointer-events:none;"></div>
+
+      <sc-if value="{{ showEnterUi }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;">
+          <div style="font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.5em;text-transform:uppercase;color:#7a4d12;font-weight:500;text-shadow:0 1px 18px rgba(255,244,224,.7);animation:driftUp 1s ease both;">Taróloga Aquila apresenta</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;color:#3d2708;font-size:clamp(30px,5vw,58px);line-height:1.1;margin:18px 0 44px;max-width:18ch;text-shadow:0 1px 22px rgba(255,244,224,.8);animation:driftUp 1.2s ease both;">Tornar visível aquilo que ainda está oculto.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ playing }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ skip }}" style="position:absolute;bottom:28px;right:34px;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:#9a8b73;cursor:pointer;border:1px solid rgba(216,166,87,.3);padding:9px 18px;border-radius:30px;background:rgba(0,0,0,.3);">pular ⏭</div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- portal emergence -->
+  <sc-if value="{{ glowOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:300;pointer-events:none;background:radial-gradient(circle at 50% 47%, #ffffff 0%, #ffffff 45%, #fdf8ee 78%, #fbf2e2 100%);opacity:{{ glowOpacity }};transform:{{ glowScale }};transform-origin:50% 47%;transition:opacity 6s cubic-bezier(.33,0,.2,1), transform 6.4s cubic-bezier(.33,0,.2,1);"></div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;whatsapp&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;5511999999999&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showIntroOnLoad&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { phase: 'intro', playing: false, glowOn: false, glowFaded: false, slide: 0, tOrder: null, tUsed: [], tPicks: [], tStage: 'pick', tEmail: '', tEmailErr: false, tReading: null, faqOpen: 0, chFrom: 0, chTo: 0, chMix: 1, dispScene: 0, txtOn: true };
+  LAST = 12;
+
+  FAQ = [
+    { q: 'Posso perguntar sobre terceiros?', a: 'Sim. Podemos olhar também para quem caminha ao seu lado — sempre com respeito e cuidado.' },
+    { q: 'Como funciona o atendimento?', a: 'Começo te ouvindo. A partir do que você traz, conduzo a leitura com os oráculos certos para o seu momento.' },
+    { q: 'A consulta é online?', a: 'Sim, atendo online para todo o Brasil e o exterior — de onde você estiver, o portal te alcança.' },
+    { q: 'Quanto tempo dura?', a: 'O tempo que o seu momento pedir. Sem pressa e sem relógio apertado: o que importa é a sua clareza.' },
+    { q: 'Posso fazer mais de uma pergunta?', a: 'Pode. Trazemos quantas questões fizerem sentido para a sua consulta.' },
+    { q: 'Recebo gravação?', a: 'Se desejar, você recebe o registro do nosso encontro para revisitar com calma depois.' }
+  ];
+
+  CARDS = [
+    { rn: '0', name: 'O Louco', glyph: '✶', file: 'RWS_Tarot_00_Fool.jpg' },
+    { rn: 'I', name: 'O Mago', glyph: '✦', file: 'RWS_Tarot_01_Magician.jpg' },
+    { rn: 'II', name: 'A Sacerdotisa', glyph: '☽', file: 'RWS_Tarot_02_High_Priestess.jpg' },
+    { rn: 'III', name: 'A Imperatriz', glyph: '❂', file: 'RWS_Tarot_03_Empress.jpg' },
+    { rn: 'IV', name: 'O Imperador', glyph: '⟁', file: 'RWS_Tarot_04_Emperor.jpg' },
+    { rn: 'V', name: 'O Hierofante', glyph: '☥', file: 'RWS_Tarot_05_Hierophant.jpg' },
+    { rn: 'VI', name: 'Os Enamorados', glyph: '⚭', file: 'RWS_Tarot_06_Lovers.jpg' },
+    { rn: 'VII', name: 'O Carro', glyph: '✷', file: 'RWS_Tarot_07_Chariot.jpg' },
+    { rn: 'VIII', name: 'A Força', glyph: '∞', file: 'RWS_Tarot_08_Strength.jpg' },
+    { rn: 'IX', name: 'O Eremita', glyph: '✸', file: 'RWS_Tarot_09_Hermit.jpg' },
+    { rn: 'X', name: 'A Roda da Fortuna', glyph: '☸', file: 'RWS_Tarot_10_Wheel_of_Fortune.jpg' },
+    { rn: 'XI', name: 'A Justiça', glyph: '⚖', file: 'RWS_Tarot_11_Justice.jpg' },
+    { rn: 'XII', name: 'O Enforcado', glyph: '⌖', file: 'RWS_Tarot_12_Hanged_Man.jpg' },
+    { rn: 'XIII', name: 'A Morte', glyph: '⚝', file: 'RWS_Tarot_13_Death.jpg' },
+    { rn: 'XIV', name: 'A Temperança', glyph: '⚗', file: 'RWS_Tarot_14_Temperance.jpg' },
+    { rn: 'XV', name: 'O Diabo', glyph: '⛓', file: 'RWS_Tarot_15_Devil.jpg' },
+    { rn: 'XVI', name: 'A Torre', glyph: '☄', file: 'RWS_Tarot_16_Tower.jpg' },
+    { rn: 'XVII', name: 'A Estrela', glyph: '★', file: 'RWS_Tarot_17_Star.jpg' },
+    { rn: 'XVIII', name: 'A Lua', glyph: '☾', file: 'RWS_Tarot_18_Moon.jpg' },
+    { rn: 'XIX', name: 'O Sol', glyph: '☉', file: 'RWS_Tarot_19_Sun.jpg' },
+    { rn: 'XX', name: 'O Julgamento', glyph: '❖', file: 'RWS_Tarot_20_Judgement.jpg' },
+    { rn: 'XXI', name: 'O Mundo', glyph: '◉', file: 'RWS_Tarot_21_World.jpg' }
+  ];
+  imgUrl = (file) => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + file + '?width=400';
+  onImgError = (e) => { try { e.target.style.display = 'none'; } catch (_) {} };
+  POS = ['Amor', 'Trabalho', 'Vida'];
+
+  componentDidMount() {
+    if (this.props.showIntroOnLoad === false) this.setState({ phase: 'home' });
+    this._canv = [];
+    this._prevSlide = this.state.slide;
+    this._t0 = performance.now();
+    this._wheelLock = false;
+    this._onKey = (e) => {
+      if (this.state.phase !== 'home') return;
+      const ae = document.activeElement;
+      if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
+      if (['ArrowRight', 'ArrowDown', 'PageDown'].includes(e.key)) { e.preventDefault(); this.next(); }
+      else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); this.prev(); }
+    };
+    this._onWheel = (e) => {
+      if (this.state.phase !== 'home') return;
+      if (this.state.slide === 8 || this.state.slide === 11 || this.state.slide === 12) return; // leitura/finale/FAQ: deixa o conteúdo rolar
+      if (Math.abs(e.deltaY) < 24 || this._wheelLock) return;
+      this._wheelLock = true;
+      if (e.deltaY > 0) this.next(); else this.prev();
+      setTimeout(() => { this._wheelLock = false; }, 1100);
+    };
+    window.addEventListener('keydown', this._onKey);
+    window.addEventListener('wheel', this._onWheel, { passive: true });
+    this._safety = setTimeout(() => this.emerge(), 9000);
+    this._raf = requestAnimationFrame(this.loop);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this._onKey);
+    window.removeEventListener('wheel', this._onWheel);
+    if (this._safety) clearTimeout(this._safety);
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._chRaf) cancelAnimationFrame(this._chRaf);
+    if (this._txtSwap) clearTimeout(this._txtSwap);
+    this.disposeSolar();
+  }
+
+  makeGlowTexture = (THREE, stops) => {
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const g = c.getContext('2d');
+    const grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    grd.addColorStop(0, stops[0]); grd.addColorStop(0.45, stops[1]); grd.addColorStop(1, stops[2]);
+    g.fillStyle = grd; g.fillRect(0, 0, 128, 128);
+    const t = new THREE.CanvasTexture(c); t.needsUpdate = true; return t;
+  };
+
+  makeStarTexture = (THREE) => {
+    const c = document.createElement('canvas'); c.width = c.height = 64;
+    const g = c.getContext('2d');
+    const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grd.addColorStop(0, 'rgba(255,255,255,1)');
+    grd.addColorStop(0.25, 'rgba(255,250,240,0.85)');
+    grd.addColorStop(0.55, 'rgba(200,210,255,0.25)');
+    grd.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = grd; g.fillRect(0, 0, 64, 64);
+    const t = new THREE.CanvasTexture(c); t.needsUpdate = true; return t;
+  };
+
+  makeNebulaTexture = (THREE) => {
+    const S = 1024, c = document.createElement('canvas'); c.width = c.height = S;
+    const g = c.getContext('2d');
+    g.fillStyle = '#05040c'; g.fillRect(0, 0, S, S);
+    const blobs = [
+      ['rgba(78,54,140,0.42)', 0.30, 0.34, 0.40],
+      ['rgba(40,58,120,0.36)', 0.70, 0.62, 0.46],
+      ['rgba(150,96,40,0.20)', 0.54, 0.30, 0.30],
+      ['rgba(96,40,110,0.30)', 0.24, 0.74, 0.34],
+      ['rgba(30,40,90,0.34)', 0.84, 0.22, 0.40],
+      ['rgba(120,70,150,0.18)', 0.50, 0.52, 0.55]
+    ];
+    blobs.forEach((b) => {
+      const grd = g.createRadialGradient(b[1] * S, b[2] * S, 0, b[1] * S, b[2] * S, b[3] * S);
+      grd.addColorStop(0, b[0]); grd.addColorStop(1, 'rgba(5,4,12,0)');
+      g.fillStyle = grd; g.fillRect(0, 0, S, S);
+    });
+    // faint dust speckle
+    for (let i = 0; i < 1400; i++) {
+      const x = Math.random() * S, y = Math.random() * S, r = Math.random() * 1.3;
+      g.fillStyle = 'rgba(' + (200 + Math.random() * 55 | 0) + ',' + (205 + Math.random() * 50 | 0) + ',255,' + (Math.random() * 0.5).toFixed(2) + ')';
+      g.beginPath(); g.arc(x, y, r, 0, 6.283); g.fill();
+    }
+    const t = new THREE.CanvasTexture(c); t.needsUpdate = true; return t;
+  };
+
+  makeSunMaterial = (THREE) => {
+    return new THREE.ShaderMaterial({
+      uniforms: { time: { value: 0 } },
+      vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+      fragmentShader: [
+        'uniform float time; varying vec3 vP;',
+        'float hash(vec3 p){ p=fract(p*0.3183099+0.1); p*=17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }',
+        'float noise(vec3 x){ vec3 i=floor(x), f=fract(x); f=f*f*(3.0-2.0*f);',
+        ' return mix(mix(mix(hash(i+vec3(0.,0.,0.)),hash(i+vec3(1.,0.,0.)),f.x), mix(hash(i+vec3(0.,1.,0.)),hash(i+vec3(1.,1.,0.)),f.x),f.y),',
+        ' mix(mix(hash(i+vec3(0.,0.,1.)),hash(i+vec3(1.,0.,1.)),f.x), mix(hash(i+vec3(0.,1.,1.)),hash(i+vec3(1.,1.,1.)),f.x),f.y),f.z); }',
+        'float fbm(vec3 p){ float v=0.0,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.02; a*=0.5; } return v; }',
+        'void main(){ vec3 d=normalize(vP);',
+        ' float n=fbm(d*3.2+vec3(0.0,time*0.06,0.0));',
+        ' float n2=fbm(d*7.5-vec3(time*0.09,0.0,time*0.04));',
+        ' float g=mix(n,n2,0.5);',
+        ' vec3 cool=vec3(0.55,0.20,0.06), mid=vec3(0.96,0.58,0.20), hot=vec3(1.0,0.88,0.60);',
+        ' vec3 col=mix(cool,mid,smoothstep(0.28,0.58,g));',
+        ' col=mix(col,hot,smoothstep(0.56,0.86,g));',
+        ' float gran=fbm(d*16.0+time*0.05); col*=0.82+0.30*gran;',
+        ' gl_FragColor=vec4(col*1.18,1.0); }'
+      ].join('\n')
+    });
+  };
+
+  makeAtmosphereMaterial = (THREE, color, power, intensity) => {
+    return new THREE.ShaderMaterial({
+      uniforms: { glowColor: { value: new THREE.Color(color) }, power: { value: power }, intensity: { value: intensity } },
+      vertexShader: 'varying vec3 vN; varying vec3 vV; void main(){ vec4 wp=modelMatrix*vec4(position,1.0); vN=mat3(modelMatrix)*normal; vV=cameraPosition-wp.xyz; gl_Position=projectionMatrix*viewMatrix*wp; }',
+      fragmentShader: 'uniform vec3 glowColor; uniform float power; uniform float intensity; varying vec3 vN; varying vec3 vV; void main(){ float f=pow(1.0-max(dot(normalize(vN),normalize(vV)),0.0),power); gl_FragColor=vec4(glowColor, clamp(f*intensity,0.0,1.0)); }',
+      transparent: true, blending: THREE.AdditiveBlending, side: THREE.BackSide, depthWrite: false
+    });
+  };
+
+  makePortalMaterial = (THREE) => {
+    return new THREE.ShaderMaterial({
+      uniforms: { time: { value: 0 } },
+      vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+      fragmentShader: [
+        'uniform float time; varying vec2 vUv;',
+        'float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+34.56); return fract(p.x*p.y); }',
+        'float noise(vec2 x){ vec2 i=floor(x), f=fract(x); f=f*f*(3.0-2.0*f);',
+        ' return mix(mix(hash(i+vec2(0.,0.)),hash(i+vec2(1.,0.)),f.x), mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x), f.y); }',
+        'float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<6;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }',
+        'void main(){',
+        ' vec2 p=vUv*2.0-1.0; float r=length(p); float ang=atan(p.y,p.x);',
+        ' float swirl=ang + r*2.6 - time*0.22;',
+        ' vec2 q=vec2(cos(swirl),sin(swirl))*(0.4+r);',
+        ' float n=fbm(q*2.3 + time*0.04);',
+        ' float n2=fbm(p*3.4 - time*0.03);',
+        ' float neb=mix(n,n2,0.5);',
+        ' vec3 deep=vec3(0.12,0.08,0.24), violet=vec3(0.42,0.28,0.72), gold=vec3(1.0,0.80,0.46);',
+        ' vec3 col=mix(deep,violet,smoothstep(0.18,0.68,neb));',
+        ' col=mix(col,gold,smoothstep(0.58,0.92,neb)*0.65);',
+        ' float core=smoothstep(0.34,0.0,r);',
+        ' col+=vec3(1.0,0.86,0.62)*core*0.7;',
+        ' float edge=smoothstep(1.0,0.18,r);',
+        ' float alpha=edge*(0.30+0.70*neb)+core*0.85;',
+        ' alpha=clamp(alpha,0.0,1.0);',
+        ' gl_FragColor=vec4(col,alpha); }'
+      ].join('\n'),
+      transparent: true, depthWrite: false, blending: THREE.NormalBlending
+    });
+  };
+
+  makeDiscMaterial = (THREE, inner, outer) => {
+    return new THREE.ShaderMaterial({
+      uniforms: { inner: { value: inner }, outer: { value: outer }, time: { value: 0 } },
+      vertexShader: 'varying float vR; varying vec2 vP; void main(){ vP=position.xy; vR=length(position.xy); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+      fragmentShader: [
+        'uniform float inner; uniform float outer; uniform float time; varying float vR; varying vec2 vP;',
+        'void main(){ float t=clamp((vR-inner)/(outer-inner),0.0,1.0);',
+        ' float edge=smoothstep(0.0,0.10,t)*(1.0-smoothstep(0.45,1.0,t));',
+        ' float ang=atan(vP.y,vP.x);',
+        ' float streak=0.45+0.55*sin(ang*46.0 + time*0.5 - vR*2.4);',
+        ' float fine=0.6+0.4*sin(ang*120.0 - time*0.9);',
+        ' float a=edge*(0.35+0.65*streak)*fine;',
+        ' vec3 hot=vec3(1.0,0.85,0.5), deep=vec3(0.85,0.36,0.10);',
+        ' vec3 col=mix(deep,hot,1.0-t);',
+        ' gl_FragColor=vec4(col, a*0.95); }'
+      ].join('\n'),
+      transparent: true, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false
+    });
+  };
+
+  syncSolar = () => {
+    const on = this.state.phase === 'home' && this.state.slide === 9;
+    if (on && !this._solar) this.initSolar();
+    else if (!on && this._solar) this.disposeSolar();
+  };
+
+  initSolar = () => {
+    if (this._solar) return;
+    const THREE = window.THREE;
+    const cv = document.getElementById('solar-canvas');
+    const stage = document.getElementById('solar-stage');
+    if (!cv || !stage) return;
+    if (!THREE) { this._solarPoll = setTimeout(this.initSolar, 150); return; }
+    const W = stage.clientWidth, H = stage.clientHeight;
+    if (!W || !H) { this._solarPoll = setTimeout(this.initSolar, 120); return; }
+
+    let renderer;
+    try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, powerPreference: 'high-performance' }); }
+    catch (e) { this._solarPoll = setTimeout(this.initSolar, 200); return; }
+    const gl = renderer.getContext();
+    if (!gl || gl.isContextLost()) { try { renderer.dispose(); } catch (e) {} this._solarPoll = setTimeout(this.initSolar, 200); return; }
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.setSize(W, H, false);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 240);
+    camera.position.set(0, 14.5, 16);
+    camera.lookAt(0, 0, 0);
+
+    scene.add(new THREE.AmbientLight(0x5a4f86, 0.7));
+    const sunLight = new THREE.PointLight(0xc9b6ff, 2.4, 150, 1.5);
+    scene.add(sunLight);
+
+    // PORTAL nebuloso (centro) — quad voltado à câmera
+    const portalMat = this.makePortalMaterial(THREE);
+    const portal = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 4.6), portalMat);
+    scene.add(portal);
+    // halo suave ao redor do portal
+    const sunGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.makeGlowTexture(THREE, ['rgba(210,184,255,0.62)', 'rgba(150,112,210,0.30)', 'rgba(90,70,160,0.0)']), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+    sunGlow.scale.set(8.2, 8.2, 1); scene.add(sunGlow);
+
+    const group = new THREE.Group();
+    group.rotation.x = -0.30;
+    scene.add(group);
+
+    const halo = this.makeGlowTexture(THREE, ['rgba(228,218,255,0.95)', 'rgba(150,120,230,0.45)', 'rgba(90,70,160,0.0)']);
+    const defs = [
+      { r: 3.6, ph: 0, sp: 0.34, col: 0xcfc2ff, sz: 0.44 },
+      { r: 3.6, ph: Math.PI, sp: 0.34, col: 0xb9a6f0, sz: 0.36 },
+      { r: 4.8, ph: 0.9, sp: 0.255, col: 0xd6c2ff, sz: 0.42 },
+      { r: 4.8, ph: 0.9 + Math.PI, sp: 0.255, col: 0xc4b0ee, sz: 0.34 },
+      { r: 6.0, ph: 1.9, sp: 0.19, col: 0xe0d0ff, sz: 0.48 },
+      { r: 6.0, ph: 1.9 + Math.PI, sp: 0.19, col: 0xcdbdf2, sz: 0.38 }
+    ];
+    const planets = defs.map((d) => {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(d.sz, 40, 40), new THREE.MeshStandardMaterial({ color: d.col, emissive: new THREE.Color(0x4a3a86), emissiveIntensity: 0.9, roughness: 0.5, metalness: 0.1 }));
+      group.add(m);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: halo, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+      sp.scale.set(d.sz * 6, d.sz * 6, 1);
+      m.add(sp);
+      return Object.assign({}, d, { mesh: m });
+    });
+
+    [3.6, 4.8, 6.0].forEach((R) => {
+      const seg = 200, pts = [];
+      for (let i = 0; i <= seg; i++) { const a = i / seg * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a) * R, 0, Math.sin(a) * R)); }
+      group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x9f8fd6, transparent: true, opacity: 0.26 })));
+    });
+
+    const starTex = this.makeStarTexture(THREE);
+    const N = 620, pos = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) { const rr = 45 + Math.random() * 70, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1); pos[i * 3] = rr * Math.sin(ph) * Math.cos(th); pos[i * 3 + 1] = rr * Math.cos(ph); pos[i * 3 + 2] = rr * Math.sin(ph) * Math.sin(th); }
+    const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const stars = new THREE.Points(sg, new THREE.PointsMaterial({ map: starTex, color: 0xe6ecff, size: 0.7, sizeAttenuation: true, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending }));
+    scene.add(stars);
+
+    const labels = [0, 1, 2, 3, 4, 5].map((i) => document.getElementById('solar-label-' + i));
+    const sunLabel = document.getElementById('solar-label-sun');
+    const onEnter = () => {};
+    const onLeave = () => {};
+
+    this._solar = { renderer, scene, camera, group, portal, portalMat, sunGlow, stars, planets, labels, sunLabel, stage, cv, t0: performance.now(), last: performance.now(), w: W, h: H, paused: false, ang: 0, onEnter, onLeave };
+    this.animateSolar();
+  };
+
+  animateSolar = () => {
+    const S = this._solar; if (!S) return;
+    const THREE = window.THREE;
+    S.raf = requestAnimationFrame(this.animateSolar);
+    const now = performance.now();
+    const dt = Math.min(0.05, (now - S.last) / 1000); S.last = now;
+    const t = (now - S.t0) / 1000;
+    const W = S.cv.clientWidth, H = S.cv.clientHeight;
+    if (W !== S.w || H !== S.h) { S.w = W; S.h = H; S.camera.aspect = W / H; S.camera.updateProjectionMatrix(); S.renderer.setSize(W, H, false); }
+    S.ang += dt;
+    S.planets.forEach((p) => { const a = p.ph + S.ang * p.sp; p.mesh.position.set(Math.cos(a) * p.r, 0, Math.sin(a) * p.r); });
+    S.camera.position.x = Math.sin(t * 0.06) * 2.2;
+    S.camera.position.y = 14.5 + Math.sin(t * 0.05) * 0.7;
+    S.camera.lookAt(0, 0, 0);
+    if (S.portalMat) S.portalMat.uniforms.time.value = t;
+    if (S.portal) S.portal.quaternion.copy(S.camera.quaternion);
+    if (S.stars) S.stars.rotation.y = t * 0.005;
+    const ps = 1 + Math.sin(t * 0.9) * 0.04;
+    S.sunGlow.scale.set(8.2 * ps, 8.2 * ps, 1);
+    S.renderer.render(S.scene, S.camera);
+    const v = new THREE.Vector3(), wp = new THREE.Vector3();
+    S.planets.forEach((p, i) => {
+      const el = S.labels[i]; if (!el) return;
+      p.mesh.getWorldPosition(wp); v.copy(wp).project(S.camera);
+      const behind = v.z > 1;
+      const x = (v.x * 0.5 + 0.5) * W, y = (-v.y * 0.5 + 0.5) * H;
+      const dist = wp.distanceTo(S.camera.position);
+      const depthT = Math.max(0, Math.min(1, (dist - 15.5) / 12));
+      const op = behind ? 0 : Math.max(0.16, 1 - depthT * 0.84);
+      const sc = 1 - depthT * 0.2;
+      el.style.left = x + 'px';
+      el.style.top = (y + 18) + 'px';
+      el.style.transformOrigin = '50% 0';
+      el.style.transform = 'translate(-50%,0) scale(' + sc.toFixed(3) + ')';
+      el.style.opacity = op.toFixed(2);
+      el.style.zIndex = String(1000 - Math.round(dist * 10));
+    });
+    if (S.sunLabel) {
+      v.set(0, 0, 0).project(S.camera);
+      S.sunLabel.style.left = ((v.x * 0.5 + 0.5) * W) + 'px';
+      S.sunLabel.style.top = ((-v.y * 0.5 + 0.5) * H + 34) + 'px';
+      S.sunLabel.style.opacity = '1';
+    }
+  };
+
+  disposeSolar = () => {
+    const S = this._solar; if (!S) { if (this._solarPoll) { clearTimeout(this._solarPoll); this._solarPoll = null; } return; }
+    if (S.raf) cancelAnimationFrame(S.raf);
+    if (this._solarPoll) { clearTimeout(this._solarPoll); this._solarPoll = null; }
+    try { S.stage.removeEventListener('pointerenter', S.onEnter); S.stage.removeEventListener('pointerleave', S.onLeave); } catch (e) {}
+    try { S.renderer.dispose(); } catch (e) {}
+    (S.labels || []).forEach((el) => { if (el) el.style.opacity = '0'; });
+    if (S.sunLabel) S.sunLabel.style.opacity = '0';
+    this._solar = null;
+  };
+
+  syncMethod = () => {
+    const on = this.state.phase === 'home' && this.state.slide === 10;
+    if (on && !this._method) this.initMethod();
+    else if (!on && this._method) { this._method = null; }
+  };
+
+  initMethod = () => {
+    if (this._method) return;
+    const path = document.getElementById('method-thread');
+    const ghost = document.getElementById('method-ghost');
+    const svg = document.getElementById('method-svg');
+    const stage = document.getElementById('method-stage');
+    const mote = document.getElementById('method-mote');
+    const mote2 = document.getElementById('method-mote2');
+    if (!path || !mote || !stage || !svg) { this._methodPoll = setTimeout(this.initMethod, 120); return; }
+
+    if (!this._methodResize) {
+      this._methodResize = () => {
+        if (!this._method) return;
+        const st = document.getElementById('method-stage');
+        const m = (st ? st.clientWidth : window.innerWidth) < 640;
+        if (m !== this._methodMobile) { this._method = null; this.initMethod(); }
+      };
+      window.addEventListener('resize', this._methodResize);
+    }
+
+    const mobile = (stage.clientWidth || window.innerWidth) < 640;
+    this._methodMobile = mobile;
+    let VBW, VBH, d, PTS, bases;
+    if (mobile) {
+      VBW = 400; VBH = 1180;
+      d = 'M 132,80 C 220,170 268,210 268,300 C 268,395 132,430 132,520 C 132,615 268,650 268,740 C 268,835 132,870 132,960 C 132,1035 200,1075 268,1110';
+      PTS = [[132, 80], [268, 300], [132, 520], [268, 740], [132, 960], [268, 1110]];
+      bases = PTS.map((p) => p[0] < 200 ? 'translate(36px,-50%)' : 'translate(calc(-100% - 36px),-50%)');
+      stage.style.height = '1080px'; stage.style.width = 'min(94vw,460px)';
+    } else {
+      VBW = 1200; VBH = 560;
+      d = 'M 80,150 C 165,260 205,420 290,420 C 380,420 425,150 510,150 C 595,150 635,420 720,420 C 805,420 855,150 940,150 C 1025,150 1065,420 1130,420';
+      PTS = [[80, 150], [290, 420], [510, 150], [720, 420], [940, 150], [1130, 420]];
+      bases = PTS.map((p, i) => i % 2 === 0 ? 'translate(-50%,-132%)' : 'translate(-50%,30%)');
+      stage.style.height = 'min(64vh,600px)'; stage.style.width = 'min(96vw,1160px)';
+    }
+    path.setAttribute('d', d);
+    if (ghost) ghost.setAttribute('d', d);
+    svg.setAttribute('viewBox', '0 0 ' + VBW + ' ' + VBH);
+
+    let L;
+    try { L = path.getTotalLength(); } catch (e) { this._methodPoll = setTimeout(this.initMethod, 120); return; }
+    if (!L) { this._methodPoll = setTimeout(this.initMethod, 120); return; }
+
+    const steps = 700, samp = [];
+    for (let s = 0; s <= steps; s++) { const p = path.getPointAtLength(L * s / steps); samp.push([p.x, p.y]); }
+    const fr = PTS.map((pt) => { let b = 0, bd = 1e9; for (let s = 0; s <= steps; s++) { const dx = samp[s][0] - pt[0], dy = samp[s][1] - pt[1], dd = dx * dx + dy * dy; if (dd < bd) { bd = dd; b = s; } } return b / steps; });
+
+    const nodes = [], lbls = [];
+    for (let i = 0; i < 6; i++) {
+      const node = document.getElementById('method-node-' + i);
+      const lbl = document.getElementById('method-label-' + i);
+      const lx = PTS[i][0] / VBW * 100, ly = PTS[i][1] / VBH * 100;
+      if (node) { node.style.left = lx + '%'; node.style.top = ly + '%'; }
+      if (lbl) {
+        lbl.style.left = lx + '%'; lbl.style.top = ly + '%';
+        if (mobile) { lbl.style.textAlign = PTS[i][0] < 200 ? 'left' : 'right'; lbl.style.width = 'clamp(150px,42vw,212px)'; }
+        else { lbl.style.textAlign = 'center'; lbl.style.width = 'clamp(122px,14vw,168px)'; }
+      }
+      nodes.push(node); lbls.push(lbl);
+    }
+    path.style.strokeDasharray = L; path.style.strokeDashoffset = L;
+    this._method = { path, mote, mote2, L, fr, nodes, lbls, bases, mobile };
+    this._methodT0 = performance.now();
+    if (!this._methodLoop) { this._methodLoop = true; this.animateMethod(); }
+  };
+
+  animateMethod = () => {
+    if (!this._methodLoop) return;
+    this._methodRaf = requestAnimationFrame(this.animateMethod);
+    const M = this._method; if (!M) return;
+    if (this.state.phase !== 'home' || this.state.slide !== 10) return;
+    const el = (performance.now() - this._methodT0) / 1000;
+    const drawDur = 7.0;
+    const pd = Math.max(0, Math.min(1, el / drawDur));
+    const pe = pd < 0.5 ? 2 * pd * pd : 1 - Math.pow(-2 * pd + 2, 2) / 2;
+    M.path.style.strokeDashoffset = (M.L * (1 - pe));
+    let mp = pe;
+    if (el > drawDur) mp = ((el - drawDur) * 0.075) % 1;
+    mp = Math.max(0, Math.min(1, mp));
+    const lp = M.path.getPointAtLength(M.L * mp);
+    M.mote.setAttribute('cx', lp.x); M.mote.setAttribute('cy', lp.y);
+    M.mote.setAttribute('opacity', (0.6 + 0.4 * Math.sin(el * 4)).toFixed(2));
+    if (M.mote2) {
+      const mp2 = Math.max(0, Math.min(1, el > drawDur ? ((((el - drawDur) * 0.06) + 0.5) % 1) : Math.max(0, pe - 0.03)));
+      const lp2 = M.path.getPointAtLength(M.L * mp2);
+      M.mote2.setAttribute('cx', lp2.x); M.mote2.setAttribute('cy', lp2.y);
+    }
+    for (let i = 0; i < 6; i++) {
+      const a = Math.max(0, Math.min(1, (pe - (M.fr[i] - 0.03)) / 0.10));
+      const ae = a * a * (3 - 2 * a);
+      const node = M.nodes[i], lbl = M.lbls[i];
+      if (node) {
+        const pulse = 1 + (ae > 0.99 ? Math.sin(el * 1.6 + i) * 0.05 : 0);
+        node.style.opacity = ae.toFixed(3);
+        node.style.transform = 'translate(-50%,-50%) scale(' + ((0.55 + 0.45 * ae) * pulse).toFixed(3) + ')';
+      }
+      if (lbl) {
+        const base = (M.bases && M.bases[i]) || ((i % 2 === 0) ? 'translate(-50%,-132%)' : 'translate(-50%,30%)');
+        lbl.style.opacity = ae.toFixed(3);
+        lbl.style.transform = M.mobile ? (base + ' translateX(' + ((1 - ae) * 8).toFixed(1) + 'px)') : (base + ' translateY(' + ((1 - ae) * 10).toFixed(1) + 'px)');
+      }
+    }
+  };
+
+  stopMethod = () => {
+    const M = this._method;
+    if (this._methodPoll) { clearTimeout(this._methodPoll); this._methodPoll = null; }
+    if (!M) return;
+    if (M.raf) cancelAnimationFrame(M.raf);
+    this._method = null;
+  };
+
+  componentDidUpdate() {
+    this.syncSolar();
+    this.syncMethod();
+    const b = this.state.slide;
+    const a = (this._prevSlide === undefined) ? b : this._prevSlide;
+    this._prevSlide = b;
+    if (a === b) return;
+    const bCh = b >= 1 && b <= 6;
+    if (!bCh) return;
+    const aCh = a >= 1 && a <= 6;
+    const to = b - 1;
+    if (!aCh) {
+      // snapped into the chapters from outside — no crossfade
+      if (this._chRaf) cancelAnimationFrame(this._chRaf);
+      if (this._txtSwap) clearTimeout(this._txtSwap);
+      this.setState({ chFrom: to, chTo: to, chMix: 1, dispScene: to, txtOn: true });
+      return;
+    }
+    this.startSceneTransition(a - 1, to);
+  }
+
+  startSceneTransition(from, to) {
+    if (this._chRaf) cancelAnimationFrame(this._chRaf);
+    if (this._txtSwap) clearTimeout(this._txtSwap);
+    // fade current text out, begin the effect crossfade
+    this.setState({ txtOn: false, chFrom: from, chTo: to, chMix: 0 });
+    // swap the copy at the darkest point, then fade it back in
+    this._txtSwap = setTimeout(() => this.setState({ dispScene: to, txtOn: true }), 440);
+    const t0 = performance.now(), dur = 1200;
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / dur);
+      const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; // easeInOutQuad
+      this.setState({ chMix: e });
+      if (k < 1) this._chRaf = requestAnimationFrame(step);
+      else { this._chRaf = null; this.setState({ chFrom: to, chMix: 1 }); }
+    };
+    this._chRaf = requestAnimationFrame(step);
+  }
+
+  drawActive = () => {
+    if (this.state.phase !== 'home' || this.state.slide < 1 || this.state.slide > 6) return;
+    let cv = this._chCanv;
+    if (!cv || !cv.isConnected) { cv = document.querySelector('canvas[data-scene="chapter"]'); this._chCanv = cv; }
+    if (cv) { try { this.renderChapter(cv); } catch (e) {} }
+  };
+
+  loop = (now) => {
+    const s = this.state;
+    if (s.phase === 'home' && s.slide >= 1 && s.slide <= 6) {
+      let cv = this._chCanv;
+      if (!cv || !cv.isConnected) { cv = document.querySelector('canvas[data-scene="chapter"]'); this._chCanv = cv; }
+      if (cv) { try { this.renderChapter(cv); } catch (e) {} }
+    }
+    if (s.phase === 'home' && s.slide === 11) {
+      let fc = this._finCanv;
+      if (!fc || !fc.isConnected) { fc = document.querySelector('canvas[data-scene="finale"]'); this._finCanv = fc; }
+      if (fc) { try { this.renderFinale(fc); } catch (e) {} }
+    }
+    if (s.phase === 'home' && s.slide === 10) {
+      let mc = this._methodBgCanv;
+      if (!mc || !mc.isConnected) { mc = document.querySelector('canvas[data-scene="methodbg"]'); this._methodBgCanv = mc; }
+      if (mc) { try { this.renderMethodBg(mc); } catch (e) {} }
+    }
+    this._raf = requestAnimationFrame(this.loop);
+  };
+
+  FRAG = `precision highp float;
+uniform vec2 u_res; uniform float u_time; uniform float u_from; uniform float u_to; uniform float u_mix;
+#define TAU 6.28318530718
+float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
+float noise(vec2 p){ vec2 i=floor(p),f=fract(p); vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1.,0.)),u.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),u.x),u.y);}
+float fbm(vec2 p){ float v=0.,a=.5; mat2 m=mat2(1.6,1.2,-1.2,1.6); for(int k=0;k<5;k++){v+=a*noise(p);p=m*p;a*=.5;} return v;}
+float segd(vec2 p, vec2 a, vec2 b){ vec2 pa=p-a, ba=b-a; float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.); return length(pa-ba*h);}
+vec3 holo(float x){ return 0.5+0.5*cos(TAU*(vec3(1.0,0.9,0.75)*x+vec3(0.0,0.18,0.38))); }
+vec4 sceneCol(vec2 uv, float t, float sc){
+  float r=length(uv), ang=atan(uv.y,uv.x);
+  vec3 gold=vec3(0.98,0.80,0.44), warm=vec3(1.0,0.94,0.78);
+  vec3 col=vec3(0.0); float al=0.0;
+
+  if(sc<0.5){
+    // A NÉVOA — fog parts, a core of light, god-rays
+    float fog=fbm(uv*3.2+vec2(t*0.05,t*0.22));
+    float corridor=smoothstep(0.04,0.34,abs(uv.x));
+    float rays=pow(max(0.0,0.5+0.5*sin(ang*16.0+fbm(uv*2.0+t*0.1)*4.0)),5.0)*exp(-r*2.3);
+    float core=exp(-r*3.1)*(0.85+0.15*sin(t*1.4));
+    al=core+rays*0.45+fog*corridor*0.18;
+    col=mix(gold,warm,core);
+  } else if(sc<1.5){
+    // O ENCONTRO — two souls merging (metaballs) + thread
+    vec2 p1=vec2(cos(t*0.55),sin(t*0.55)*0.62)*0.30;
+    vec2 p2=-p1;
+    float d1=exp(-length(uv-p1)*5.5), d2=exp(-length(uv-p2)*5.5);
+    float field=d1+d2; float thread=exp(-segd(uv,p1,p2)*10.0);
+    float halo=fbm(uv*4.0+t*0.15)*exp(-r*2.2)*0.25;
+    al=field*1.05+thread*0.5+halo;
+    col=mix(gold,warm,clamp(field,0.,1.));
+  } else if(sc<2.5){
+    // O TERCEIRO — three-fold mandala, kaleidoscope
+    float k=3.0; float a2=mod(ang,TAU/k)-3.14159/k;
+    vec2 ku=vec2(cos(a2),sin(a2))*r;
+    float warp=fbm(ku*3.6+t*0.12);
+    float petals=0.5+0.5*sin(a2*6.0+warp*2.0);
+    float ring=0.5+0.5*sin(r*20.0-t*1.1+warp*4.0);
+    float nodes=exp(-abs(r-0.30)*9.0)*pow(0.5+0.5*cos(ang*k),12.0);
+    al=(ring*petals)*exp(-r*2.3)*0.9+nodes*1.1;
+    col=mix(gold,warm,nodes+ring*0.4);
+  } else if(sc<3.5){
+    // AS ONDAS — a portal tunnel of unfolding ripples
+    float warp=fbm(uv*2.6-vec2(0.0,t*0.2));
+    float rings=0.5+0.5*sin(r*24.0-t*2.4+warp*3.0);
+    float swirl=0.5+0.5*sin(ang*2.0+r*8.0-t*1.2);
+    float tunnel=rings*exp(-r*1.8)*(0.6+0.4*swirl);
+    al=tunnel+exp(-r*5.0)*0.5;
+    col=mix(gold,warm,rings*0.7+exp(-r*5.0));
+  } else if(sc<4.5){
+    // A BÚSSOLA — an eight-point star compass finding north
+    float k=8.0; float star=pow(abs(cos(ang*k*0.5)),6.0);
+    float ringC=exp(-abs(r-0.34)*22.0);
+    float na=-1.5708+sin(t*0.3)*0.4+sin(t*2.5)*0.02;
+    float ptr=exp(-pow((ang-na),2.0)*40.0)*smoothstep(0.36,0.0,r);
+    float hub=exp(-r*9.0);
+    al=ringC*0.5+star*exp(-r*2.6)*0.5+ptr*1.2+hub*0.7;
+    col=mix(gold,warm,ptr+hub);
+  } else {
+    // A AURA — holographic plasma signature, gen-z iridescence
+    vec2 q=uv*2.4; float w1=fbm(q+t*0.12);
+    float w2=fbm(q+w1*1.4+t*0.08);
+    float aura=fbm(uv*3.2-w2);
+    float sig=0.5+0.5*sin(r*15.0-t*1.5+w2*7.0);
+    al=exp(-r*1.6)*(0.55+0.6*aura)*sig+exp(-r*3.2)*0.65;
+    vec3 ir=holo(w2+r*0.6+t*0.05);
+    col=mix(warm,ir,0.5)*(0.85+0.45*aura);
+  }
+
+  al*=smoothstep(1.0,0.5,r);
+  al=clamp(al,0.0,1.0);
+  return vec4(col, al);
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*u_res)/u_res.y;
+  uv*=0.92;
+  vec4 A=sceneCol(uv,u_time,u_from);
+  vec4 B=sceneCol(uv,u_time,u_to);
+  vec4 m=mix(A,B,clamp(u_mix,0.0,1.0));
+  vec3 col=m.rgb; float al=m.a;
+  float r=length(uv);
+  // a bloom of light flares as one symbol dissolves into the next
+  float fl=clamp(u_mix*(1.0-u_mix)*4.0,0.0,1.0);
+  vec3 warm=vec3(1.0,0.94,0.78);
+  float bloom=fl*exp(-r*1.85)*1.5;
+  col+=warm*bloom; al=max(al,bloom*0.8);
+  col+=(hash(gl_FragCoord.xy+u_time)-0.5)*0.06;
+  al=clamp(al,0.0,1.0);
+  gl_FragColor=vec4(col,al);
+}`;
+
+  VERT = 'attribute vec2 a_pos; void main(){ gl_Position=vec4(a_pos,0.,1.); }';
+
+  initGL(cv) {
+    const gl = cv.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: true, preserveDrawingBuffer: true });
+    if (!gl) return null;
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, this.VERT));
+    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, this.FRAG));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'a_pos');
+    return { gl, prog, buf, loc, uRes: gl.getUniformLocation(prog, 'u_res'), uTime: gl.getUniformLocation(prog, 'u_time'), uFrom: gl.getUniformLocation(prog, 'u_from'), uTo: gl.getUniformLocation(prog, 'u_to'), uMix: gl.getUniformLocation(prog, 'u_mix') };
+  }
+
+  renderChapter(cv) {
+    let g = cv.__gl;
+    if (g === undefined) { g = this.initGL(cv); cv.__gl = g; }
+    if (!g) return;
+    const RES = 0.72; // soft glow — render below native res for performance
+    const w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return;
+    const bw = Math.max(1, Math.round(w * RES)), bh = Math.max(1, Math.round(h * RES));
+    if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; }
+    const { gl, prog, buf, loc, uRes, uTime, uFrom, uTo, uMix } = g;
+    gl.viewport(0, 0, cv.width, cv.height);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform2f(uRes, cv.width, cv.height);
+    gl.uniform1f(uTime, (performance.now() - this._t0) / 1000);
+    gl.uniform1f(uFrom, this.state.chFrom);
+    gl.uniform1f(uTo, this.state.chTo);
+    gl.uniform1f(uMix, this.state.chMix);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  renderFinale(cv) {
+    let g = cv.__gl;
+    if (g === undefined) { g = this.initGL(cv); cv.__gl = g; }
+    if (!g) return;
+    const RES = 0.72;
+    const w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return;
+    const bw = Math.max(1, Math.round(w * RES)), bh = Math.max(1, Math.round(h * RES));
+    if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; }
+    const { gl, prog, buf, loc, uRes, uTime, uFrom, uTo, uMix } = g;
+    gl.viewport(0, 0, cv.width, cv.height);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform2f(uRes, cv.width, cv.height);
+    gl.uniform1f(uTime, (performance.now() - this._t0) / 1000);
+    gl.uniform1f(uFrom, 5);
+    gl.uniform1f(uTo, 5);
+    gl.uniform1f(uMix, 1);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  METHOD_FRAG = [
+    'precision mediump float;',
+    'uniform vec2 u_res; uniform float u_time;',
+    'float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+34.56); return fract(p.x*p.y); }',
+    'float noise(vec2 x){ vec2 i=floor(x), f=fract(x); f=f*f*(3.0-2.0*f); return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x), mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x), f.y); }',
+    'float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }',
+    'void main(){',
+    ' vec2 uv=gl_FragCoord.xy/u_res.xy;',
+    ' vec2 p=vec2(uv.x*(u_res.x/u_res.y),uv.y)*2.3;',
+    ' float t=u_time*0.045;',
+    ' float n=fbm(p+vec2(t,t*0.18));',
+    ' float n2=fbm(p*1.7-vec2(t*1.4,0.0)+n*0.6);',
+    ' float m=mix(n,n2,0.5);',
+    ' float band=smoothstep(0.0,0.62,m)*smoothstep(1.05,0.35,abs(uv.y-0.5)*1.55);',
+    ' vec3 deep=vec3(0.10,0.08,0.17), gold=vec3(0.95,0.72,0.34), warm=vec3(1.0,0.90,0.62);',
+    ' vec3 col=mix(deep,gold,smoothstep(0.24,0.70,m));',
+    ' col=mix(col,warm,smoothstep(0.60,0.92,m)*0.6);',
+    ' float alpha=clamp(band*(0.16+0.55*m),0.0,0.6);',
+    ' gl_FragColor=vec4(col,alpha);',
+    '}'
+  ].join('\n');
+
+  initMethodGL(cv) {
+    const gl = cv.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: true });
+    if (!gl) return null;
+    const mk = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, mk(gl.VERTEX_SHADER, this.VERT));
+    gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, this.METHOD_FRAG));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'a_pos');
+    return { gl, prog, buf, loc, uRes: gl.getUniformLocation(prog, 'u_res'), uTime: gl.getUniformLocation(prog, 'u_time') };
+  }
+
+  renderMethodBg(cv) {
+    let g = cv.__mgl;
+    if (g === undefined) { g = this.initMethodGL(cv); cv.__mgl = g; }
+    if (!g) return;
+    const RES = 0.6;
+    const w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return;
+    const bw = Math.max(1, Math.round(w * RES)), bh = Math.max(1, Math.round(h * RES));
+    if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; }
+    const { gl, prog, buf, loc, uRes, uTime } = g;
+    gl.viewport(0, 0, cv.width, cv.height);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform2f(uRes, cv.width, cv.height);
+    gl.uniform1f(uTime, (performance.now() - this._t0) / 1000);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  next = () => this.setState((s) => ({ slide: Math.min(this.LAST, s.slide + 1) }));
+  prev = () => this.setState((s) => ({ slide: Math.max(0, s.slide - 1) }));
+  goTo = (i) => this.setState({ slide: Math.max(0, Math.min(this.LAST, i)) });
+
+  dup = (nums) => { const a = nums.map((n) => 'testimonials/t' + n + '.png'); return a.concat(a); };
+
+  shuffle = (a) => { const r = a.slice(); for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = r[i]; r[i] = r[j]; r[j] = t; } return r; };
+  tarotOrder = () => this.state.tOrder || (this._initOrder = this._initOrder || this.shuffle(this.CARDS.map((c, i) => i)));
+  tarotReset = () => this.setState({ tOrder: this.shuffle(this.CARDS.map((c, i) => i)), tUsed: [], tPicks: [], tStage: 'pick', tEmail: '', tEmailErr: false, tReading: null });
+  pickCard = (fanIdx) => {
+    const s = this.state; if (s.tStage !== 'pick' || s.tPicks.length >= 3 || s.tUsed.indexOf(fanIdx) !== -1) return;
+    const order = this.tarotOrder();
+    const picks = s.tPicks.concat(order[fanIdx]);
+    this.setState({ tUsed: s.tUsed.concat(fanIdx), tPicks: picks });
+    if (picks.length === 3) setTimeout(() => this.runReading(), 950);
+  };
+  onEmailInput = (e) => this.setState({ tEmail: e.target.value, tEmailErr: false });
+  onEmailKey = (e) => { if (e.key === 'Enter') { e.preventDefault(); this.submitReading(); } };
+  parseReading = (raw) => {
+    if (!raw) return null;
+    try {
+      const t = String(raw); const a = t.indexOf('{'), b = t.lastIndexOf('}');
+      if (a === -1 || b === -1) return null;
+      const o = JSON.parse(t.slice(a, b + 1));
+      if (o && o.amor && o.trabalho && o.vida) return { amor: String(o.amor).trim(), trabalho: String(o.trabalho).trim(), vida: String(o.vida).trim() };
+    } catch (e) {}
+    return null;
+  };
+  fallbackReading = () => ({
+    amor: 'No amor, a energia pede verdade e presença. O que é sincero se aproxima — e o resto se dissolve com leveza, sem precisar de força.',
+    trabalho: 'No trabalho, há um chamado para alinhar o que você faz com o que sente. Um gesto simples, feito com clareza, abre mais portas do que parece.',
+    vida: 'Na vida, é um momento de virada suave: algo se move por baixo da superfície. Confie no seu tempo e dê um passo de cada vez.'
+  });
+  runReading = async () => {
+    if (this.state.tStage !== 'pick' || this.state.tPicks.length < 3) return;
+    this.setState({ tStage: 'loading' });
+    const cards = this.state.tPicks.map((ci, k) => this.POS[k] + ' — ' + this.CARDS[ci].name).join('; ');
+    const prompt = 'Você é Aquila, uma taróloga brasileira de voz calorosa, humana e acolhedora. Uma pessoa fez uma tiragem rápida e tirou três cartas: ' + cards + '. '
+      + 'Escreva uma leitura interpretando a JUNÇÃO das três energias como um todo — nunca explique carta por carta nem cite os nomes das cartas. Diga o que elas, juntas, revelam sobre o momento dela. '
+      + 'Tom de conversa de uma amiga sábia: simples, afetuoso e direto. Português do Brasil. Não soe como robô nem como IA, evite jargão esotérico difícil e evite listas. '
+      + 'Divida em três blocos bem curtos, cada um com no máximo 1 ou 2 frases: amor (o campo afetivo), trabalho (trabalho e propósito) e vida (o momento de vida em geral, saúde e caminho). '
+      + 'Responda SOMENTE com um JSON válido, sem markdown e sem texto fora dele: {"amor":"...","trabalho":"...","vida":"..."}';
+    let reading = null;
+    try {
+      if (typeof window !== 'undefined' && window.claude && window.claude.complete) {
+        const raw = await window.claude.complete(prompt);
+        reading = this.parseReading(raw);
+      }
+    } catch (e) { reading = null; }
+    if (!reading) reading = this.fallbackReading();
+    this.setState({ tReading: reading, tStage: 'result' });
+  };
+
+  setVideo = (el) => { this.videoRef = el; };
+  enter = () => {
+    const v = this.videoRef;
+    this.setState({ playing: true });
+    if (v) { v.loop = false; v.muted = false; v.volume = 1; v.currentTime = 0; const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+  };
+  emerge = () => {
+    if (this.state.phase === 'home') return;
+    if (this._safety) { clearTimeout(this._safety); this._safety = null; }
+    this.setState({ phase: 'home', glowOn: true, glowFaded: false });
+    setTimeout(() => this.setState({ glowFaded: true }), 120);
+    setTimeout(() => this.setState({ glowOn: false }), 6400);
+  };
+  onEnded = () => { this.emerge(); };
+  skip = () => { const v = this.videoRef; if (v) { try { v.pause(); } catch (e) {} } this.emerge(); };
+
+  renderVals() {
+    const num = (this.props.whatsapp || '5511999999999').replace(/\D/g, '');
+    const msg = encodeURIComponent('Oi! Acabei de agendar uma consulta pelo site e gostaria de confirmar meu atendimento.');
+    const waLink = 'https://wa.me/' + num + '?text=' + msg;
+
+    const phase = this.state.phase, slide = this.state.slide;
+    const reveal = phase === 'home' && this.state.glowOn && !this.state.glowFaded;
+    // ensure the active scene paints at least one frame even if rAF is throttled
+    if (typeof window !== 'undefined') { clearTimeout(this._drawT); this._drawT = setTimeout(this.drawActive, 40); }
+
+    const data = [
+      { n: '01', t: 'Enxergar o caminho quando tudo parece névoa.', s: 'Para decisões importantes.', cap: 'A Névoa' },
+      { n: '02', t: 'Entender o que pulsa por trás das palavras.', s: 'Sobre relacionamentos e sentimentos.', cap: 'O Encontro' },
+      { n: '03', t: 'Ver o invisível que move outras pessoas.', s: 'Sobre questões envolvendo terceiros.', cap: 'O Terceiro' },
+      { n: '04', t: 'Antecipar aquilo que ainda está se formando.', s: 'Sobre tendências e o que está por vir.', cap: 'As Ondas' },
+      { n: '05', t: 'Reconhecer a próxima porta antes dela se abrir.', s: 'Para o seu direcionamento profissional.', cap: 'A Bússola' },
+      { n: '06', t: 'Uma travessia feita só para o seu momento.', s: 'Sua leitura energética personalizada.', cap: 'A Aura' }
+    ];
+    const chapters = data.map((d, i) => ({
+      n: d.n, t: d.t, s: d.s, cap: d.cap,
+      idx: i,
+      eyebrow: 'Capítulo II · ' + d.n + ' / 06',
+      screenLabel: 'II · ' + d.n,
+      dir: i % 2 ? 'row-reverse' : 'row',
+      numX: i % 2 ? '28%' : '72%',
+      last: i === 5,
+      active: slide === i + 1
+    }));
+
+    const ds = Math.max(0, Math.min(5, this.state.dispScene || 0));
+    const cur = data[ds];
+    const txtOn = this.state.txtOn;
+
+    return {
+      waLink, chapters,
+      isChapters: slide >= 1 && slide <= 6,
+      chN: cur.n, chCap: cur.cap, chTitle: cur.t, chSub: cur.s,
+      chEyebrow: 'Capítulo II · ' + cur.n + ' / 06',
+      chScreenLabel: 'II · ' + cur.n,
+      chNumX: ds % 2 ? '24%' : '76%',
+      chLast: ds === 5,
+      txtOpacity: txtOn ? 1 : 0,
+      txtTransform: txtOn ? 'translateY(0)' : 'translateY(12px)',
+      txtFilter: txtOn ? 'blur(0px)' : 'blur(5px)',
+      showIntro: phase === 'intro',
+      showEnterUi: phase === 'intro' && !this.state.playing,
+      playing: phase === 'intro' && this.state.playing,
+      glowOn: this.state.glowOn,
+      glowOpacity: this.state.glowFaded ? 0 : 1,
+      glowScale: this.state.glowFaded ? 'scale(1.18)' : 'scale(1)',
+      homeOpacity: reveal ? 0 : 1,
+      homeScale: reveal ? 'scale(1.06)' : 'scale(1)',
+      isHome: slide === 0,
+      isDepo: slide === 7,
+      col1: this.dup(['01', '04', '07', '10', '08']),
+      col2: this.dup(['02', '05', '11', '12', '13']),
+      col3: this.dup(['03', '06', '09', '14']),
+      isTarot: slide === 8,
+      isDiferenciais: slide === 9,
+      isMetodologia: slide === 10,
+      isFinale: slide === 11,
+      isFaq: slide === 12,
+      faqItems: this.FAQ.map((f, i) => ({
+        q: f.q, a: f.a,
+        toggle: () => this.setState((s) => ({ faqOpen: s.faqOpen === i ? -1 : i })),
+        sign: this.state.faqOpen === i ? '–' : '+',
+        maxH: (this.state.faqOpen === i ? 200 : 0) + 'px',
+        op: this.state.faqOpen === i ? 1 : 0,
+        qColor: this.state.faqOpen === i ? '#f7efe0' : '#cdbfa9',
+        orbScale: this.state.faqOpen === i ? 1.18 : 1,
+        orbOp: this.state.faqOpen === i ? 1 : 0.6
+      })),
+      tarotTitle: 'Faça uma tiragem rápida e gratuita.',
+      tarotHint: 'Saiba as energias do momento — respire, pense no seu agora e escolha três cartas.',
+      tStage: this.state.tStage,
+      showDeck: this.state.tStage === 'pick' && this.state.tPicks.length < 3,
+      showLoading: this.state.tStage === 'loading',
+      showResult: this.state.tStage === 'result',
+      showSpread: true,
+      tEmail: this.state.tEmail,
+      tEmailErr: this.state.tEmailErr,
+      emailBorder: this.state.tEmailErr ? 'rgba(217,138,106,.7)' : 'rgba(216,166,87,.4)',
+      onEmailInput: this.onEmailInput,
+      onEmailKey: this.onEmailKey,
+      readingAmor: (this.state.tReading && this.state.tReading.amor) || '',
+      readingTrabalho: (this.state.tReading && this.state.tReading.trabalho) || '',
+      readingVida: (this.state.tReading && this.state.tReading.vida) || '',
+      pickHint: this.state.tPicks.length === 0 ? 'Escolha sua primeira carta' : ('Escolha mais ' + (3 - this.state.tPicks.length) + (3 - this.state.tPicks.length > 1 ? ' cartas' : ' carta')),
+      onImgError: this.onImgError,
+      chosen: this.state.tPicks.map((ci) => { const c = this.CARDS[ci]; return { name: c.name, imgEl: React.createElement('img', { src: this.imgUrl(c.file), alt: c.name, loading: 'eager', onError: this.onImgError, style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) }; }),
+      tarotReset: this.tarotReset,
+      fan: this.tarotOrder().map((cardIdx, fanIdx) => {
+        const off = fanIdx - (this.CARDS.length - 1) / 2;
+        return {
+          rot: (off * 1.6).toFixed(1) + 'deg',
+          ml: fanIdx === 0 ? '0px' : '-3vw',
+          ty: (Math.abs(off) * 1.7).toFixed(0) + 'px',
+          op: this.state.tUsed.indexOf(fanIdx) !== -1 ? 0.12 : 1,
+          pick: () => this.pickCard(fanIdx)
+        };
+      }),
+      slots: this.POS.map((pos, k) => {
+        const filled = k < this.state.tPicks.length;
+        const card = filled ? this.CARDS[this.state.tPicks[k]] : null;
+        const faceUp = filled; // revela a carta REAL assim que é escolhida
+        const imgEl = card ? React.createElement('img', { src: this.imgUrl(card.file), alt: card.name, loading: 'eager', onError: this.onImgError, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) : null;
+        return { pos, filled, empty: !filled, flip: faceUp ? 'rotateY(180deg)' : 'rotateY(0deg)', rn: card ? card.rn : '', name: card ? card.name : '', glyph: card ? card.glyph : '', imgEl };
+      }),
+      showNext: phase === 'home' && slide < this.LAST,
+      showBack: phase === 'home' && slide > 0,
+      next: this.next, prev: this.prev, goHome: () => this.goTo(0),
+      pageMark: slide === 0 ? 'I · A Soleira' : (slide === 7 ? 'III · Depoimentos' : (slide === 8 ? 'IV · A Leitura' : (slide === 9 ? 'V · Diferenciais' : (slide === 10 ? 'VI · Metodologia' : (slide === 11 ? 'VIII · Clube' : (slide === 12 ? 'IX · FAQ' : 'II · 0' + slide + ' / 06')))))),
+      progress: (slide / this.LAST * 100) + '%',
+      setVideo: this.setVideo, enter: this.enter, onEnded: this.onEnded, skip: this.skip
+    };
+  }
+}
+</script>
+</body>
+</html>
