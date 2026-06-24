@@ -8,10 +8,8 @@
 <body>
 <x-dc>
 <helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="fonts/fonts.css" rel="stylesheet">
+<script src="vendor/three.min.js"></script>
 <style>
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:#070504;}
@@ -23,6 +21,7 @@
   @keyframes twinkle{0%,100%{opacity:.2}50%{opacity:.85}}
   @keyframes breathe{0%,100%{box-shadow:0 0 0 1px rgba(240,205,138,.45),0 18px 70px rgba(216,166,87,.28)}50%{box-shadow:0 0 0 1px rgba(240,205,138,.75),0 18px 90px rgba(216,166,87,.5)}}
   @keyframes driftUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @keyframes floatHint{0%,100%{transform:translateX(-50%) translateY(0);opacity:.55}50%{transform:translateX(-50%) translateY(6px);opacity:1}}
   @keyframes cardReveal{0%{opacity:0;transform:translateY(14px) scale(.84) rotate(-3deg)}60%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
   @keyframes drawLine{to{stroke-dashoffset:0}}
   @keyframes constPulse{0%,100%{box-shadow:0 0 44px rgba(150,120,230,.45),inset 0 0 24px rgba(200,180,255,.28);transform:scale(1)}50%{box-shadow:0 0 72px rgba(170,140,250,.72),inset 0 0 30px rgba(210,190,255,.42);transform:scale(1.045)}}
@@ -33,8 +32,15 @@
   @keyframes beam{0%,100%{opacity:.35;transform:translateX(-50%) scaleY(1)}50%{opacity:.7;transform:translateX(-50%) scaleY(1.08)}}
   @keyframes filmIn{0%{opacity:0;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
   @keyframes filmInSoft{from{opacity:0}to{opacity:1}}
+  @keyframes depoReveal{0%{opacity:0;transform:translateY(54px) scale(1.06);filter:blur(7px)}55%{opacity:1}100%{opacity:1;transform:none;filter:blur(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
   @keyframes scrollUp{from{transform:translateY(0)}to{transform:translateY(-50%)}}
   @keyframes scrollDown{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+  @media (max-width:640px){
+    .tarot-fan{flex-wrap:wrap !important;height:auto !important;gap:7px;max-width:340px;margin-left:auto !important;margin-right:auto !important;}
+    .tarot-fan>div{margin-left:0 !important;transform:none !important;width:clamp(44px,15vw,62px) !important;height:auto !important;aspect-ratio:46 / 72;}
+    .tarot-fan>div:hover{transform:translateY(-8px) !important;}
+  }
 </style>
 </helmet>
 
@@ -57,8 +63,15 @@
             <div style="position:absolute;top:-30%;left:50%;width:46%;height:150%;background:linear-gradient(180deg, rgba(240,205,138,0) 0%, rgba(240,205,138,.22) 55%, rgba(240,205,138,0) 100%);filter:blur(12px);animation:beam 6s ease-in-out infinite;transform-origin:50% 80%;"></div>
             <div style="position:absolute;inset:-11px;border-radius:999px 999px 20px 20px;border:1px solid rgba(240,205,138,.45);box-shadow:0 0 0 1px rgba(216,166,87,.12), 0 24px 90px rgba(216,166,87,.3);"></div>
             <div style="position:relative;width:100%;height:100%;border-radius:999px 999px 14px 14px;overflow:hidden;box-shadow:inset 0 0 70px rgba(216,166,87,.5), inset 0 -30px 50px rgba(11,8,7,.6);">
-              <video src="portal.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+              <video id="home-video" src="portal.mp4" muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;"></video>
               <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(7,5,4,0) 55%, rgba(7,5,4,.45) 100%);"></div>
+              <sc-if value="{{ showHomePlay }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ playHomeVideo }}" style="position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(7,5,4,.32);">
+                  <div style="width:clamp(54px,9vw,74px);height:clamp(54px,9vw,74px);border-radius:50%;background:linear-gradient(180deg,#f4d99b,#d2992f);box-shadow:0 8px 30px rgba(216,166,87,.55), 0 0 0 1px rgba(240,205,138,.4);display:flex;align-items:center;justify-content:center;animation:breathe 5s ease-in-out infinite;">
+                    <div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 17px;border-color:transparent transparent transparent #0b0807;margin-left:4px;"></div>
+                  </div>
+                </div>
+              </sc-if>
             </div>
             <div style="position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);width:150%;height:50px;background:radial-gradient(50% 100% at 50% 0%, rgba(240,205,138,.5), rgba(240,205,138,0) 72%);filter:blur(7px);"></div>
           </div>
@@ -78,39 +91,32 @@
 
       <!-- ================= CHAPTER II · AS SEIS CENAS (full-bleed) ================= -->
       <sc-if value="{{ isChapters }}" hint-placeholder-val="{{ false }}">
-        <section data-screen-label="{{ chScreenLabel }}" style="position:absolute;inset:0;overflow:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 50%, #15100a 0%, #0a0706 56%, #050403 100%);display:flex;align-items:center;justify-content:center;">
+        <section data-screen-label="II · O Portal" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 38%, #4a3411 0%, #2a1d09 50%, #0c0803 100%);">
 
           <!-- FULL-BLEED EFFECT -->
-          <canvas data-scene="chapter" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;"></canvas>
+          <canvas data-scene="chapter" style="position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;opacity:.2;"></canvas>
 
           <!-- faint stars -->
-          <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background-image:radial-gradient(1px 1px at 16% 26%, rgba(255,244,224,.5), transparent),radial-gradient(1px 1px at 70% 18%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 86% 60%, rgba(255,244,224,.45), transparent),radial-gradient(1px 1px at 38% 78%, rgba(255,244,224,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
+          <div style="position:fixed;inset:0;pointer-events:none;z-index:1;background-image:radial-gradient(1px 1px at 16% 26%, rgba(255,244,224,.5), transparent),radial-gradient(1px 1px at 70% 18%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 86% 60%, rgba(255,244,224,.45), transparent),radial-gradient(1px 1px at 38% 78%, rgba(255,244,224,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
           <!-- vignette + legibility scrim -->
-          <div style="position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(135% 105% at 50% 50%, transparent 26%, rgba(7,5,4,.5) 70%, rgba(7,5,4,.9) 100%);"></div>
+          <div style="position:fixed;inset:0;pointer-events:none;z-index:2;background:radial-gradient(150% 110% at 50% 50%, transparent 18%, rgba(7,5,4,.55) 64%, rgba(7,5,4,.92) 100%);"></div>
 
-          <!-- giant number watermark -->
-          <div style="position:absolute;z-index:2;left:{{ chNumX }};top:50%;transform:translate(-50%,-50%);font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(200px,46vh,520px);line-height:.8;color:rgba(216,166,87,.06);pointer-events:none;user-select:none;opacity:{{ txtOpacity }};transition:opacity .5s ease;">{{ chN }}</div>
-
-          <!-- CENTERED TEXT (fades out/in on change) -->
-          <div style="position:relative;z-index:3;max-width:640px;text-align:center;padding:0 clamp(24px,6vw,72px);display:flex;flex-direction:column;align-items:center;opacity:{{ txtOpacity }};transform:{{ txtTransform }};filter:{{ txtFilter }};transition:opacity .5s ease, transform .75s cubic-bezier(.3,0,.2,1), filter .6s ease;">
-            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(17px,1.9vw,24px);color:#e8c074;letter-spacing:.04em;text-shadow:0 2px 30px rgba(216,166,87,.45);">{{ chCap }}</div>
-            <div style="display:flex;align-items:center;gap:12px;margin-top:14px;">
-              <div style="height:1px;width:clamp(20px,4vw,46px);background:linear-gradient(90deg, transparent, rgba(216,166,87,.6));"></div>
-              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:#caa765;font-weight:300;white-space:nowrap;">{{ chEyebrow }}</div>
-              <div style="height:1px;width:clamp(20px,4vw,46px);background:linear-gradient(90deg, rgba(216,166,87,.6), transparent);"></div>
-            </div>
-            <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f6efe0;font-size:clamp(30px,4.4vw,60px);line-height:1.08;margin:18px 0 0;max-width:16ch;text-wrap:balance;text-shadow:0 4px 40px rgba(0,0,0,.6);">{{ chTitle }}</h2>
-            <p style="font-family:'Jost',sans-serif;font-weight:300;color:#b6a991;font-size:clamp(13px,1.3vw,16px);line-height:1.55;margin:clamp(16px,2.4vh,24px) 0 0;max-width:34ch;letter-spacing:.03em;">{{ chSub }}</p>
-            <sc-if value="{{ chLast }}" hint-placeholder-val="{{ false }}">
-              <a href="{{ waLink }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;margin-top:clamp(22px,3.4vh,34px);font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:16px 38px;border-radius:40px;text-decoration:none;font-weight:500;animation:breathe 5s ease-in-out infinite;">Agendar consulta</a>
-            </sc-if>
+          <!-- STACKED LIST -->
+          <div style="position:relative;z-index:3;min-height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;gap:clamp(16px,3vh,34px);max-width:1040px;margin:0 auto;padding:clamp(70px,12vh,140px) clamp(24px,7vw,90px) clamp(60px,10vh,120px);box-sizing:border-box;">
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#caa765;font-weight:300;margin-bottom:clamp(6px,1.5vh,16px);">Capítulo II · O que o Portal te revelará</div>
+            <sc-for list="{{ chapterList }}" as="c" hint-placeholder-count="6">
+              <div style="display:flex;align-items:baseline;justify-content:center;gap:clamp(16px,2.4vw,32px);opacity:{{ c.op }};transform:translateY({{ c.tx }});transition:opacity 1.9s ease, transform 2s cubic-bezier(.2,.7,.2,1);">
+                <span style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f6efe0;font-size:clamp(24px,4vw,52px);line-height:1.12;text-shadow:0 2px 34px rgba(216,166,87,.4), 0 4px 40px rgba(0,0,0,.6);text-wrap:balance;">{{ c.t }}</span>
+              </div>
+            </sc-for>
+            <a href="{{ waLink }}" target="_blank" rel="noopener" style="align-self:center;margin-top:clamp(20px,3.4vh,38px);display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:16px 38px;border-radius:40px;text-decoration:none;font-weight:500;animation:breathe 5s ease-in-out infinite;">Agendar consulta</a>
           </div>
         </section>
       </sc-if>
 
       <!-- ================= SLIDE 7 · DEPOIMENTOS ================= -->
       <sc-if value="{{ isDepo }}" hint-placeholder-val="{{ false }}">
-      <section data-screen-label="III · Depoimentos" style="position:absolute;inset:0;overflow:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(120% 90% at 50% -8%, #1d140d 0%, #0c0807 48%, #070504 100%);display:flex;flex-direction:column;align-items:center;padding:84px clamp(22px,5vw,72px) 92px;">
+      <section onClick="{{ toggleDepo }}" data-screen-label="III · Depoimentos" style="position:absolute;inset:0;overflow:hidden;cursor:pointer;animation:depoReveal 1.15s cubic-bezier(.2,.7,.2,1) both;background:radial-gradient(120% 90% at 50% -8%, #1d140d 0%, #0c0807 48%, #070504 100%);display:flex;flex-direction:column;align-items:center;padding:84px clamp(22px,5vw,72px) 92px;">
         <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1px 1px at 16% 26%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 72% 14%, rgba(255,244,224,.35), transparent),radial-gradient(1px 1px at 86% 64%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 32% 80%, rgba(255,244,224,.35), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
 
         <div style="position:relative;z-index:2;text-align:center;max-width:760px;flex:none;">
@@ -121,29 +127,36 @@
 
         <div style="position:relative;z-index:2;width:100%;max-width:1180px;flex:1;min-height:0;margin-top:clamp(18px,3vh,30px);display:flex;gap:clamp(12px,1.4vw,20px);align-items:flex-start;-webkit-mask:linear-gradient(180deg, transparent 0, #000 9%, #000 88%, transparent 100%);mask:linear-gradient(180deg, transparent 0, #000 9%, #000 88%, transparent 100%);">
           <div style="flex:1;min-width:0;overflow:hidden;height:100%;">
-            <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px);animation:scrollUp 46s linear infinite;will-change:transform;">
+            <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px);animation:scrollUp 46s linear infinite;will-change:transform;animation-play-state:{{ depoPlay }};">
               <sc-for list="{{ col1 }}" as="t" hint-placeholder-count="0">
-                <sc-if value="{{ t }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#0d0a08;border:1px solid rgba(216,166,87,.22);border-radius:14px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55);"><img src="{{ t }}" loading="lazy" decoding="async" style="width:100%;display:block;" /></div></sc-if>
+                <sc-if value="{{ t }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#0d0a08;border:1px solid rgba(216,166,87,.22);border-radius:14px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55);"><img src="{{ t }}" onClick="{{ openDepo }}" loading="lazy" decoding="async" style="width:100%;display:block;cursor:zoom-in;" /></div></sc-if>
               </sc-for>
             </div>
           </div>
           <div style="flex:1;min-width:0;overflow:hidden;height:100%;">
-            <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px);animation:scrollDown 58s linear infinite;will-change:transform;">
+            <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px);animation:scrollDown 58s linear infinite;will-change:transform;animation-play-state:{{ depoPlay }};">
               <sc-for list="{{ col2 }}" as="t" hint-placeholder-count="0">
-                <sc-if value="{{ t }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#0d0a08;border:1px solid rgba(216,166,87,.22);border-radius:14px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55);"><img src="{{ t }}" loading="lazy" decoding="async" style="width:100%;display:block;" /></div></sc-if>
+                <sc-if value="{{ t }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#0d0a08;border:1px solid rgba(216,166,87,.22);border-radius:14px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55);"><img src="{{ t }}" onClick="{{ openDepo }}" loading="lazy" decoding="async" style="width:100%;display:block;cursor:zoom-in;" /></div></sc-if>
               </sc-for>
             </div>
           </div>
           <div style="flex:1;min-width:0;overflow:hidden;height:100%;">
-            <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px);animation:scrollUp 52s linear infinite;will-change:transform;">
+            <div style="display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px);animation:scrollUp 52s linear infinite;will-change:transform;animation-play-state:{{ depoPlay }};">
               <sc-for list="{{ col3 }}" as="t" hint-placeholder-count="0">
-                <sc-if value="{{ t }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#0d0a08;border:1px solid rgba(216,166,87,.22);border-radius:14px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55);"><img src="{{ t }}" loading="lazy" decoding="async" style="width:100%;display:block;" /></div></sc-if>
+                <sc-if value="{{ t }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#0d0a08;border:1px solid rgba(216,166,87,.22);border-radius:14px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55);"><img src="{{ t }}" onClick="{{ openDepo }}" loading="lazy" decoding="async" style="width:100%;display:block;cursor:zoom-in;" /></div></sc-if>
               </sc-for>
             </div>
           </div>
         </div>
 
         <a href="{{ waLink }}" target="_blank" rel="noopener" style="position:relative;z-index:2;flex:none;margin-top:clamp(14px,2vh,22px);display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:14px 34px;border-radius:40px;text-decoration:none;font-weight:500;">Quero a minha leitura</a>
+
+        <sc-if value="{{ showDepoLightbox }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ closeDepo }}" style="position:absolute;inset:0;z-index:20;background:rgba(5,3,2,.93);display:flex;align-items:center;justify-content:center;padding:clamp(20px,5vw,64px);cursor:zoom-out;animation:filmInSoft .3s ease both;">
+            <img src="{{ depoLightbox }}" loading="lazy" decoding="async" style="max-width:min(92vw,560px);max-height:88vh;border-radius:16px;border:1px solid rgba(216,166,87,.35);box-shadow:0 28px 90px rgba(0,0,0,.75);" />
+            <div style="position:absolute;top:clamp(16px,3vh,30px);right:clamp(16px,4vw,34px);width:44px;height:44px;border-radius:50%;border:1px solid rgba(216,166,87,.45);background:rgba(12,9,7,.6);display:flex;align-items:center;justify-content:center;color:#e8c074;font-family:'Jost',sans-serif;font-size:22px;line-height:1;">×</div>
+          </div>
+        </sc-if>
       </section>
       </sc-if>
 
@@ -191,7 +204,7 @@
 
         <!-- deck fan (pick) -->
         <sc-if value="{{ showDeck }}" hint-placeholder-val="{{ true }}">
-          <div style="position:relative;z-index:2;display:flex;justify-content:center;align-items:flex-end;margin-top:clamp(18px,3.2vh,34px);height:clamp(96px,15vh,140px);flex:none;">
+          <div class="tarot-fan" style="position:relative;z-index:2;display:flex;justify-content:center;align-items:flex-end;margin-top:clamp(18px,3.2vh,34px);height:clamp(96px,15vh,140px);flex:none;">
             <sc-for list="{{ fan }}" as="c" hint-placeholder-count="22">
               <div onClick="{{ c.pick }}" style="position:relative;overflow:hidden;width:clamp(50px,5.2vw,72px);height:clamp(78px,12vh,112px);margin-left:{{ c.ml }};transform:rotate({{ c.rot }}) translateY({{ c.ty }});transform-origin:50% 120%;transition:transform .35s ease, opacity .35s ease;cursor:pointer;opacity:{{ c.op }};border-radius:9px;border:1px solid rgba(216,166,87,.5);box-shadow:0 8px 22px rgba(0,0,0,.5);" style-hover="transform:rotate({{ c.rot }}) translateY(-16px);">
                 <img src="card-back.png" alt="" loading="eager" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;" />
@@ -217,21 +230,21 @@
               <div style="display:flex;gap:14px;align-items:flex-start;">
                 <div style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(240,205,138,.5);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:16px;font-family:'Cormorant Garamond',serif;">♡</div>
                 <div>
-                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Amor</div>
+                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Amor <span style="color:#e8c074;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px;text-transform:none;letter-spacing:0;">· {{ readingAmorCard }}</span></div>
                   <p style="font-family:'Jost',sans-serif;font-weight:300;color:#cdbfa9;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingAmor }}</p>
                 </div>
               </div>
               <div style="display:flex;gap:14px;align-items:flex-start;">
                 <div style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(240,205,138,.5);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:16px;font-family:'Cormorant Garamond',serif;">✦</div>
                 <div>
-                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Trabalho</div>
+                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Trabalho <span style="color:#e8c074;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px;text-transform:none;letter-spacing:0;">· {{ readingTrabalhoCard }}</span></div>
                   <p style="font-family:'Jost',sans-serif;font-weight:300;color:#cdbfa9;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingTrabalho }}</p>
                 </div>
               </div>
               <div style="display:flex;gap:14px;align-items:flex-start;">
                 <div style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(240,205,138,.5);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:16px;font-family:'Cormorant Garamond',serif;">☽</div>
                 <div>
-                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Vida</div>
+                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Vida <span style="color:#e8c074;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px;text-transform:none;letter-spacing:0;">· {{ readingVidaCard }}</span></div>
                   <p style="font-family:'Jost',sans-serif;font-weight:300;color:#cdbfa9;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingVida }}</p>
                 </div>
               </div>
@@ -251,7 +264,9 @@
 
       <!-- ================= SLIDE 9 · DIFERENCIAIS DO PORTAL ================= -->
       <sc-if value="{{ isDiferenciais }}" hint-placeholder-val="{{ false }}">
-      <section data-screen-label="V · Diferenciais" style="position:absolute;inset:0;overflow:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 42%, #171331 0%, #0c0917 48%, #060409 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px clamp(16px,5vw,64px) 50px;box-sizing:border-box;">
+      <section data-screen-label="V · Diferenciais" style="position:absolute;inset:0;overflow:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 42%, #2a130d 0%, #160b08 50%, #060302 100%);">
+        <div id="diff-panel" style="position:relative;width:100%;height:100%;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px clamp(16px,5vw,64px) 50px;box-sizing:border-box;">
+        <canvas data-scene="solarbg" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;opacity:.9;"></canvas>
         <!-- stars -->
         <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.3px 1.3px at 12% 22%, rgba(222,226,255,.75), transparent),radial-gradient(1px 1px at 78% 15%, rgba(222,226,255,.55), transparent),radial-gradient(1px 1px at 88% 58%, rgba(222,226,255,.6), transparent),radial-gradient(1.4px 1.4px at 28% 74%, rgba(222,226,255,.5), transparent),radial-gradient(1px 1px at 64% 84%, rgba(222,226,255,.5), transparent),radial-gradient(1px 1px at 46% 36%, rgba(222,226,255,.45), transparent),radial-gradient(1px 1px at 8% 50%, rgba(222,226,255,.4), transparent),radial-gradient(1px 1px at 94% 40%, rgba(222,226,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
         <!-- nebula tint -->
@@ -261,7 +276,7 @@
 
         <!-- header -->
         <div style="position:relative;z-index:5;text-align:center;flex:none;">
-          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo V</div>
+          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo V · Diferenciais</div>
           <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">Por que o Portal é diferente</h2>
           <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(12px,1.15vw,14.5px);margin:6px 0 0;letter-spacing:.03em;">Seis forças que tornam cada leitura única.</p>
         </div>
@@ -269,56 +284,67 @@
         <!-- solar system 3D · WebGL -->
         <div class="solar" id="solar-stage" style="position:relative;z-index:2;width:min(97vw,78vh,1000px);height:min(97vw,78vh,1000px);margin-top:clamp(2px,1vh,10px);flex:none;">
           <canvas id="solar-canvas" style="position:absolute;inset:0;width:100%;height:100%;display:block;"></canvas>
-          <div id="solar-overlay" style="position:absolute;inset:0;z-index:2;pointer-events:none;overflow:visible;">
+          <div id="solar-overlay" style="position:absolute;inset:0;z-index:2;pointer-events:none;overflow:visible;--pt-font:{{ ptFont }};--pt-weight:{{ ptWeight }};--pt-style:{{ ptStyle }};--pt-shadow:{{ ptShadow }};">
             <div id="solar-label-sun" style="position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.1vw,28px);color:#f3d79a;letter-spacing:.04em;text-shadow:0 2px 18px rgba(232,170,70,.85);opacity:0;">O Portal</div>
 
             <div id="solar-label-0" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Mais de 10 oráculos</div>
-              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Tarô, baralho cigano, runas e muito mais.</div>
+              <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Atendimento por chamada de vídeo ou áudio</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Tarô, runas, baralho cigano e muito mais — escolho o que melhor conversa com o seu caso.</div>
             </div>
 
             <div id="solar-label-1" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Atendimento humanizado</div>
-              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Acolhimento de verdade, sem respostas prontas.</div>
+              <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Áudio da leitura disponível para revisitar sempre que precisar</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Acolhimento real: traduzo os símbolos para a sua realidade, sem respostas prontas.</div>
             </div>
 
             <div id="solar-label-2" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Leituras personalizadas</div>
-              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Cada tiragem feita só para o seu momento.</div>
+              <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Possibilidade de aprofundar questões sobre terceiros</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Começamos pela pergunta certa — uma tiragem feita só para o seu momento.</div>
             </div>
 
             <div id="solar-label-3" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Escuta ativa antes da leitura</div>
-              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Primeiro eu te ouço, depois as cartas falam.</div>
+              <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Uma leitura que considera o contexto completo da sua história</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Antes das cartas, eu te escuto de verdade: sem pressa e sem julgamentos.</div>
             </div>
 
             <div id="solar-label-4" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Consultas online — Brasil e exterior</div>
-              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">De onde você estiver, o portal te alcança.</div>
+              <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Atendimento individual e sem pressa</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">De onde você estiver, o portal te alcança.</div>
             </div>
 
             <div id="solar-label-5" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f3eeff;font-size:clamp(15.5px,1.7vw,21px);line-height:1.12;text-shadow:0 2px 16px rgba(6,4,14,.95);">Perguntas sobre terceiros</div>
-              <div style="font-family:'Jost',sans-serif;font-weight:300;color:#b3a8cf;font-size:clamp(11px,1.05vw,13px);line-height:1.38;margin-top:3px;text-shadow:0 2px 16px rgba(6,4,14,.98);">Traga também quem caminha ao seu lado.</div>
+              <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Possibilidade de perguntas sobre terceiros</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Traga também quem caminha ao seu lado.</div>
+            </div>
+
+            <div id="solar-label-6" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
+              <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Leitura intuitiva e aprofundada</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">As cartas revelam padrões, sentimentos e movimentos ocultos.</div>
+            </div>
+            <div id="solar-label-7" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
+              <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Clareza sobre caminhos e próximos passos</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Você sai com reflexões, perspectivas e caminhos claros.</div>
             </div>
           </div>
+        </div>
         </div>
       </section>
       </sc-if>
 
-      <!-- ================= SLIDE 10 · METODOLOGIA ================= -->
+      <!-- ================= SLIDE 5 · METODOLOGIA ================= -->
       <sc-if value="{{ isMetodologia }}" hint-placeholder-val="{{ false }}">
-      <section data-screen-label="VI · Metodologia" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 40%, #1a1530 0%, #0d0a1a 50%, #060409 100%);">
+      <section data-screen-label="VI · Metodologia" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 40%, #2a130d 0%, #160b08 50%, #060302 100%);">
+        <div id="method-panel" style="position:relative;width:100%;min-height:100%;overflow:hidden;">
         <canvas data-scene="methodbg" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;"></canvas>
         <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.2px 1.2px at 14% 22%, rgba(226,224,255,.6), transparent),radial-gradient(1px 1px at 72% 16%, rgba(226,224,255,.5), transparent),radial-gradient(1px 1px at 86% 62%, rgba(226,224,255,.5), transparent),radial-gradient(1.3px 1.3px at 30% 78%, rgba(226,224,255,.45), transparent),radial-gradient(1px 1px at 60% 86%, rgba(226,224,255,.45), transparent),radial-gradient(1px 1px at 44% 34%, rgba(226,224,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
         <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(132% 108% at 50% 50%, transparent 40%, rgba(4,3,9,.72) 100%);"></div>
 
-        <div id="method-wrap" style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px clamp(16px,5vw,56px) 54px;box-sizing:border-box;">
+        <div id="method-wrap" style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(92px,16vh,108px) clamp(16px,5vw,56px) 54px;box-sizing:border-box;">
         <!-- header -->
         <div style="position:relative;z-index:5;text-align:center;flex:none;">
-          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#c2a86a;font-weight:300;">Capítulo VI</div>
+          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#c2a86a;font-weight:300;">Capítulo VI · Metodologia</div>
           <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f6efe0;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">A Metodologia</h2>
-          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9b8f7c;font-size:clamp(12px,1.15vw,14.5px);margin:7px 0 0;letter-spacing:.03em;max-width:46ch;">Nada aqui é mecânico. A consulta é um caminho que percorremos juntos — um fio que se desenha, passo a passo.</p>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9b8f7c;font-size:clamp(12px,1.15vw,14.5px);margin:7px 0 0;letter-spacing:.03em;max-width:46ch;">É por isso que cada encontro segue um caminho — um fio que se desenha, passo a passo.</p>
         </div>
 
         <!-- journey stage -->
@@ -342,29 +368,30 @@
             <!-- LABELS -->
             <div id="method-label-0" style="position:absolute;left:0;top:0;transform:translate(-50%,-128%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
               <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Escuta</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu te escuto primeiro</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(13px,1.35vw,16.5px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">Você é acolhido sem julgamentos.</div>
             </div>
             <div id="method-label-1" style="position:absolute;left:0;top:0;transform:translate(-50%,28%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
-              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Perguntas</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu te ajudo a perguntar</div>
+              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Intenção</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(13px,1.35vw,16.5px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">A pergunta ganha forma.</div>
             </div>
             <div id="method-label-2" style="position:absolute;left:0;top:0;transform:translate(-50%,-128%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
-              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Oráculos</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu escolho o oráculo certo</div>
+              <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Oráculo</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(13px,1.35vw,16.5px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">O símbolo é escolhido.</div>
             </div>
             <div id="method-label-3" style="position:absolute;left:0;top:0;transform:translate(-50%,28%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
               <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Leitura</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu conduzo a leitura</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(13px,1.35vw,16.5px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">O invisível se revela.</div>
             </div>
             <div id="method-label-4" style="position:absolute;left:0;top:0;transform:translate(-50%,-128%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
               <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Interpretação</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu reúno as energias</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(13px,1.35vw,16.5px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">O sentido emerge.</div>
             </div>
             <div id="method-label-5" style="position:absolute;left:0;top:0;transform:translate(-50%,28%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
               <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Direcionamento</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(16px,1.7vw,22px);line-height:1.16;margin-top:6px;text-shadow:0 2px 16px rgba(6,4,14,.95);">Eu aponto um caminho</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(13px,1.35vw,16.5px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">Um caminho se ilumina.</div>
             </div>
           </div>
+        </div>
         </div>
         </div>
       </section>
@@ -372,16 +399,16 @@
 
       <!-- ================= SLIDE 11 · CLUBE DO PORTAL + CTA FINAL ================= -->
       <sc-if value="{{ isFinale }}" hint-placeholder-val="{{ false }}">
-      <section data-screen-label="VIII · Clube" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 30%, #1c1535 0%, #0d0a1c 50%, #060409 100%);">
-        <canvas data-scene="finale" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;"></canvas>
+      <section data-screen-label="VII · Clube" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 30%, #1c1535 0%, #0d0a1c 50%, #060409 100%);">
+        <canvas data-scene="finale" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;opacity:.8;"></canvas>
         <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.3px 1.3px at 14% 20%, rgba(228,224,255,.6), transparent),radial-gradient(1px 1px at 76% 14%, rgba(228,224,255,.5), transparent),radial-gradient(1px 1px at 88% 58%, rgba(228,224,255,.5), transparent),radial-gradient(1.4px 1.4px at 28% 78%, rgba(228,224,255,.45), transparent),radial-gradient(1px 1px at 62% 86%, rgba(228,224,255,.45), transparent),radial-gradient(1px 1px at 46% 36%, rgba(228,224,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
-        <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(130% 108% at 50% 62%, transparent 36%, rgba(4,3,9,.74) 100%);"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(130% 108% at 50% 55%, rgba(8,4,10,.5) 0%, rgba(6,3,8,.84) 100%);"></div>
 
-        <div style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px clamp(20px,5vw,52px) 92px;box-sizing:border-box;">
+        <div style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(96px,20vh,120px) clamp(20px,5vw,52px) 92px;box-sizing:border-box;">
 
           <!-- CLUBE DO PORTAL -->
           <div style="text-align:center;flex:none;max-width:760px;">
-            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VIII</div>
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VII</div>
             <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:7px 0 0;text-wrap:balance;">Clube do Portal</h2>
             <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(12.5px,1.2vw,15px);margin:9px 0 0;letter-spacing:.02em;max-width:42ch;margin-left:auto;margin-right:auto;">Um grupo exclusivo no WhatsApp — um encontro contínuo, no seu tempo, entre uma consulta e outra.</p>
           </div>
@@ -414,14 +441,14 @@
 
       <!-- ================= SLIDE 12 · FAQ ================= -->
       <sc-if value="{{ isFaq }}" hint-placeholder-val="{{ false }}">
-      <section data-screen-label="IX · FAQ" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 16%, #181230 0%, #0c0918 52%, #060409 100%);">
+      <section data-screen-label="VIII · FAQ" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 16%, #2a130d 0%, #160b08 52%, #060302 100%);">
         <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.2px 1.2px at 16% 20%, rgba(226,224,255,.55), transparent),radial-gradient(1px 1px at 74% 14%, rgba(226,224,255,.45), transparent),radial-gradient(1px 1px at 86% 60%, rgba(226,224,255,.5), transparent),radial-gradient(1.3px 1.3px at 30% 80%, rgba(226,224,255,.4), transparent),radial-gradient(1px 1px at 58% 88%, rgba(226,224,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
         <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(132% 108% at 50% 44%, transparent 42%, rgba(4,3,9,.72) 100%);"></div>
 
         <div style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:84px clamp(20px,5vw,48px) 92px;box-sizing:border-box;">
           <!-- header -->
           <div style="text-align:center;flex:none;margin-bottom:clamp(18px,3vh,34px);">
-            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo IX</div>
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VIII</div>
             <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">Perguntas frequentes</h2>
             <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(12px,1.15vw,14.5px);margin:7px 0 0;letter-spacing:.03em;">Toque numa pergunta para abrir o portal da resposta.</p>
           </div>
@@ -463,7 +490,7 @@
   <header style="position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(22px,5vw,56px);pointer-events:none;background:linear-gradient(180deg, rgba(7,5,4,.82) 0%, rgba(7,5,4,.46) 55%, rgba(7,5,4,0) 100%);">
     <div onClick="{{ goHome }}" style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:10px;">
       <span style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,205,138,.6);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:13px;font-family:'Cormorant Garamond',serif;">✦</span>
-      <span style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#f0e6d4;letter-spacing:.04em;white-space:nowrap;">Portal do Invisível</span>
+      <img src="logo-emblem.png" alt="Portal do Invisível" style="height:clamp(70px,11vw,150px);width:auto;display:block;" />
     </div>
     <a href="{{ waLink }}" target="_blank" rel="noopener" style="pointer-events:auto;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#e8c074;text-decoration:none;border:1px solid rgba(216,166,87,.4);padding:11px 22px;border-radius:30px;">Agendar</a>
   </header>
@@ -487,8 +514,14 @@
   <!-- ============ LOADING SCREEN (video) ============ -->
   <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
     <div style="position:absolute;inset:0;z-index:200;background:#000;overflow:hidden;">
-      <video ref="{{ setVideo }}" src="portal.mp4" autoplay muted playsinline onEnded="{{ onEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>
+      <video ref="{{ setVideo }}" src="intro.mp4" autoplay muted playsinline onEnded="{{ onEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>
       <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 46%, rgba(0,0,0,0) 30%, rgba(0,0,0,.45) 100%);pointer-events:none;"></div>
+      <sc-if value="{{ showVideoLoading }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;">
+          <div style="width:48px;height:48px;border-radius:50%;border:2px solid rgba(216,166,87,.22);border-top-color:#e8c074;animation:spin .9s linear infinite;"></div>
+          <div style="font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:#9a8a6a;">Carregando</div>
+        </div>
+      </sc-if>
 
       <sc-if value="{{ showEnterUi }}" hint-placeholder-val="{{ true }}">
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;">
@@ -509,11 +542,12 @@
   </sc-if>
 
 </div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;whatsapp&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;5511999999999&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showIntroOnLoad&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#160b08"/><circle cx="50" cy="48" r="22" fill="none" stroke="#d8a64f" stroke-width="2.5"/><circle cx="50" cy="48" r="16" fill="none" stroke="#c0392b" stroke-width="1.5"/><path d="M40 36c-6 4-6 14 2 16" fill="none" stroke="#e0b24a" stroke-width="2.4" stroke-linecap="round"/><circle cx="50" cy="48" r="4" fill="#f0cd8a"/><text x="50" y="84" text-anchor="middle" font-size="8" fill="#e8c074" font-family="serif" font-style="italic">Portal</text></svg></template></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;whatsapp&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;5511993876192&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showIntroOnLoad&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;planetFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Cormorant&quot;,&quot;Jost&quot;],&quot;default&quot;:&quot;Cormorant&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;planetGlow&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dourado&quot;,&quot;Branco&quot;,&quot;Suave&quot;,&quot;Nenhum&quot;],&quot;default&quot;:&quot;Dourado&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 class Component extends DCLogic {
-  state = { phase: 'intro', playing: false, glowOn: false, glowFaded: false, slide: 0, tOrder: null, tUsed: [], tPicks: [], tStage: 'pick', tEmail: '', tEmailErr: false, tReading: null, faqOpen: 0, chFrom: 0, chTo: 0, chMix: 1, dispScene: 0, txtOn: true };
-  LAST = 12;
+  state = { phase: 'intro', playing: false, glowOn: false, glowFaded: false, slide: 0, tOrder: null, tUsed: [], tPicks: [], tStage: 'pick', tEmail: '', tEmailErr: false, tReading: null, faqOpen: 0, videoReady: false, homeVideoPlaying: false, chFrom: 0, chTo: 0, chMix: 1, dispScene: 0, txtOn: true };
+  LAST = 7;
 
   FAQ = [
     { q: 'Posso perguntar sobre terceiros?', a: 'Sim. Podemos olhar também para quem caminha ao seu lado — sempre com respeito e cuidado.' },
@@ -548,7 +582,31 @@ class Component extends DCLogic {
     { rn: 'XX', name: 'O Julgamento', glyph: '❖', file: 'RWS_Tarot_20_Judgement.jpg' },
     { rn: 'XXI', name: 'O Mundo', glyph: '◉', file: 'RWS_Tarot_21_World.jpg' }
   ];
-  imgUrl = (file) => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + file + '?width=400';
+  MEANINGS = [
+    { a: 'há um recomeço afetivo pedindo passagem: ame com leveza, sem o peso do que ficou para trás. Um novo capítulo do coração começa quando você confia e dá o primeiro passo sem medo.', t: 'é hora de um salto de fé. Mesmo sem todas as garantias, a coragem de começar abre o caminho — o novo pede ousadia, não certeza. Confie no impulso que te move.', v: 'um ciclo de liberdade e renovação se abre. Solte o controle e siga de coração leve; o inesperado pode ser justamente o que você precisava para recomeçar.' },
+    { a: 'você tem em mãos o poder de criar a conexão que deseja. Aja com intenção e verdade: o que vem de um coração sincero encontra eco e se concretiza no afeto.', t: 'as ferramentas de que você precisa já estão com você. É momento de transformar ideia em ação — concentre a sua energia e realize aquilo que imaginou.', v: 'é tempo de manifestar. Vontade, foco e clareza se unem a seu favor; use seus talentos sem hesitar, porque você é o artífice do próprio momento.' },
+    { a: 'há algo ainda não dito pulsando entre vocês. Escute a intuição mais do que as palavras — o essencial vive no silêncio e nos gestos, não na pressa de entender tudo.', t: 'antes de decidir, ouça o que a sua voz interior sussurra. Nem tudo precisa ser revelado agora; dê tempo ao tempo e confie na sua percepção mais sutil.', v: 'a resposta que você procura mora no seu silêncio. Recolha-se, observe sinais e sonhos: a sabedoria interior já conhece o caminho que você ainda busca.' },
+    { a: 'é um tempo de abundância afetiva: cuidado, ternura e entrega que florescem. Permita-se nutrir e ser nutrida — o amor cresce onde há acolhimento e presença.', t: 'você está em terreno fértil; o que semeia com carinho dá frutos. Crie, produza e confie na sua capacidade de fazer prosperar o que começou.', v: 'momento de criar, acolher e se permitir prazer. Cuide do corpo e dos sentidos: a vida pede que você floresça no seu próprio ritmo, com generosidade.' },
+    { a: 'estabilidade e compromisso firme sustentam a relação. É hora de estrutura e presença — construir junto, com responsabilidade, fortalece e dá raízes ao vínculo.', t: 'estrutura, disciplina e foco constroem o seu sucesso. Assuma a liderança do que é seu e organize o caminho com firmeza; os resultados sólidos virão.', v: 'assuma o comando da própria vida com firmeza e clareza. Estabeleça limites e bases sólidas: a segurança que você busca nasce da sua própria autoridade.' },
+    { a: 'aponta para uma união séria, ancorada em valores compartilhados. O compromisso e a confiança mútua dão raízes profundas ao que vocês constroem juntos.', t: 'busque orientação, um mentor ou um método já testado. Seguir caminhos sólidos e aprender com quem tem experiência te leva mais longe agora.', v: 'fé, tradição e sabedoria antiga guiam suas escolhas. Apoie-se em valores que fazem sentido para você e confie na orientação que chega no momento certo.' },
+    { a: 'uma escolha do coração se apresenta, e a união verdadeira se aproxima. Decida a partir do que é sincero — o amor pede presença, honestidade e entrega.', t: 'há uma decisão importante a tomar, alinhada aos seus valores. Escolha com consciência: o caminho certo é aquele que respeita quem você realmente é.', v: 'harmonia entre o que você sente e o que faz. É tempo de alinhar coração e atitude, escolhendo aquilo que te deixa inteiro e em paz.' },
+    { a: 'avance com determinação: a relação pede direção e atitude. Quando você assume o rumo com confiança, os obstáculos cedem diante do seu movimento.', t: 'vitória pela vontade e pelo foco. Mantenha o rumo, domine as forças contrárias e siga firme — a conquista está ao seu alcance se você persistir.', v: 'você está no controle do próprio caminho. Reúna a sua força de vontade e siga em frente com coragem; a determinação te conduz direto à meta.' },
+    { a: 'ternura e paciência vencem onde a pressa falha. Ame com suavidade e firmeza interior — a delicadeza é a sua maior força no terreno do afeto.', t: 'domine os desafios com calma, não com força bruta. A persistência serena e a confiança em si abrem portas que a tensão e a pressa fechariam.', v: 'a coragem gentil é o seu maior poder agora. Acolha as suas emoções com paciência: a verdadeira força nasce da brandura e do autodomínio.' },
+    { a: 'é tempo de olhar para dentro antes de se abrir ao outro. Entenda o que o seu coração realmente busca; a clareza no amor chega no recolhimento.', t: 'as respostas vêm da reflexão, não da agitação. Recue um pouco, avalie com calma e escute a sua sabedoria antes de dar o próximo passo.', v: 'o silêncio interior ilumina o próximo passo. Reserve um tempo só seu: é na quietude que você reencontra o sentido e a direção que procura.' },
+    { a: 'o destino move algo no afeto, e os ciclos mudam a seu favor. Aceite o fluxo: uma virada inesperada pode reaproximar exatamente o que importa.', t: 'uma virada se aproxima no trabalho. Aproveite a mudança em vez de resistir — o momento é propício para um novo ciclo de oportunidades.', v: 'a roda gira e nada permanece parado. Confie no movimento da vida; o que parece acaso pode ser justamente aquilo que estava faltando.' },
+    { a: 'verdade e equilíbrio regem a relação agora. O que é justo se ajusta: seja honesta consigo e com o outro, e a harmonia volta a se restabelecer.', t: 'decisões honestas trazem o resultado merecido. Aja com integridade e clareza — cada escolha justa que você faz retorna a seu favor.', v: 'causa e efeito estão em ação na sua vida. Assuma a responsabilidade pelas escolhas e busque o equilíbrio; a verdade, no fim, traz paz.' },
+    { a: 'uma pausa revela a relação por um novo ângulo. Em vez de forçar, observe de outro ponto de vista — a entrega traz a compreensão que faltava.', t: 'solte o controle por um instante: outra perspectiva resolve o impasse. Às vezes, parar é justamente o que faz o caminho aparecer com clareza.', v: 'render-se ao tempo abre uma compreensão nova. Aceite a espera como parte do processo; o que parece pausa é, na verdade, amadurecimento.' },
+    { a: 'um ciclo se encerra para que um amor possa renascer. Deixar ir o que já cumpriu o seu papel abre espaço para algo mais verdadeiro e leve.', t: 'é hora de soltar o que não serve mais. Um fim necessário libera energia para um recomeço profissional mais alinhado com quem você é hoje.', v: 'uma transformação profunda está em curso — todo fim é também recomeço. Permita a mudança: o novo só nasce quando o velho enfim parte.' },
+    { a: 'equilíbrio e paciência harmonizam o vínculo. Misture entrega e calma na medida certa; o amor floresce no encontro tranquilo, sem extremos.', t: 'o meio-termo e a serenidade trazem bons frutos. Ajuste o ritmo, una forças e evite os exageros — a constância serena te conduz adiante.', v: 'encontre o ritmo certo: a alquimia está no equilíbrio. Integre as áreas da sua vida com paciência e a paz interior volta a se restabelecer.' },
+    { a: 'cuidado com apegos: observe o que de fato prende você. Reconhecer os padrões que limitam é o primeiro passo para amar com mais liberdade.', t: 'não se acorrente a uma rotina que esgota você. Veja onde a comodidade virou prisão — libertar-se disso devolve a sua energia e o seu brilho.', v: 'olhar para a própria sombra é o início da libertação. Aquilo que você teme encarar perde a força no instante em que ganha luz.' },
+    { a: 'uma ruptura súbita derruba o que era ilusão. Pode doer, mas abre espaço para uma verdade mais sólida e honesta no relacionamento.', t: 'uma mudança abrupta sacode as suas bases — e isso liberta. O que cai abre caminho para reconstruir sobre algo mais verdadeiro e seguro.', v: 'o que cai precisava cair. Permita-se reconstruir com honestidade: depois da queda vem a chance de erguer algo realmente autêntico.' },
+    { a: 'esperança e cura: o coração se reabre à fé. Depois da tempestade, uma luz suave renova a confiança e a serenidade no amor.', t: 'inspiração renovada ilumina os seus projetos. Siga a sua intuição com otimismo — bons caminhos se abrem para quem mantém a fé acesa.', v: 'confie: a serenidade e a esperança estão voltando. Respire fundo e siga o seu brilho; a cura acontece, com delicadeza, no seu tempo.' },
+    { a: 'nem tudo está claro no afeto agora. Escute o que o coração sente por baixo das aparências e evite tirar conclusões precipitadas.', t: 'não decida no escuro: espere a névoa passar. Há informações ainda ocultas — observe com cuidado antes de seguir em frente.', v: 'o invisível fala através da intuição. Confie nos sinais, e não no medo; o que ainda não se vê logo vai ganhar forma e sentido.' },
+    { a: 'alegria e clareza: um amor caloroso floresce. É tempo de leveza e verdade — o coração se ilumina e o vínculo se fortalece com naturalidade.', t: 'sucesso e reconhecimento iluminam os seus projetos. A sua energia contagia e abre portas; aproveite este momento luminoso de realização.', v: 'é tempo de luz, vitalidade e celebração. Permita-se sentir alegria e gratidão — a vida sorri para você e pede que você sorria de volta.' },
+    { a: 'um chamado para renascer a dois: perdão e recomeço. Deixe o passado em paz e responda ao convite de amar com mais consciência e leveza.', t: 'um despertar profissional pede a sua resposta. Avalie a trajetória, perdoe os erros e siga o chamado que ressoa fundo dentro de você.', v: 'é hora de renascimento: algo maior chama você adiante. Faça as pazes com o que passou e abrace, sem medo, a nova versão de si mesma.' },
+    { a: 'plenitude afetiva: um ciclo do coração se completa. Há realização e integração — colha, com gratidão, tudo aquilo que você construiu.', t: 'conclusão vitoriosa: um objetivo enfim se realiza. Reconheça a sua conquista e celebre; um ciclo importante se fecha com êxito e mérito.', v: 'integração e plenitude — um ciclo se fecha em paz. Você chega a um lugar de inteireza; honre o caminho percorrido e o que se tornou.' }
+  ];
+  imgUrl = (file) => 'cards/' + file;
   onImgError = (e) => { try { e.target.style.display = 'none'; } catch (_) {} };
   POS = ['Amor', 'Trabalho', 'Vida'];
 
@@ -567,7 +625,7 @@ class Component extends DCLogic {
     };
     this._onWheel = (e) => {
       if (this.state.phase !== 'home') return;
-      if (this.state.slide === 8 || this.state.slide === 11 || this.state.slide === 12) return; // leitura/finale/FAQ: deixa o conteúdo rolar
+      if (this.state.slide === 3 || this.state.slide === 5 || this.state.slide === 6 || this.state.slide === 7) return; // leitura/V (scroll)/finale/FAQ: deixa o conteúdo rolar
       if (Math.abs(e.deltaY) < 24 || this._wheelLock) return;
       this._wheelLock = true;
       if (e.deltaY > 0) this.next(); else this.prev();
@@ -686,7 +744,7 @@ class Component extends DCLogic {
         ' float n=fbm(q*2.3 + time*0.04);',
         ' float n2=fbm(p*3.4 - time*0.03);',
         ' float neb=mix(n,n2,0.5);',
-        ' vec3 deep=vec3(0.12,0.08,0.24), violet=vec3(0.42,0.28,0.72), gold=vec3(1.0,0.80,0.46);',
+        ' vec3 deep=vec3(0.18,0.07,0.04), violet=vec3(0.92,0.48,0.16), gold=vec3(1.0,0.85,0.50);',
         ' vec3 col=mix(deep,violet,smoothstep(0.18,0.68,neb));',
         ' col=mix(col,gold,smoothstep(0.58,0.92,neb)*0.65);',
         ' float core=smoothstep(0.34,0.0,r);',
@@ -721,7 +779,7 @@ class Component extends DCLogic {
   };
 
   syncSolar = () => {
-    const on = this.state.phase === 'home' && this.state.slide === 9;
+    const on = this.state.phase === 'home' && this.state.slide === 4;
     if (on && !this._solar) this.initSolar();
     else if (!on && this._solar) this.disposeSolar();
   };
@@ -745,47 +803,61 @@ class Component extends DCLogic {
     renderer.setSize(W, H, false);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 240);
-    camera.position.set(0, 14.5, 16);
+    camera.position.set(0, 16, 20.5);
     camera.lookAt(0, 0, 0);
 
-    scene.add(new THREE.AmbientLight(0x5a4f86, 0.7));
-    const sunLight = new THREE.PointLight(0xc9b6ff, 2.4, 150, 1.5);
+    scene.add(new THREE.AmbientLight(0x6a4a3a, 0.7));
+    const sunLight = new THREE.PointLight(0xffca82, 2.8, 150, 1.5);
     scene.add(sunLight);
 
     // PORTAL nebuloso (centro) — quad voltado à câmera
     const portalMat = this.makePortalMaterial(THREE);
-    const portal = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 4.6), portalMat);
+    const portal = new THREE.Mesh(new THREE.PlaneGeometry(9.2, 9.2), portalMat);
     scene.add(portal);
-    // halo suave ao redor do portal
-    const sunGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.makeGlowTexture(THREE, ['rgba(210,184,255,0.62)', 'rgba(150,112,210,0.30)', 'rgba(90,70,160,0.0)']), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
-    sunGlow.scale.set(8.2, 8.2, 1); scene.add(sunGlow);
+    // halo central removido
+    const sunGlow = null;
 
     const group = new THREE.Group();
     group.rotation.x = -0.30;
     scene.add(group);
 
-    const halo = this.makeGlowTexture(THREE, ['rgba(228,218,255,0.95)', 'rgba(150,120,230,0.45)', 'rgba(90,70,160,0.0)']);
+    const halo = (() => {
+      const cv = document.createElement('canvas'); cv.width = cv.height = 160;
+      const g = cv.getContext('2d');
+      const grd = g.createRadialGradient(80, 80, 0, 80, 80, 80);
+      grd.addColorStop(0.00, 'rgba(248,244,255,0.98)');
+      grd.addColorStop(0.06, 'rgba(232,220,255,0.88)');
+      grd.addColorStop(0.13, 'rgba(196,170,248,0.52)');
+      grd.addColorStop(0.24, 'rgba(158,126,232,0.24)');
+      grd.addColorStop(0.40, 'rgba(126,98,206,0.10)');
+      grd.addColorStop(0.62, 'rgba(104,80,180,0.035)');
+      grd.addColorStop(1.00, 'rgba(90,70,160,0.0)');
+      g.fillStyle = grd; g.fillRect(0, 0, 160, 160);
+      const t = new THREE.CanvasTexture(cv); t.needsUpdate = true; return t;
+    })();
     const defs = [
-      { r: 3.6, ph: 0, sp: 0.34, col: 0xcfc2ff, sz: 0.44 },
-      { r: 3.6, ph: Math.PI, sp: 0.34, col: 0xb9a6f0, sz: 0.36 },
-      { r: 4.8, ph: 0.9, sp: 0.255, col: 0xd6c2ff, sz: 0.42 },
-      { r: 4.8, ph: 0.9 + Math.PI, sp: 0.255, col: 0xc4b0ee, sz: 0.34 },
-      { r: 6.0, ph: 1.9, sp: 0.19, col: 0xe0d0ff, sz: 0.48 },
-      { r: 6.0, ph: 1.9 + Math.PI, sp: 0.19, col: 0xcdbdf2, sz: 0.38 }
+      { r: 2.8, ph: Math.PI / 2 - 0.62 * 0, sp: 0.330, col: 0xeee2c6, sz: 0.44, yOff: 0.5 },
+      { r: 4.0, ph: Math.PI / 2 - 0.62 * 1, sp: 0.224, col: 0xf4ebd2, sz: 0.40, yOff: 4.5 },
+      { r: 5.0, ph: Math.PI / 2 - 0.62 * 2, sp: 0.160, col: 0xe8dcbe, sz: 0.44, yOff: 8.0 },
+      { r: 3.4, ph: Math.PI / 2 - 0.62 * 3, sp: 0.262, col: 0xece0c2, sz: 0.36, yOff: -3.0 },
+      { r: 4.4, ph: Math.PI / 2 - 0.62 * 4, sp: 0.192, col: 0xf2e8cc, sz: 0.40, yOff: 2.5 }
     ];
+    const planetTex = (() => {
+      const S = 256, cv = document.createElement('canvas'); cv.width = cv.height = S; const g = cv.getContext('2d');
+      g.fillStyle = '#9a93bd'; g.fillRect(0, 0, S, S);
+      const grd = g.createRadialGradient(S * 0.36, S * 0.30, S * 0.04, S * 0.52, S * 0.54, S * 0.78);
+      grd.addColorStop(0, 'rgba(255,255,255,0.95)'); grd.addColorStop(0.42, 'rgba(188,182,214,0.28)'); grd.addColorStop(0.74, 'rgba(96,88,128,0.45)'); grd.addColorStop(1, 'rgba(44,38,68,0.7)');
+      g.fillStyle = grd; g.fillRect(0, 0, S, S);
+      for (let i = 0; i < 80; i++) { const x = Math.random() * S, y = Math.random() * S, r = 10 + Math.random() * 54; const lite = Math.random() < 0.5; g.fillStyle = (lite ? 'rgba(255,255,255,' : 'rgba(38,28,66,') + (Math.random() * 0.05).toFixed(3) + ')'; g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
+      const t = new THREE.CanvasTexture(cv); t.needsUpdate = true; t.anisotropy = 4; return t;
+    })();
     const planets = defs.map((d) => {
-      const m = new THREE.Mesh(new THREE.SphereGeometry(d.sz, 40, 40), new THREE.MeshStandardMaterial({ color: d.col, emissive: new THREE.Color(0x4a3a86), emissiveIntensity: 0.9, roughness: 0.5, metalness: 0.1 }));
+      const m = new THREE.Mesh(new THREE.SphereGeometry(d.sz, 64, 64), new THREE.MeshStandardMaterial({ color: d.col, map: planetTex, emissive: new THREE.Color(d.col), emissiveIntensity: 0.55, emissiveMap: planetTex, roughness: 0.72, metalness: 0.0 }));
       group.add(m);
       const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: halo, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
-      sp.scale.set(d.sz * 6, d.sz * 6, 1);
+      sp.scale.set(d.sz * 8, d.sz * 8, 1);
       m.add(sp);
       return Object.assign({}, d, { mesh: m });
-    });
-
-    [3.6, 4.8, 6.0].forEach((R) => {
-      const seg = 200, pts = [];
-      for (let i = 0; i <= seg; i++) { const a = i / seg * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a) * R, 0, Math.sin(a) * R)); }
-      group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x9f8fd6, transparent: true, opacity: 0.26 })));
     });
 
     const starTex = this.makeStarTexture(THREE);
@@ -795,12 +867,64 @@ class Component extends DCLogic {
     const stars = new THREE.Points(sg, new THREE.PointsMaterial({ map: starTex, color: 0xe6ecff, size: 0.7, sizeAttenuation: true, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending }));
     scene.add(stars);
 
-    const labels = [0, 1, 2, 3, 4, 5].map((i) => document.getElementById('solar-label-' + i));
+    const labels = [0, 1, 2, 3, 4].map((i) => document.getElementById('solar-label-' + i));
     const sunLabel = document.getElementById('solar-label-sun');
     const onEnter = () => {};
     const onLeave = () => {};
 
-    this._solar = { renderer, scene, camera, group, portal, portalMat, sunGlow, stars, planets, labels, sunLabel, stage, cv, t0: performance.now(), last: performance.now(), w: W, h: H, paused: false, ang: 0, onEnter, onLeave };
+    // —— interatividade: arrastar planetas ——
+    const raycaster = new THREE.Raycaster();
+    const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const ndc = new THREE.Vector2();
+    const hitPt = new THREE.Vector3();
+    const ptXY = (e) => {
+      const r = cv.getBoundingClientRect();
+      const px = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+      const py = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+      ndc.x = ((px - r.left) / r.width) * 2 - 1;
+      ndc.y = -((py - r.top) / r.height) * 2 + 1;
+      return { px: px, py: py, r: r };
+    };
+    const onDown = (e) => {
+      const S = this._solar; if (!S) return;
+      const info = ptXY(e);
+      let best = null, bd = 46 * 46;
+      const v = new THREE.Vector3(), wp = new THREE.Vector3();
+      S.planets.forEach((p) => {
+        if ((p._em || 0) < 0.85) return;
+        p.mesh.getWorldPosition(wp); v.copy(wp).project(S.camera);
+        const sx = (v.x * 0.5 + 0.5) * info.r.width + info.r.left;
+        const sy = (-v.y * 0.5 + 0.5) * info.r.height + info.r.top;
+        const d = (sx - info.px) * (sx - info.px) + (sy - info.py) * (sy - info.py);
+        if (d < bd) { bd = d; best = p; }
+      });
+      if (best) { S.dragging = best; best._drag = true; cv.style.cursor = 'grabbing'; try { if (e.pointerId != null) cv.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); }
+    };
+    const onMove = (e) => {
+      const S = this._solar; if (!S || !S.dragging) return;
+      ptXY(e);
+      raycaster.setFromCamera(ndc, S.camera);
+      if (raycaster.ray.intersectPlane(dragPlane, hitPt)) {
+        let rad = Math.hypot(hitPt.x, hitPt.z); rad = Math.max(2.4, Math.min(8.2, rad));
+        const ang = Math.atan2(hitPt.z, hitPt.x);
+        S.dragging.mesh.position.set(Math.cos(ang) * rad, 0, Math.sin(ang) * rad);
+        S.dragging._dragAng = ang; S.dragging._dragR = rad;
+      }
+      e.preventDefault();
+    };
+    const onUp = () => {
+      const S = this._solar; if (!S || !S.dragging) return;
+      const p = S.dragging;
+      if (p._dragAng != null) { p.r = p._dragR; p.ph = p._dragAng - (S.ang - (p._delay || 0)) * p.sp; }
+      p._drag = false; S.dragging = null; cv.style.cursor = 'grab';
+    };
+    cv.style.touchAction = 'none'; cv.style.cursor = 'grab'; cv.style.pointerEvents = 'auto';
+    cv.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+
+    this._solar = { renderer, scene, camera, group, portal, portalMat, sunGlow, stars, planets, labels, sunLabel, stage, cv, t0: performance.now(), last: performance.now(), w: W, h: H, paused: false, ang: 0, dragging: null, onEnter, onLeave, onDown, onMove, onUp };
     this.animateSolar();
   };
 
@@ -814,15 +938,29 @@ class Component extends DCLogic {
     const W = S.cv.clientWidth, H = S.cv.clientHeight;
     if (W !== S.w || H !== S.h) { S.w = W; S.h = H; S.camera.aspect = W / H; S.camera.updateProjectionMatrix(); S.renderer.setSize(W, H, false); }
     S.ang += dt;
-    S.planets.forEach((p) => { const a = p.ph + S.ang * p.sp; p.mesh.position.set(Math.cos(a) * p.r, 0, Math.sin(a) * p.r); });
+    const EM_DUR = 1.5;
+    S.planets.forEach((p, i) => {
+      const delayI = 0.3 + 10 * (Math.pow(1.2, i) - 1);
+      const k = Math.max(0, Math.min(1, (t - delayI) / EM_DUR));
+      const em = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      p._em = em;
+      p._delay = delayI;
+      if (!p._drag) {
+        const target = p.ph + (S.ang - delayI) * p.sp;
+        const a = (Math.PI / 2) + (target - (Math.PI / 2)) * em;
+        const rr = p.r * em;
+        p.mesh.position.set(Math.cos(a) * rr, ((p.yOff || 0) + Math.sin(t * 0.3 + i) * 0.5) * em, Math.sin(a) * rr);
+      }
+      p.mesh.scale.setScalar(0.08 + 0.92 * em);
+    });
     S.camera.position.x = Math.sin(t * 0.06) * 2.2;
-    S.camera.position.y = 14.5 + Math.sin(t * 0.05) * 0.7;
+    S.camera.position.y = 16 + Math.sin(t * 0.05) * 0.7;
     S.camera.lookAt(0, 0, 0);
     if (S.portalMat) S.portalMat.uniforms.time.value = t;
     if (S.portal) S.portal.quaternion.copy(S.camera.quaternion);
     if (S.stars) S.stars.rotation.y = t * 0.005;
     const ps = 1 + Math.sin(t * 0.9) * 0.04;
-    S.sunGlow.scale.set(8.2 * ps, 8.2 * ps, 1);
+    if (S.sunGlow) S.sunGlow.scale.set(8.2 * ps, 8.2 * ps, 1);
     S.renderer.render(S.scene, S.camera);
     const v = new THREE.Vector3(), wp = new THREE.Vector3();
     S.planets.forEach((p, i) => {
@@ -832,8 +970,12 @@ class Component extends DCLogic {
       const x = (v.x * 0.5 + 0.5) * W, y = (-v.y * 0.5 + 0.5) * H;
       const dist = wp.distanceTo(S.camera.position);
       const depthT = Math.max(0, Math.min(1, (dist - 15.5) / 12));
-      const op = behind ? 0 : Math.max(0.16, 1 - depthT * 0.84);
+      const em = p._em || 0;
+      const emOp = Math.max(0, Math.min(1, (em - 0.4) / 0.45));
+      const op = (behind ? 0 : Math.max(0.5, 1 - depthT * 0.45)) * emOp;
       const sc = 1 - depthT * 0.2;
+      const front = 1 - depthT;
+      el.style.filter = 'brightness(' + (1.7 + front * 0.9).toFixed(2) + ') drop-shadow(0 0 ' + Math.round(6 + front * 14) + 'px rgba(255,253,248,' + (0.45 + front * 0.45).toFixed(2) + '))';
       el.style.left = x + 'px';
       el.style.top = (y + 18) + 'px';
       el.style.transformOrigin = '50% 0';
@@ -854,6 +996,7 @@ class Component extends DCLogic {
     if (S.raf) cancelAnimationFrame(S.raf);
     if (this._solarPoll) { clearTimeout(this._solarPoll); this._solarPoll = null; }
     try { S.stage.removeEventListener('pointerenter', S.onEnter); S.stage.removeEventListener('pointerleave', S.onLeave); } catch (e) {}
+    try { S.cv.removeEventListener('pointerdown', S.onDown); window.removeEventListener('pointermove', S.onMove); window.removeEventListener('pointerup', S.onUp); window.removeEventListener('pointercancel', S.onUp); } catch (e) {}
     try { S.renderer.dispose(); } catch (e) {}
     (S.labels || []).forEach((el) => { if (el) el.style.opacity = '0'; });
     if (S.sunLabel) S.sunLabel.style.opacity = '0';
@@ -861,7 +1004,7 @@ class Component extends DCLogic {
   };
 
   syncMethod = () => {
-    const on = this.state.phase === 'home' && this.state.slide === 10;
+    const on = this.state.phase === 'home' && this.state.slide === 5;
     if (on && !this._method) this.initMethod();
     else if (!on && this._method) { this._method = null; }
   };
@@ -894,7 +1037,7 @@ class Component extends DCLogic {
       d = 'M 132,80 C 220,170 268,210 268,300 C 268,395 132,430 132,520 C 132,615 268,650 268,740 C 268,835 132,870 132,960 C 132,1035 200,1075 268,1110';
       PTS = [[132, 80], [268, 300], [132, 520], [268, 740], [132, 960], [268, 1110]];
       bases = PTS.map((p) => p[0] < 200 ? 'translate(36px,-50%)' : 'translate(calc(-100% - 36px),-50%)');
-      stage.style.height = '1080px'; stage.style.width = 'min(94vw,460px)';
+      stage.style.height = 'min(66vh,620px)'; stage.style.width = 'min(90vw,420px)';
     } else {
       VBW = 1200; VBH = 560;
       d = 'M 80,150 C 165,260 205,420 290,420 C 380,420 425,150 510,150 C 595,150 635,420 720,420 C 805,420 855,150 940,150 C 1025,150 1065,420 1130,420';
@@ -922,8 +1065,8 @@ class Component extends DCLogic {
       if (node) { node.style.left = lx + '%'; node.style.top = ly + '%'; }
       if (lbl) {
         lbl.style.left = lx + '%'; lbl.style.top = ly + '%';
-        if (mobile) { lbl.style.textAlign = PTS[i][0] < 200 ? 'left' : 'right'; lbl.style.width = 'clamp(150px,42vw,212px)'; }
-        else { lbl.style.textAlign = 'center'; lbl.style.width = 'clamp(122px,14vw,168px)'; }
+        if (mobile) { lbl.style.textAlign = PTS[i][0] < 200 ? 'left' : 'right'; lbl.style.width = 'clamp(156px,44vw,220px)'; }
+        else { lbl.style.textAlign = 'center'; lbl.style.width = 'clamp(150px,15.5vw,202px)'; }
       }
       nodes.push(node); lbls.push(lbl);
     }
@@ -937,7 +1080,7 @@ class Component extends DCLogic {
     if (!this._methodLoop) return;
     this._methodRaf = requestAnimationFrame(this.animateMethod);
     const M = this._method; if (!M) return;
-    if (this.state.phase !== 'home' || this.state.slide !== 10) return;
+    if (this.state.phase !== 'home' || this.state.slide !== 5) return;
     const el = (performance.now() - this._methodT0) / 1000;
     const drawDur = 7.0;
     const pd = Math.max(0, Math.min(1, el / drawDur));
@@ -955,7 +1098,7 @@ class Component extends DCLogic {
       M.mote2.setAttribute('cx', lp2.x); M.mote2.setAttribute('cy', lp2.y);
     }
     for (let i = 0; i < 6; i++) {
-      const a = Math.max(0, Math.min(1, (pe - (M.fr[i] - 0.03)) / 0.10));
+      const a = Math.max(0, Math.min(1, (pe - (M.fr[i] - 0.09)) / 0.09));
       const ae = a * a * (3 - 2 * a);
       const node = M.nodes[i], lbl = M.lbls[i];
       if (node) {
@@ -982,22 +1125,34 @@ class Component extends DCLogic {
   componentDidUpdate() {
     this.syncSolar();
     this.syncMethod();
+    this.syncChapters();
     const b = this.state.slide;
     const a = (this._prevSlide === undefined) ? b : this._prevSlide;
     this._prevSlide = b;
     if (a === b) return;
-    const bCh = b >= 1 && b <= 6;
-    if (!bCh) return;
-    const aCh = a >= 1 && a <= 6;
-    const to = b - 1;
-    if (!aCh) {
-      // snapped into the chapters from outside — no crossfade
-      if (this._chRaf) cancelAnimationFrame(this._chRaf);
-      if (this._txtSwap) clearTimeout(this._txtSwap);
-      this.setState({ chFrom: to, chTo: to, chMix: 1, dispScene: to, txtOn: true });
-      return;
-    }
-    this.startSceneTransition(a - 1, to);
+  }
+
+  syncChapters = () => {
+    const on = this.state.phase === 'home' && this.state.slide === 1;
+    if (on && !this._chapTimer) this.startChapters();
+    else if (!on && this._chapTimer) this.stopChapters();
+  };
+
+  startChapters = () => {
+    if (this._chRaf) cancelAnimationFrame(this._chRaf);
+    if (this._txtSwap) clearTimeout(this._txtSwap);
+    this.setState({ chapStep: -1, chFrom: 5, chTo: 5, chMix: 1 });
+    setTimeout(() => { if (this._chapTimer) this.setState({ chapStep: 0 }); }, 400);
+    let i = 0;
+    this._chapTimer = setInterval(() => {
+      i++;
+      if (i > 5) { clearInterval(this._chapTimer); this._chapTimer = null; return; }
+      this.setState({ chapStep: i });
+    }, 2200);
+  };
+
+  stopChapters = () => {
+    if (this._chapTimer) { clearInterval(this._chapTimer); this._chapTimer = null; }
   }
 
   startSceneTransition(from, to) {
@@ -1027,17 +1182,22 @@ class Component extends DCLogic {
 
   loop = (now) => {
     const s = this.state;
-    if (s.phase === 'home' && s.slide >= 1 && s.slide <= 6) {
+    if (s.phase === 'home' && s.slide === 1) {
       let cv = this._chCanv;
       if (!cv || !cv.isConnected) { cv = document.querySelector('canvas[data-scene="chapter"]'); this._chCanv = cv; }
       if (cv) { try { this.renderChapter(cv); } catch (e) {} }
     }
-    if (s.phase === 'home' && s.slide === 11) {
+    if (s.phase === 'home' && s.slide === 6) {
       let fc = this._finCanv;
       if (!fc || !fc.isConnected) { fc = document.querySelector('canvas[data-scene="finale"]'); this._finCanv = fc; }
       if (fc) { try { this.renderFinale(fc); } catch (e) {} }
     }
-    if (s.phase === 'home' && s.slide === 10) {
+    if (s.phase === 'home' && s.slide === 4) {
+      let sb = this._solarBgCanv;
+      if (!sb || !sb.isConnected) { sb = document.querySelector('canvas[data-scene="solarbg"]'); this._solarBgCanv = sb; }
+      if (sb) { try { this.renderMethodBg(sb); } catch (e) {} }
+    }
+    if (s.phase === 'home' && s.slide === 5) {
       let mc = this._methodBgCanv;
       if (!mc || !mc.isConnected) { mc = document.querySelector('canvas[data-scene="methodbg"]'); this._methodBgCanv = mc; }
       if (mc) { try { this.renderMethodBg(mc); } catch (e) {} }
@@ -1222,7 +1382,7 @@ void main(){
     ' float n2=fbm(p*1.7-vec2(t*1.4,0.0)+n*0.6);',
     ' float m=mix(n,n2,0.5);',
     ' float band=smoothstep(0.0,0.62,m)*smoothstep(1.05,0.35,abs(uv.y-0.5)*1.55);',
-    ' vec3 deep=vec3(0.10,0.08,0.17), gold=vec3(0.95,0.72,0.34), warm=vec3(1.0,0.90,0.62);',
+    ' vec3 deep=vec3(0.05,0.07,0.15), gold=vec3(0.34,0.54,0.96), warm=vec3(0.72,0.88,1.0);',
     ' vec3 col=mix(deep,gold,smoothstep(0.24,0.70,m));',
     ' col=mix(col,warm,smoothstep(0.60,0.92,m)*0.6);',
     ' float alpha=clamp(band*(0.16+0.55*m),0.0,0.6);',
@@ -1288,42 +1448,38 @@ void main(){
   };
   onEmailInput = (e) => this.setState({ tEmail: e.target.value, tEmailErr: false });
   onEmailKey = (e) => { if (e.key === 'Enter') { e.preventDefault(); this.submitReading(); } };
-  parseReading = (raw) => {
-    if (!raw) return null;
-    try {
-      const t = String(raw); const a = t.indexOf('{'), b = t.lastIndexOf('}');
-      if (a === -1 || b === -1) return null;
-      const o = JSON.parse(t.slice(a, b + 1));
-      if (o && o.amor && o.trabalho && o.vida) return { amor: String(o.amor).trim(), trabalho: String(o.trabalho).trim(), vida: String(o.vida).trim() };
-    } catch (e) {}
-    return null;
-  };
-  fallbackReading = () => ({
-    amor: 'No amor, a energia pede verdade e presença. O que é sincero se aproxima — e o resto se dissolve com leveza, sem precisar de força.',
-    trabalho: 'No trabalho, há um chamado para alinhar o que você faz com o que sente. Um gesto simples, feito com clareza, abre mais portas do que parece.',
-    vida: 'Na vida, é um momento de virada suave: algo se move por baixo da superfície. Confie no seu tempo e dê um passo de cada vez.'
-  });
-  runReading = async () => {
+  runReading = () => {
     if (this.state.tStage !== 'pick' || this.state.tPicks.length < 3) return;
     this.setState({ tStage: 'loading' });
-    const cards = this.state.tPicks.map((ci, k) => this.POS[k] + ' — ' + this.CARDS[ci].name).join('; ');
-    const prompt = 'Você é Aquila, uma taróloga brasileira de voz calorosa, humana e acolhedora. Uma pessoa fez uma tiragem rápida e tirou três cartas: ' + cards + '. '
-      + 'Escreva uma leitura interpretando a JUNÇÃO das três energias como um todo — nunca explique carta por carta nem cite os nomes das cartas. Diga o que elas, juntas, revelam sobre o momento dela. '
-      + 'Tom de conversa de uma amiga sábia: simples, afetuoso e direto. Português do Brasil. Não soe como robô nem como IA, evite jargão esotérico difícil e evite listas. '
-      + 'Divida em três blocos bem curtos, cada um com no máximo 1 ou 2 frases: amor (o campo afetivo), trabalho (trabalho e propósito) e vida (o momento de vida em geral, saúde e caminho). '
-      + 'Responda SOMENTE com um JSON válido, sem markdown e sem texto fora dele: {"amor":"...","trabalho":"...","vida":"..."}';
-    let reading = null;
-    try {
-      if (typeof window !== 'undefined' && window.claude && window.claude.complete) {
-        const raw = await window.claude.complete(prompt);
-        reading = this.parseReading(raw);
-      }
-    } catch (e) { reading = null; }
-    if (!reading) reading = this.fallbackReading();
-    this.setState({ tReading: reading, tStage: 'result' });
+    const p = this.state.tPicks;
+    const M = this.MEANINGS, C = this.CARDS;
+    // cada carta tirada informa a sua posição (Amor / Trabalho / Vida), no estilo de uma tiragem clássica
+    const reading = {
+      amor: 'No amor, ' + M[p[0]].a,
+      trabalho: 'No trabalho, ' + M[p[1]].t,
+      vida: 'Na vida, ' + M[p[2]].v,
+      amorCard: C[p[0]].name,
+      trabalhoCard: C[p[1]].name,
+      vidaCard: C[p[2]].name
+    };
+    setTimeout(() => this.setState({ tReading: reading, tStage: 'result' }), 1500);
   };
 
-  setVideo = (el) => { this.videoRef = el; };
+  playHomeVideo = () => {
+    const v = document.getElementById('home-video');
+    if (v) { v.muted = false; try { v.currentTime = 0; } catch (e) {} const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+    this.setState({ homeVideoPlaying: true });
+  };
+  setVideo = (el) => {
+    this.videoRef = el;
+    if (el && !el._readyBound) {
+      el._readyBound = true;
+      const ready = () => { if (!this.state.videoReady) this.setState({ videoReady: true }); };
+      el.addEventListener('loadeddata', ready);
+      el.addEventListener('canplay', ready);
+      if (el.readyState >= 2) ready();
+    }
+  };
   enter = () => {
     const v = this.videoRef;
     this.setState({ playing: true });
@@ -1350,12 +1506,12 @@ void main(){
     if (typeof window !== 'undefined') { clearTimeout(this._drawT); this._drawT = setTimeout(this.drawActive, 40); }
 
     const data = [
-      { n: '01', t: 'Enxergar o caminho quando tudo parece névoa.', s: 'Para decisões importantes.', cap: 'A Névoa' },
-      { n: '02', t: 'Entender o que pulsa por trás das palavras.', s: 'Sobre relacionamentos e sentimentos.', cap: 'O Encontro' },
-      { n: '03', t: 'Ver o invisível que move outras pessoas.', s: 'Sobre questões envolvendo terceiros.', cap: 'O Terceiro' },
-      { n: '04', t: 'Antecipar aquilo que ainda está se formando.', s: 'Sobre tendências e o que está por vir.', cap: 'As Ondas' },
-      { n: '05', t: 'Reconhecer a próxima porta antes dela se abrir.', s: 'Para o seu direcionamento profissional.', cap: 'A Bússola' },
-      { n: '06', t: 'Uma travessia feita só para o seu momento.', s: 'Sua leitura energética personalizada.', cap: 'A Aura' }
+      { n: '01', t: 'O caminho que estava escondido na névoa.', s: 'Para decisões importantes.', cap: 'A Névoa' },
+      { n: '02', t: 'O que pulsa por trás das palavras ditas.', s: 'Sobre relacionamentos e sentimentos.', cap: 'O Encontro' },
+      { n: '03', t: 'O que move em silêncio as pessoas ao seu redor.', s: 'Sobre questões envolvendo terceiros.', cap: 'O Terceiro' },
+      { n: '04', t: 'Os sinais do que ainda está por vir.', s: 'Sobre tendências e o que está por vir.', cap: 'As Ondas' },
+      { n: '05', t: 'A próxima porta, antes mesmo de ela se abrir.', s: 'Para o seu direcionamento profissional.', cap: 'A Bússola' },
+      { n: '06', t: 'A travessia que é só sua, no seu tempo.', s: 'Sua leitura energética personalizada.', cap: 'A Aura' }
     ];
     const chapters = data.map((d, i) => ({
       n: d.n, t: d.t, s: d.s, cap: d.cap,
@@ -1374,7 +1530,8 @@ void main(){
 
     return {
       waLink, chapters,
-      isChapters: slide >= 1 && slide <= 6,
+      isChapters: slide === 1,
+      chapterList: data.map((d, i) => ({ n: d.n, t: d.t, op: (i <= (this.state.chapStep || 0)) ? 1 : 0, tx: (i <= (this.state.chapStep || 0)) ? '0px' : '-26px' })),
       chN: cur.n, chCap: cur.cap, chTitle: cur.t, chSub: cur.s,
       chEyebrow: 'Capítulo II · ' + cur.n + ' / 06',
       chScreenLabel: 'II · ' + cur.n,
@@ -1384,6 +1541,13 @@ void main(){
       txtTransform: txtOn ? 'translateY(0)' : 'translateY(12px)',
       txtFilter: txtOn ? 'blur(0px)' : 'blur(5px)',
       showIntro: phase === 'intro',
+      ptFont: (this.props.planetFont === 'Jost') ? "'Jost', sans-serif" : "'Cormorant Garamond', serif",
+      ptWeight: (this.props.planetFont === 'Jost') ? '400' : '500',
+      ptStyle: (this.props.planetFont === 'Jost') ? 'normal' : 'italic',
+      ptShadow: ({ Dourado: '0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48)', Branco: '0 0 4px rgba(0,0,0,.92), 0 0 14px rgba(255,255,255,.65), 0 0 30px rgba(205,215,255,.45)', Suave: '0 1px 4px rgba(0,0,0,.92), 0 0 12px rgba(0,0,0,.7)', Nenhum: '0 1px 2px rgba(0,0,0,.95)' }[this.props.planetGlow || 'Dourado']) || '0 0 16px rgba(248,210,130,.68)',
+      showHomePlay: !this.state.homeVideoPlaying,
+      playHomeVideo: this.playHomeVideo,
+      showVideoLoading: phase === 'intro' && !this.state.videoReady,
       showEnterUi: phase === 'intro' && !this.state.playing,
       playing: phase === 'intro' && this.state.playing,
       glowOn: this.state.glowOn,
@@ -1392,15 +1556,21 @@ void main(){
       homeOpacity: reveal ? 0 : 1,
       homeScale: reveal ? 'scale(1.06)' : 'scale(1)',
       isHome: slide === 0,
-      isDepo: slide === 7,
+      isDepo: slide === 2,
+      depoPlay: (this.state.depoPaused || this.state.depoLightbox) ? 'paused' : 'running',
+      toggleDepo: () => this.setState((s) => ({ depoPaused: !s.depoPaused })),
+      openDepo: (e) => { if (e) { e.stopPropagation(); this.setState({ depoLightbox: e.currentTarget.getAttribute('src') }); } },
+      closeDepo: (e) => { if (e) e.stopPropagation(); this.setState({ depoLightbox: null }); },
+      depoLightbox: this.state.depoLightbox || '',
+      showDepoLightbox: !!this.state.depoLightbox,
       col1: this.dup(['01', '04', '07', '10', '08']),
       col2: this.dup(['02', '05', '11', '12', '13']),
       col3: this.dup(['03', '06', '09', '14']),
-      isTarot: slide === 8,
-      isDiferenciais: slide === 9,
-      isMetodologia: slide === 10,
-      isFinale: slide === 11,
-      isFaq: slide === 12,
+      isTarot: slide === 3,
+      isDiferenciais: slide === 4,
+      isMetodologia: slide === 5,
+      isFinale: slide === 6,
+      isFaq: slide === 7,
       faqItems: this.FAQ.map((f, i) => ({
         q: f.q, a: f.a,
         toggle: () => this.setState((s) => ({ faqOpen: s.faqOpen === i ? -1 : i })),
@@ -1426,6 +1596,9 @@ void main(){
       readingAmor: (this.state.tReading && this.state.tReading.amor) || '',
       readingTrabalho: (this.state.tReading && this.state.tReading.trabalho) || '',
       readingVida: (this.state.tReading && this.state.tReading.vida) || '',
+      readingAmorCard: (this.state.tReading && this.state.tReading.amorCard) || '',
+      readingTrabalhoCard: (this.state.tReading && this.state.tReading.trabalhoCard) || '',
+      readingVidaCard: (this.state.tReading && this.state.tReading.vidaCard) || '',
       pickHint: this.state.tPicks.length === 0 ? 'Escolha sua primeira carta' : ('Escolha mais ' + (3 - this.state.tPicks.length) + (3 - this.state.tPicks.length > 1 ? ' cartas' : ' carta')),
       onImgError: this.onImgError,
       chosen: this.state.tPicks.map((ci) => { const c = this.CARDS[ci]; return { name: c.name, imgEl: React.createElement('img', { src: this.imgUrl(c.file), alt: c.name, loading: 'eager', onError: this.onImgError, style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) }; }),
@@ -1450,7 +1623,7 @@ void main(){
       showNext: phase === 'home' && slide < this.LAST,
       showBack: phase === 'home' && slide > 0,
       next: this.next, prev: this.prev, goHome: () => this.goTo(0),
-      pageMark: slide === 0 ? 'I · A Soleira' : (slide === 7 ? 'III · Depoimentos' : (slide === 8 ? 'IV · A Leitura' : (slide === 9 ? 'V · Diferenciais' : (slide === 10 ? 'VI · Metodologia' : (slide === 11 ? 'VIII · Clube' : (slide === 12 ? 'IX · FAQ' : 'II · 0' + slide + ' / 06')))))),
+      pageMark: slide === 0 ? 'I · A Soleira' : (slide === 1 ? 'II · O Portal' : (slide === 2 ? 'III · Depoimentos' : (slide === 3 ? 'IV · A Leitura' : (slide === 4 ? 'V · Diferenciais' : (slide === 5 ? 'VI · Metodologia' : (slide === 6 ? 'VII · Clube' : 'VIII · FAQ')))))),
       progress: (slide / this.LAST * 100) + '%',
       setVideo: this.setVideo, enter: this.enter, onEnded: this.onEnded, skip: this.skip
     };

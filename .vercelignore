@@ -1,0 +1,5 @@
+# Arquivos de trabalho não referenciados pelo site (mantidos no Git, fora do deploy)
+uploads/
+screenshots/
+.playwright-mcp/
+*.log

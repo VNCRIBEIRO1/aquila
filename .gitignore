@@ -1,1 +1,7 @@
-.vercel
+.vercel/
+.playwright-mcp/
+node_modules/
+*.log
+reading-result-localized.jpeg
+.DS_Store
+Thumbs.db
