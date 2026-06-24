@@ -16,11 +16,16 @@ Todos os recursos que antes vinham da internet foram **embutidos no projeto**, s
 
 Não há mais nenhuma requisição externa de recurso. Os únicos links externos restantes são intencionais: o botão de WhatsApp (`wa.me`) e o namespace XML de SVG (`w3.org`).
 
+## Vídeo de intro (pré-home)
+
+- O vídeo é otimizado: H.264 720p com **+faststart** (toca progressivamente, sem precisar baixar tudo antes) — `intro.mp4` (~1 MB) e `portal.mp4` (faststart lossless).
+- Há um **boot-loader** (`#boot-loader` no topo do `<body>`): tela de carregamento on-brand que cobre o bootstrap e o buffering do vídeo, dispara o play (vencendo bloqueio de autoplay), com fallback "Toque para entrar" e trava de segurança. Garante que o vídeo carregue para todos.
+
 ## Estrutura
 
-- **`index.html`** — bundle self-contained (página entregue na Vercel). React, ReactDOM e three.js já vêm embutidos; só busca as cartas em `cards/`.
-- **`Portal do Invisível.dc.html` + `support.js`** — fonte modular editável (mesma experiência), agora carregando tudo de `vendor/`, `fonts/` e `cards/`.
+- **`index.html`** = **`Portal do Invisível.dc.html`** — página modular entregue na Vercel. `support.js` carrega React/ReactDOM de `vendor/`; three.js vem de `vendor/three.min.js`; fontes de `fonts/`; cartas de `cards/`. Mantenha os dois arquivos em sincronia (index.html é cópia do .dc.html).
 - `cards/`, `fonts/`, `vendor/` — assets locais embutidos.
+- `uploads/`, `screenshots/` — arquivos de trabalho (no Git, fora do deploy via `.vercelignore`).
 
 ## Deploy
 
