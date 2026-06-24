@@ -3,5 +3,7 @@
 node_modules/
 *.log
 reading-result-localized.jpeg
+flow-*.jpeg
+boot-loader-look.jpeg
 .DS_Store
 Thumbs.db

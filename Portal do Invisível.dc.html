@@ -6,6 +6,48 @@
 <script src="./support.js"></script>
 </head>
 <body>
+<!-- ===== BOOT LOADER: garante que o vídeo de intro carregue para todos (cobre o bootstrap e o buffering do vídeo) ===== -->
+<div id="boot-loader" aria-hidden="true">
+  <div class="bl-ring"></div>
+  <div class="bl-word">Portal do Invisível</div>
+  <div class="bl-sub">Carregando o portal</div>
+  <button id="bl-enter" type="button">Toque para entrar</button>
+</div>
+<style>
+  #boot-loader{position:fixed;inset:0;z-index:99999;background:#070504;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .8s ease;font-family:'Cormorant Garamond',Georgia,serif;}
+  #boot-loader.bl-hide{opacity:0;pointer-events:none;}
+  #boot-loader .bl-ring{width:52px;height:52px;border-radius:50%;border:2px solid rgba(216,166,87,.22);border-top-color:#e8c074;animation:blspin .9s linear infinite;}
+  @keyframes blspin{to{transform:rotate(360deg)}}
+  #boot-loader .bl-word{font-size:clamp(22px,4.4vw,30px);font-style:italic;color:#f0cd8a;text-align:center;padding:0 24px;}
+  #boot-loader .bl-sub{font-family:'Jost',-apple-system,BlinkMacSystemFont,sans-serif;font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:#9a8a6a;}
+  #boot-loader #bl-enter{display:none;margin-top:8px;font-family:'Jost',-apple-system,sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);border:none;border-radius:30px;padding:12px 26px;cursor:pointer;}
+</style>
+<script>
+(function(){
+  var bl=document.getElementById('boot-loader'); if(!bl) return;
+  var enterBtn=document.getElementById('bl-enter');
+  var hidden=false, attached=null, sawVideo=false;
+  function hide(){ if(hidden) return; hidden=true; bl.classList.add('bl-hide'); setTimeout(function(){ if(bl&&bl.parentNode) bl.parentNode.removeChild(bl); }, 850); }
+  function findIntro(){ var v=document.getElementsByTagName('video'); for(var i=0;i<v.length;i++){ var s=v[i].getAttribute('src')||''; if(s.indexOf('intro')!==-1) return v[i]; } return null; }
+  function tryPlay(v){ try{ var p=v.play(); if(p&&p.catch) p.catch(function(){ if(enterBtn) enterBtn.style.display='inline-block'; }); }catch(e){ if(enterBtn) enterBtn.style.display='inline-block'; } }
+  function attach(v){
+    if(attached===v) return; attached=v; sawVideo=true;
+    try{ v.setAttribute('preload','auto'); v.muted=true; }catch(e){}
+    if(v.readyState>=3) tryPlay(v);
+    v.addEventListener('canplay', function(){ tryPlay(v); });
+    v.addEventListener('playing', hide);
+    v.addEventListener('timeupdate', function(){ if(v.currentTime>0) hide(); });
+  }
+  if(enterBtn) enterBtn.addEventListener('click', function(){ var v=findIntro(); if(v){ v.muted=true; tryPlay(v); } else { hide(); } });
+  var poll=setInterval(function(){
+    if(hidden){ clearInterval(poll); return; }
+    var v=findIntro();
+    if(v) attach(v);
+    else if(sawVideo) hide();           /* intro emergiu/foi removida -> revela o app */
+  }, 120);
+  setTimeout(hide, 12000);              /* trava de segurança: nunca prende o usuário no loader */
+})();
+</script>
 <x-dc>
 <helmet>
 <link href="fonts/fonts.css" rel="stylesheet">
@@ -514,7 +556,7 @@
   <!-- ============ LOADING SCREEN (video) ============ -->
   <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
     <div style="position:absolute;inset:0;z-index:200;background:#000;overflow:hidden;">
-      <video ref="{{ setVideo }}" src="intro.mp4" autoplay muted playsinline onEnded="{{ onEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>
+      <video ref="{{ setVideo }}" src="intro.mp4" autoplay muted playsinline preload="auto" onEnded="{{ onEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>
       <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 46%, rgba(0,0,0,0) 30%, rgba(0,0,0,.45) 100%);pointer-events:none;"></div>
       <sc-if value="{{ showVideoLoading }}" hint-placeholder-val="{{ true }}">
         <div style="position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;">
