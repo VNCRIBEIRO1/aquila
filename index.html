@@ -1563,7 +1563,7 @@ float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<6;i++){ v+=a*noise(p); p*=2.
 void main(){
  vec2 uv=gl_FragCoord.xy/u_res; vec2 p=uv*2.0-1.0; float asp=u_res.x/u_res.y;
  if(asp>=1.0) p.x*=asp; else p.y/=asp;   // mantém o portal circular
- p*=1.08;                                 // folga p/ não cortar nenhuma ponta
+ p*=0.27;                                 // portal 4x maior (preenche bem o fundo)
  float time=u_time; float r=length(p); float ang=atan(p.y,p.x);
  float swirl=ang + r*2.6 - time*0.22;
  vec2 q=vec2(cos(swirl),sin(swirl))*(0.4+r);
