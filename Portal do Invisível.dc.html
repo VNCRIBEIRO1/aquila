@@ -628,20 +628,12 @@
     <a href="{{ waLink }}" target="_blank" rel="noopener" style="pointer-events:auto;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#e8c074;text-decoration:none;border:1px solid rgba(216,166,87,.4);padding:11px 22px;border-radius:30px;">Agendar</a>
   </header>
 
-  <!-- ============ PROGRESS + LABEL ============ -->
-  <div style="position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:55;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;width:min(280px,60vw);">
-    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#e8c074;letter-spacing:.02em;">{{ pageMark }}</div>
-    <div style="width:100%;height:2px;background:rgba(216,166,87,.18);border-radius:2px;overflow:hidden;">
-      <div style="height:100%;width:{{ progress }};background:linear-gradient(90deg,#d2992f,#f4d99b);border-radius:2px;transition:width 1s cubic-bezier(.72,0,.18,1);"></div>
-    </div>
-  </div>
-
-  <!-- ============ FILM ARROWS ============ -->
+  <!-- ============ FILM ARROWS (↑ anterior / ↓ próxima) ============ -->
   <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
-    <button onClick="{{ prev }}" style="position:absolute;bottom:22px;left:clamp(18px,5vw,46px);z-index:55;width:46px;height:46px;border-radius:50%;border:1px solid rgba(216,166,87,.36);background:rgba(11,8,7,.5);color:#e8c074;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;">←</button>
+    <button onClick="{{ prev }}" aria-label="Página anterior" style="position:absolute;bottom:78px;right:clamp(18px,5vw,46px);z-index:55;width:46px;height:46px;border-radius:50%;border:1px solid rgba(216,166,87,.36);background:rgba(11,8,7,.5);color:#e8c074;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">↑</button>
   </sc-if>
   <sc-if value="{{ showNext }}" hint-placeholder-val="{{ false }}">
-    <button onClick="{{ next }}" style="position:absolute;bottom:22px;right:clamp(18px,5vw,46px);z-index:55;width:46px;height:46px;border-radius:50%;border:1px solid rgba(240,205,138,.55);background:linear-gradient(180deg,rgba(244,217,155,.22),rgba(210,153,47,.18));color:#f4d99b;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;animation:pulseGlow 4s ease-in-out infinite;">→</button>
+    <button onClick="{{ next }}" aria-label="Próxima página" style="position:absolute;bottom:22px;right:clamp(18px,5vw,46px);z-index:55;width:46px;height:46px;border-radius:50%;border:1px solid rgba(240,205,138,.55);background:linear-gradient(180deg,rgba(244,217,155,.22),rgba(210,153,47,.18));color:#f4d99b;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;animation:pulseGlow 4s ease-in-out infinite;">↓</button>
   </sc-if>
 
   <!-- ============ LOADING SCREEN (video) ============ -->
@@ -757,12 +749,18 @@ class Component extends DCLogic {
       else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); this.prev(); }
     };
     this._onWheel = (e) => {
-      if (this.state.phase !== 'home') return;
-      if (this.state.slide === 3 || this.state.slide === 5 || this.state.slide === 6 || this.state.slide === 7) return; // leitura/V (scroll)/finale/FAQ: deixa o conteúdo rolar
-      if (Math.abs(e.deltaY) < 24 || this._wheelLock) return;
+      if (this.state.phase !== 'home' || this._wheelLock) return;
+      if (Math.abs(e.deltaY) < 18) return;
+      const goingNext = e.deltaY > 0;                 // rolar pra baixo = próxima
+      const sc = this._findScroller(e.target);
+      if (sc) {
+        const atTop = sc.scrollTop <= 2;
+        const atBottom = sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 2;
+        if (goingNext ? !atBottom : !atTop) return;   // deixa o conteúdo rolar até a borda; na borda, troca de página
+      }
       this._wheelLock = true;
-      if (e.deltaY > 0) this.next(); else this.prev();
-      setTimeout(() => { this._wheelLock = false; }, 1100);
+      if (goingNext) this.next(); else this.prev();
+      setTimeout(() => { this._wheelLock = false; }, 900);
     };
     // —— navegação por toque (mobile): swipe vertical troca de página ——
     // Em telas com conteúdo rolável, só troca quando o scroll já está na borda
