@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tarologaaquila.vercel.app/sitemap.xml
