@@ -556,7 +556,7 @@
   <!-- ============ LOADING SCREEN (video) ============ -->
   <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
     <div style="position:absolute;inset:0;z-index:200;background:#000;overflow:hidden;">
-      <video ref="{{ setVideo }}" src="intro.mp4" autoplay muted playsinline preload="auto" onEnded="{{ onEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>
+      <video ref="{{ setVideo }}" src="intro.mp4" autoplay muted playsinline preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>
       <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 46%, rgba(0,0,0,0) 30%, rgba(0,0,0,.45) 100%);pointer-events:none;"></div>
       <sc-if value="{{ showVideoLoading }}" hint-placeholder-val="{{ true }}">
         <div style="position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;">
@@ -836,12 +836,13 @@ class Component extends DCLogic {
     const W = stage.clientWidth, H = stage.clientHeight;
     if (!W || !H) { this._solarPoll = setTimeout(this.initSolar, 120); return; }
 
+    const isMobile = (typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '')) || Math.min(W, H) < 680;
     let renderer;
-    try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, powerPreference: 'high-performance' }); }
+    try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: !isMobile, alpha: true, powerPreference: 'high-performance' }); }
     catch (e) { this._solarPoll = setTimeout(this.initSolar, 200); return; }
     const gl = renderer.getContext();
     if (!gl || gl.isContextLost()) { try { renderer.dispose(); } catch (e) {} this._solarPoll = setTimeout(this.initSolar, 200); return; }
-    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.setPixelRatio(Math.min(isMobile ? 1.25 : 1.5, window.devicePixelRatio || 1));
     renderer.setSize(W, H, false);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 240);
@@ -894,7 +895,7 @@ class Component extends DCLogic {
       const t = new THREE.CanvasTexture(cv); t.needsUpdate = true; t.anisotropy = 4; return t;
     })();
     const planets = defs.map((d) => {
-      const m = new THREE.Mesh(new THREE.SphereGeometry(d.sz, 64, 64), new THREE.MeshStandardMaterial({ color: d.col, map: planetTex, emissive: new THREE.Color(d.col), emissiveIntensity: 0.55, emissiveMap: planetTex, roughness: 0.72, metalness: 0.0 }));
+      const m = new THREE.Mesh(new THREE.SphereGeometry(d.sz, 24, 16), new THREE.MeshStandardMaterial({ color: d.col, map: planetTex, emissive: new THREE.Color(d.col), emissiveIntensity: 0.55, emissiveMap: planetTex, roughness: 0.72, metalness: 0.0 }));
       group.add(m);
       const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: halo, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
       sp.scale.set(d.sz * 8, d.sz * 8, 1);
@@ -903,7 +904,7 @@ class Component extends DCLogic {
     });
 
     const starTex = this.makeStarTexture(THREE);
-    const N = 620, pos = new Float32Array(N * 3);
+    const N = 420, pos = new Float32Array(N * 3);
     for (let i = 0; i < N; i++) { const rr = 45 + Math.random() * 70, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1); pos[i * 3] = rr * Math.sin(ph) * Math.cos(th); pos[i * 3 + 1] = rr * Math.cos(ph); pos[i * 3 + 2] = rr * Math.sin(ph) * Math.sin(th); }
     const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     const stars = new THREE.Points(sg, new THREE.PointsMaterial({ map: starTex, color: 0xe6ecff, size: 0.7, sizeAttenuation: true, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending }));
@@ -914,59 +915,12 @@ class Component extends DCLogic {
     const onEnter = () => {};
     const onLeave = () => {};
 
-    // —— interatividade: arrastar planetas ——
-    const raycaster = new THREE.Raycaster();
-    const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-    const ndc = new THREE.Vector2();
-    const hitPt = new THREE.Vector3();
-    const ptXY = (e) => {
-      const r = cv.getBoundingClientRect();
-      const px = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
-      const py = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
-      ndc.x = ((px - r.left) / r.width) * 2 - 1;
-      ndc.y = -((py - r.top) / r.height) * 2 + 1;
-      return { px: px, py: py, r: r };
-    };
-    const onDown = (e) => {
-      const S = this._solar; if (!S) return;
-      const info = ptXY(e);
-      let best = null, bd = 46 * 46;
-      const v = new THREE.Vector3(), wp = new THREE.Vector3();
-      S.planets.forEach((p) => {
-        if ((p._em || 0) < 0.85) return;
-        p.mesh.getWorldPosition(wp); v.copy(wp).project(S.camera);
-        const sx = (v.x * 0.5 + 0.5) * info.r.width + info.r.left;
-        const sy = (-v.y * 0.5 + 0.5) * info.r.height + info.r.top;
-        const d = (sx - info.px) * (sx - info.px) + (sy - info.py) * (sy - info.py);
-        if (d < bd) { bd = d; best = p; }
-      });
-      if (best) { S.dragging = best; best._drag = true; cv.style.cursor = 'grabbing'; try { if (e.pointerId != null) cv.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); }
-    };
-    const onMove = (e) => {
-      const S = this._solar; if (!S || !S.dragging) return;
-      ptXY(e);
-      raycaster.setFromCamera(ndc, S.camera);
-      if (raycaster.ray.intersectPlane(dragPlane, hitPt)) {
-        let rad = Math.hypot(hitPt.x, hitPt.z); rad = Math.max(2.4, Math.min(8.2, rad));
-        const ang = Math.atan2(hitPt.z, hitPt.x);
-        S.dragging.mesh.position.set(Math.cos(ang) * rad, 0, Math.sin(ang) * rad);
-        S.dragging._dragAng = ang; S.dragging._dragR = rad;
-      }
-      e.preventDefault();
-    };
-    const onUp = () => {
-      const S = this._solar; if (!S || !S.dragging) return;
-      const p = S.dragging;
-      if (p._dragAng != null) { p.r = p._dragR; p.ph = p._dragAng - (S.ang - (p._delay || 0)) * p.sp; }
-      p._drag = false; S.dragging = null; cv.style.cursor = 'grab';
-    };
-    cv.style.touchAction = 'none'; cv.style.cursor = 'grab'; cv.style.pointerEvents = 'auto';
-    cv.addEventListener('pointerdown', onDown);
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('pointercancel', onUp);
+    // interatividade removida — os planetas seguem apenas o fluxo de órbita já definido (mais leve em todos os aparelhos)
+    cv.style.pointerEvents = 'none';
+    cv.style.touchAction = 'auto';
+    cv.style.cursor = 'default';
 
-    this._solar = { renderer, scene, camera, group, portal, portalMat, sunGlow, stars, planets, labels, sunLabel, stage, cv, t0: performance.now(), last: performance.now(), w: W, h: H, paused: false, ang: 0, dragging: null, onEnter, onLeave, onDown, onMove, onUp };
+    this._solar = { renderer, scene, camera, group, portal, portalMat, sunGlow, stars, planets, labels, sunLabel, stage, cv, t0: performance.now(), last: performance.now(), w: W, h: H, paused: false, ang: 0, onEnter, onLeave };
     this.animateSolar();
   };
 
@@ -1038,7 +992,6 @@ class Component extends DCLogic {
     if (S.raf) cancelAnimationFrame(S.raf);
     if (this._solarPoll) { clearTimeout(this._solarPoll); this._solarPoll = null; }
     try { S.stage.removeEventListener('pointerenter', S.onEnter); S.stage.removeEventListener('pointerleave', S.onLeave); } catch (e) {}
-    try { S.cv.removeEventListener('pointerdown', S.onDown); window.removeEventListener('pointermove', S.onMove); window.removeEventListener('pointerup', S.onUp); window.removeEventListener('pointercancel', S.onUp); } catch (e) {}
     try { S.renderer.dispose(); } catch (e) {}
     (S.labels || []).forEach((el) => { if (el) el.style.opacity = '0'; });
     if (S.sunLabel) S.sunLabel.style.opacity = '0';
@@ -1519,6 +1472,7 @@ void main(){
       const ready = () => { if (!this.state.videoReady) this.setState({ videoReady: true }); };
       el.addEventListener('loadeddata', ready);
       el.addEventListener('canplay', ready);
+      el.addEventListener('ended', this.onEnded);
       if (el.readyState >= 2) ready();
     }
   };
