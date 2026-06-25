@@ -239,7 +239,7 @@
           <div style="position:relative;z-index:3;min-height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;gap:clamp(16px,3vh,34px);max-width:1040px;margin:0 auto;padding:clamp(70px,12vh,140px) clamp(24px,7vw,90px) clamp(60px,10vh,120px);box-sizing:border-box;">
             <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#caa765;font-weight:300;margin-bottom:clamp(6px,1.5vh,16px);">Capítulo II · O que o Portal te revelará</div>
             <sc-for list="{{ chapterList }}" as="c" hint-placeholder-count="6">
-              <div style="display:flex;align-items:baseline;justify-content:center;gap:clamp(16px,2.4vw,32px);opacity:{{ c.op }};transform:translateY({{ c.tx }});transition:opacity 1.9s ease, transform 2s cubic-bezier(.2,.7,.2,1);">
+              <div style="display:flex;align-items:baseline;justify-content:center;gap:clamp(16px,2.4vw,32px);opacity:{{ c.op }};transform:translateY({{ c.tx }});transition:opacity 1.9s ease, transform 2s cubic-bezier(.2,.7,.2,1);will-change:opacity,transform;">
                 <span style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f6efe0;font-size:clamp(24px,4vw,52px);line-height:1.12;text-shadow:0 2px 34px rgba(216,166,87,.4), 0 4px 40px rgba(0,0,0,.6);text-wrap:balance;">{{ c.t }}</span>
               </div>
             </sc-for>
@@ -1270,7 +1270,8 @@ class Component extends DCLogic {
   startChapters = () => {
     if (this._chRaf) cancelAnimationFrame(this._chRaf);
     if (this._txtSwap) clearTimeout(this._txtSwap);
-    this.setState({ chapStep: -1, chFrom: 5, chTo: 5, chMix: 1 });
+    this._chFrom = 5; this._chTo = 5; this._chMix = 1;
+    this.setState({ chapStep: -1 });
     setTimeout(() => { if (this._chapTimer) this.setState({ chapStep: 0 }); }, 400);
     let i = 0;
     this._chapTimer = setInterval(() => {
@@ -1287,17 +1288,17 @@ class Component extends DCLogic {
   startSceneTransition(from, to) {
     if (this._chRaf) cancelAnimationFrame(this._chRaf);
     if (this._txtSwap) clearTimeout(this._txtSwap);
-    // fade current text out, begin the effect crossfade
-    this.setState({ txtOn: false, chFrom: from, chTo: to, chMix: 0 });
-    // swap the copy at the darkest point, then fade it back in
+    // crossfade do efeito via uniforms (variáveis de instância) — NÃO re-renderiza o React por frame
+    this._chFrom = from; this._chTo = to; this._chMix = 0;
+    // só o texto usa state: some agora e volta no ponto mais escuro (2 re-renders, não por frame)
+    this.setState({ txtOn: false });
     this._txtSwap = setTimeout(() => this.setState({ dispScene: to, txtOn: true }), 440);
     const t0 = performance.now(), dur = 1200;
     const step = (now) => {
       const k = Math.min(1, (now - t0) / dur);
-      const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; // easeInOutQuad
-      this.setState({ chMix: e });
+      this._chMix = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; // easeInOutQuad
       if (k < 1) this._chRaf = requestAnimationFrame(step);
-      else { this._chRaf = null; this.setState({ chFrom: to, chMix: 1 }); }
+      else { this._chRaf = null; this._chFrom = to; this._chMix = 1; }
     };
     this._chRaf = requestAnimationFrame(step);
   }
@@ -1508,7 +1509,7 @@ void main(){
     let g = cv.__gl;
     if (g === undefined) { g = this.initGL(cv); cv.__gl = g; }
     if (!g) return;
-    const RES = 0.72; // soft glow — render below native res for performance
+    const RES = 0.45; // fundo bem fraco (opacity .2) — resolução baixa é imperceptível e bem mais leve
     const w = cv.clientWidth, h = cv.clientHeight;
     if (!w || !h) return;
     const bw = Math.max(1, Math.round(w * RES)), bh = Math.max(1, Math.round(h * RES));
@@ -1525,9 +1526,9 @@ void main(){
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     gl.uniform2f(uRes, cv.width, cv.height);
     gl.uniform1f(uTime, (performance.now() - this._t0) / 1000);
-    gl.uniform1f(uFrom, this.state.chFrom);
-    gl.uniform1f(uTo, this.state.chTo);
-    gl.uniform1f(uMix, this.state.chMix);
+    gl.uniform1f(uFrom, this._chFrom != null ? this._chFrom : 0);
+    gl.uniform1f(uTo, this._chTo != null ? this._chTo : 0);
+    gl.uniform1f(uMix, this._chMix != null ? this._chMix : 1);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
@@ -1535,7 +1536,7 @@ void main(){
     let g = cv.__gl;
     if (g === undefined) { g = this.initGL(cv); cv.__gl = g; }
     if (!g) return;
-    const RES = 0.72;
+    const RES = 0.62;
     const w = cv.clientWidth, h = cv.clientHeight;
     if (!w || !h) return;
     const bw = Math.max(1, Math.round(w * RES)), bh = Math.max(1, Math.round(h * RES));
