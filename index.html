@@ -874,7 +874,7 @@ class Component extends DCLogic {
         'float noise(vec3 x){ vec3 i=floor(x), f=fract(x); f=f*f*(3.0-2.0*f);',
         ' return mix(mix(mix(hash(i+vec3(0.,0.,0.)),hash(i+vec3(1.,0.,0.)),f.x), mix(hash(i+vec3(0.,1.,0.)),hash(i+vec3(1.,1.,0.)),f.x),f.y),',
         ' mix(mix(hash(i+vec3(0.,0.,1.)),hash(i+vec3(1.,0.,1.)),f.x), mix(hash(i+vec3(0.,1.,1.)),hash(i+vec3(1.,1.,1.)),f.x),f.y),f.z); }',
-        'float fbm(vec3 p){ float v=0.0,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.02; a*=0.5; } return v; }',
+        'float fbm(vec3 p){ float v=0.0,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.02; a*=0.5; } return v; }',
         'void main(){ vec3 d=normalize(vP);',
         ' float n=fbm(d*3.2+vec3(0.0,time*0.06,0.0));',
         ' float n2=fbm(d*7.5-vec3(time*0.09,0.0,time*0.04));',
@@ -906,7 +906,7 @@ class Component extends DCLogic {
         'float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+34.56); return fract(p.x*p.y); }',
         'float noise(vec2 x){ vec2 i=floor(x), f=fract(x); f=f*f*(3.0-2.0*f);',
         ' return mix(mix(hash(i+vec2(0.,0.)),hash(i+vec2(1.,0.)),f.x), mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x), f.y); }',
-        'float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<6;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }',
+        'float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }',
         'void main(){',
         ' vec2 p=vUv*2.0-1.0; float r=length(p); float ang=atan(p.y,p.x);',
         ' float swirl=ang + r*2.6 - time*0.22;',
@@ -966,7 +966,7 @@ class Component extends DCLogic {
 
     const isMobile = (typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '')) || Math.min(W, H) < 680;
     let renderer;
-    try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: !isMobile, alpha: true, powerPreference: 'high-performance' }); }
+    try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: !isMobile, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }); }
     catch (e) { this._solarPoll = setTimeout(this.initSolar, 200); return; }
     const gl = renderer.getContext();
     if (!gl || gl.isContextLost()) { try { renderer.dispose(); } catch (e) {} this._solarPoll = setTimeout(this.initSolar, 200); return; }
@@ -1057,6 +1057,8 @@ class Component extends DCLogic {
     const THREE = window.THREE;
     S.raf = requestAnimationFrame(this.animateSolar);
     const now = performance.now();
+    if (now - (S.frameT || 0) < 30) return; // ~30fps: órbita é lenta e time-based (velocidade preservada), bem mais leve
+    S.frameT = now;
     const dt = Math.min(0.05, (now - S.last) / 1000); S.last = now;
     const t = (now - S.t0) / 1000;
     const W = S.cv.clientWidth, H = S.cv.clientHeight;
@@ -1349,6 +1351,9 @@ class Component extends DCLogic {
   };
 
   loop = (now) => {
+    this._raf = requestAnimationFrame(this.loop);
+    if (now - (this._sceneT || 0) < 30) return; // ~30fps p/ os efeitos de fundo (time-based: velocidade preservada, bem mais leve)
+    this._sceneT = now;
     const s = this.state;
     if (s.phase === 'home' && s.slide === 0) {
       let hp = this._homePortalCanv;
@@ -1388,7 +1393,6 @@ class Component extends DCLogic {
         }
       }
     } else { this._faqPainted = false; }
-    this._raf = requestAnimationFrame(this.loop);
   };
 
   FRAG = `precision highp float;
@@ -1397,7 +1401,7 @@ uniform vec2 u_res; uniform float u_time; uniform float u_from; uniform float u_
 float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
 float noise(vec2 p){ vec2 i=floor(p),f=fract(p); vec2 u=f*f*(3.-2.*f);
   return mix(mix(hash(i),hash(i+vec2(1.,0.)),u.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),u.x),u.y);}
-float fbm(vec2 p){ float v=0.,a=.5; mat2 m=mat2(1.6,1.2,-1.2,1.6); for(int k=0;k<5;k++){v+=a*noise(p);p=m*p;a*=.5;} return v;}
+float fbm(vec2 p){ float v=0.,a=.5; mat2 m=mat2(1.6,1.2,-1.2,1.6); for(int k=0;k<4;k++){v+=a*noise(p);p=m*p;a*=.5;} return v;}
 float segd(vec2 p, vec2 a, vec2 b){ vec2 pa=p-a, ba=b-a; float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.); return length(pa-ba*h);}
 vec3 holo(float x){ return 0.5+0.5*cos(TAU*(vec3(1.0,0.9,0.75)*x+vec3(0.0,0.18,0.38))); }
 vec4 sceneCol(vec2 uv, float t, float sc){
@@ -1559,7 +1563,7 @@ uniform vec2 u_res; uniform float u_time;
 float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+34.56); return fract(p.x*p.y); }
 float noise(vec2 x){ vec2 i=floor(x), f=fract(x); f=f*f*(3.0-2.0*f);
  return mix(mix(hash(i+vec2(0.,0.)),hash(i+vec2(1.,0.)),f.x), mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x), f.y); }
-float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<6;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }
+float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }
 void main(){
  vec2 uv=gl_FragCoord.xy/u_res; vec2 p=uv*2.0-1.0; float asp=u_res.x/u_res.y;
  if(asp>=1.0) p.x*=asp; else p.y/=asp;   // mantém o portal circular
@@ -1582,7 +1586,7 @@ void main(){
 }`;
 
   initPortalGL(cv) {
-    const gl = cv.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: false });
+    const gl = cv.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: true });
     if (!gl) return null;
     const sh = (t, s) => { const x = gl.createShader(t); gl.shaderSource(x, s); gl.compileShader(x); return x; };
     const prog = gl.createProgram();
@@ -1621,7 +1625,7 @@ void main(){
     'uniform vec2 u_res; uniform float u_time;',
     'float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+34.56); return fract(p.x*p.y); }',
     'float noise(vec2 x){ vec2 i=floor(x), f=fract(x); f=f*f*(3.0-2.0*f); return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x), mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x), f.y); }',
-    'float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }',
+    'float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }',
     'void main(){',
     ' vec2 uv=gl_FragCoord.xy/u_res.xy;',
     ' vec2 p=vec2(uv.x*(u_res.x/u_res.y),uv.y)*2.3;',
