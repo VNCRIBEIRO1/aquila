@@ -441,7 +441,7 @@
 
       <!-- ================= SLIDE 11 · CLUBE DO PORTAL + CTA FINAL ================= -->
       <sc-if value="{{ isFinale }}" hint-placeholder-val="{{ false }}">
-      <section data-screen-label="VII · Clube" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 30%, #1c1535 0%, #0d0a1c 50%, #060409 100%);">
+      <section data-screen-label="VIII · Clube" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 30%, #1c1535 0%, #0d0a1c 50%, #060409 100%);">
         <canvas data-scene="finale" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;opacity:.8;"></canvas>
         <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.3px 1.3px at 14% 20%, rgba(228,224,255,.6), transparent),radial-gradient(1px 1px at 76% 14%, rgba(228,224,255,.5), transparent),radial-gradient(1px 1px at 88% 58%, rgba(228,224,255,.5), transparent),radial-gradient(1.4px 1.4px at 28% 78%, rgba(228,224,255,.45), transparent),radial-gradient(1px 1px at 62% 86%, rgba(228,224,255,.45), transparent),radial-gradient(1px 1px at 46% 36%, rgba(228,224,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
         <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(130% 108% at 50% 55%, rgba(8,4,10,.5) 0%, rgba(6,3,8,.84) 100%);"></div>
@@ -450,7 +450,7 @@
 
           <!-- CLUBE DO PORTAL -->
           <div style="text-align:center;flex:none;max-width:760px;">
-            <div style="font-family:'Jost',sans-serif;font-size:12.5px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VII</div>
+            <div style="font-family:'Jost',sans-serif;font-size:12.5px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VIII</div>
             <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(32px,4vw,56px);line-height:1.08;margin:7px 0 0;text-wrap:balance;">Clube do Portal</h2>
             <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(14.5px,1.6vw,18px);margin:9px 0 0;letter-spacing:.02em;max-width:42ch;margin-left:auto;margin-right:auto;">Um grupo exclusivo no WhatsApp — um encontro contínuo, no seu tempo, entre uma consulta e outra.</p>
           </div>
@@ -483,14 +483,14 @@
 
       <!-- ================= SLIDE 12 · FAQ ================= -->
       <sc-if value="{{ isFaq }}" hint-placeholder-val="{{ false }}">
-      <section data-screen-label="VIII · FAQ" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 16%, #2a130d 0%, #160b08 52%, #060302 100%);">
+      <section data-screen-label="VII · FAQ" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;animation:filmInSoft .9s ease both;background:radial-gradient(125% 100% at 50% 16%, #2a130d 0%, #160b08 52%, #060302 100%);">
         <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1.2px 1.2px at 16% 20%, rgba(226,224,255,.55), transparent),radial-gradient(1px 1px at 74% 14%, rgba(226,224,255,.45), transparent),radial-gradient(1px 1px at 86% 60%, rgba(226,224,255,.5), transparent),radial-gradient(1.3px 1.3px at 30% 80%, rgba(226,224,255,.4), transparent),radial-gradient(1px 1px at 58% 88%, rgba(226,224,255,.4), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
         <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(132% 108% at 50% 44%, transparent 42%, rgba(4,3,9,.72) 100%);"></div>
 
         <div style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:84px clamp(20px,5vw,48px) 92px;box-sizing:border-box;">
           <!-- header -->
           <div style="text-align:center;flex:none;margin-bottom:clamp(18px,3vh,34px);">
-            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VIII</div>
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VII</div>
             <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">Perguntas frequentes</h2>
             <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(12px,1.15vw,14.5px);margin:7px 0 0;letter-spacing:.03em;">Toque numa pergunta para abrir o portal da resposta.</p>
           </div>
@@ -690,9 +690,7 @@ class Component extends DCLogic {
       const t = e.touches && e.touches[0]; if (!t) { this._touchStart = null; return; }
       const sc = this._findScroller(e.target);
       this._touchStart = {
-        x: t.clientX, y: t.clientY,
-        hasScroller: !!sc,
-        atTop: !sc || sc.scrollTop <= 2,
+        x: t.clientX, y: t.clientY, sc: sc,
         atBottom: !sc || (sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 2)
       };
     };
@@ -704,11 +702,16 @@ class Component extends DCLogic {
       const t = e.changedTouches && e.changedTouches[0]; if (!t) return;
       const dy = st.y - t.clientY, dx = t.clientX - st.x;
       if (Math.abs(dy) < 45 || Math.abs(dy) <= Math.abs(dx)) return; // exige swipe vertical nítido
-      const goingNext = dy > 0;                                       // arrastar pra cima = próxima
-      if (st.hasScroller && (goingNext ? !st.atBottom : !st.atTop)) return; // ainda há conteúdo pra rolar
+      const goingNext = dy > 0;                                       // arrastar pra cima = próxima; pra baixo = anterior
+      const sc = st.sc;
+      if (sc) {
+        // PRÓXIMA: só avança quando o conteúdo já estava no fim (deixa ler/rolar até embaixo).
+        // ANTERIOR: volta assim que o conteúdo chega ao topo — no início OU durante o próprio gesto.
+        if (goingNext ? !st.atBottom : (sc.scrollTop > 2)) return;
+      }
       this._wheelLock = true;
       if (goingNext) this.next(); else this.prev();
-      setTimeout(() => { this._wheelLock = false; }, 900);
+      setTimeout(() => { this._wheelLock = false; }, 800);
     };
     window.addEventListener('keydown', this._onKey);
     window.addEventListener('wheel', this._onWheel, { passive: true });
@@ -1223,7 +1226,7 @@ class Component extends DCLogic {
       if (!cv || !cv.isConnected) { cv = document.querySelector('canvas[data-scene="chapter"]'); this._chCanv = cv; }
       if (cv) { try { this.renderChapter(cv); } catch (e) {} }
     }
-    if (s.phase === 'home' && s.slide === 6) {
+    if (s.phase === 'home' && s.slide === 7) {
       let fc = this._finCanv;
       if (!fc || !fc.isConnected) { fc = document.querySelector('canvas[data-scene="finale"]'); this._finCanv = fc; }
       if (fc) { try { this.renderFinale(fc); } catch (e) {} }
@@ -1606,8 +1609,8 @@ void main(){
       isTarot: slide === 3,
       isDiferenciais: slide === 4,
       isMetodologia: slide === 5,
-      isFinale: slide === 6,
-      isFaq: slide === 7,
+      isFaq: slide === 6,
+      isFinale: slide === 7,
       faqItems: this.FAQ.map((f, i) => ({
         q: f.q, a: f.a,
         toggle: () => this.setState((s) => ({ faqOpen: s.faqOpen === i ? -1 : i })),
@@ -1660,7 +1663,7 @@ void main(){
       showNext: phase === 'home' && slide < this.LAST,
       showBack: phase === 'home' && slide > 0,
       next: this.next, prev: this.prev, goHome: () => this.goTo(0),
-      pageMark: slide === 0 ? 'I · A Soleira' : (slide === 1 ? 'II · O Portal' : (slide === 2 ? 'III · Depoimentos' : (slide === 3 ? 'IV · A Leitura' : (slide === 4 ? 'V · Diferenciais' : (slide === 5 ? 'VI · Metodologia' : (slide === 6 ? 'VII · Clube' : 'VIII · FAQ')))))),
+      pageMark: slide === 0 ? 'I · A Soleira' : (slide === 1 ? 'II · O Portal' : (slide === 2 ? 'III · Depoimentos' : (slide === 3 ? 'IV · A Leitura' : (slide === 4 ? 'V · Diferenciais' : (slide === 5 ? 'VI · Metodologia' : (slide === 6 ? 'VII · FAQ' : 'VIII · Clube')))))),
       progress: (slide / this.LAST * 100) + '%',
       setVideo: this.setVideo, enter: this.enter, onEnded: this.onEnded, skip: this.skip
     };
