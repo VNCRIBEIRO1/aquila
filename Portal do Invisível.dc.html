@@ -1682,7 +1682,7 @@ void main(){
   prev = () => this.setState((s) => ({ slide: Math.max(0, s.slide - 1) }));
   goTo = (i) => this.setState({ slide: Math.max(0, Math.min(this.LAST, i)) });
 
-  dup = (nums) => { const a = nums.map((n) => 'testimonials/t' + n + '.png'); return a.concat(a); };
+  dup = (nums) => { const a = nums.map((n) => 'testimonials/t' + n + '.jpeg'); return a.concat(a); };
 
   shuffle = (a) => { const r = a.slice(); for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = r[i]; r[i] = r[j]; r[j] = t; } return r; };
   tarotOrder = () => this.state.tOrder || (this._initOrder = this._initOrder || this.shuffle(this.CARDS.map((c, i) => i)));
@@ -1812,9 +1812,9 @@ void main(){
       closeDepo: (e) => { if (e) e.stopPropagation(); this.setState({ depoLightbox: null }); },
       depoLightbox: this.state.depoLightbox || '',
       showDepoLightbox: !!this.state.depoLightbox,
-      col1: this.dup(['01', '04', '07', '10', '08']),
-      col2: this.dup(['02', '05', '11', '12', '13']),
-      col3: this.dup(['03', '06', '09', '14']),
+      col1: this.dup(['01', '04', '07', '10', '13', '16']),
+      col2: this.dup(['02', '05', '08', '11', '14']),
+      col3: this.dup(['03', '06', '09', '12', '15']),
       isTarot: slide === 3,
       isDiferenciais: slide === 4,
       isMetodologia: slide === 5,
