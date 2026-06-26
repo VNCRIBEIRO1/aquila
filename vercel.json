@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
-    { "source": "/:path*", "has": [{ "type": "host", "value": "www.aquilatarologa.com.br" }], "destination": "https://aquilatarologa.com.br/:path*", "permanent": true },
-    { "source": "/:path*", "has": [{ "type": "host", "value": "tarologaaquila.vercel.app" }], "destination": "https://aquilatarologa.com.br/:path*", "permanent": true },
-    { "source": "/:path*", "has": [{ "type": "host", "value": "portal-do-invisivel.vercel.app" }], "destination": "https://aquilatarologa.com.br/:path*", "permanent": true }
+    { "source": "/(.*)", "has": [{ "type": "host", "value": "www.aquilatarologa.com.br" }], "destination": "https://aquilatarologa.com.br/$1", "permanent": true },
+    { "source": "/(.*)", "has": [{ "type": "host", "value": "tarologaaquila.vercel.app" }], "destination": "https://aquilatarologa.com.br/$1", "permanent": true },
+    { "source": "/(.*)", "has": [{ "type": "host", "value": "portal-do-invisivel.vercel.app" }], "destination": "https://aquilatarologa.com.br/$1", "permanent": true }
   ],
   "headers": [
     {
