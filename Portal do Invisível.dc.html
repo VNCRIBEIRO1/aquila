@@ -1038,7 +1038,7 @@ class Component extends DCLogic {
     const S = this._solar; if (!S) return;
     S.raf = requestAnimationFrame(this.animateSolar);
     const now = performance.now();
-    if (now - (S.frameT || 0) < 30) return; // ~30fps, time-based
+    if (now - (S.frameT || 0) < 15) return; // ~60fps (planetas mais fluidos; movimento time-based)
     S.frameT = now;
     const dt = Math.min(0.05, (now - S.last) / 1000); S.last = now;
     const t = (now - S.t0) / 1000;
@@ -1062,14 +1062,17 @@ class Component extends DCLogic {
     // PORTAL — shader fbm original (WebGL puro), centralizado, sobre as estrelas
     const P = S.portal;
     if (P) {
-      const gl = P.gl; gl.useProgram(P.prog);
-      gl.uniform1f(P.uTime, t);
-      gl.uniform2f(P.uCenter, S.bw / 2, S.bh / 2);
-      gl.uniform1f(P.uRad, S.pRadCss * S.dpr);
-      gl.disable(gl.BLEND); // escreve RGBA direto (alpha reto) para compor limpo no drawImage
-      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-      ctx.drawImage(P.c, 0, 0, W, H);
+      if (now - (S.portalT || 0) >= 32) { // portal (swirl lento) a ~30fps; os planetas seguem a 60
+        S.portalT = now;
+        const gl = P.gl; gl.useProgram(P.prog);
+        gl.uniform1f(P.uTime, t);
+        gl.uniform2f(P.uCenter, S.bw / 2, S.bh / 2);
+        gl.uniform1f(P.uRad, S.pRadCss * S.dpr);
+        gl.disable(gl.BLEND); // escreve RGBA direto (alpha reto) para compor limpo no drawImage
+        gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+      ctx.drawImage(P.c, 0, 0, W, H); // sempre redesenha o último frame do portal (buffer preservado)
     }
 
     // planetas — órbita 2D (elipse achatada) em torno do portal, SEMPRE na frente (nunca por trás)
