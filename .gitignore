@@ -5,6 +5,9 @@ node_modules/
 reading-result-localized.jpeg
 flow-*.jpeg
 boot-loader-look.jpeg
+*-look.jpeg
+*-title.jpeg
+moldura-thumb.jpeg
 .DS_Store
 Thumbs.db
 ss/
