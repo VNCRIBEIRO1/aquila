@@ -1720,7 +1720,12 @@ void main(){
 
   playHomeVideo = () => {
     const v = document.getElementById('home-video');
-    if (v) { v.muted = false; try { v.currentTime = 0; } catch (e) {} const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+    if (v) {
+      if (!v._apres) { v._apres = true; v.loop = false; v.controls = true; v.setAttribute('src', 'apresentacao.mp4'); v.load(); }
+      v.muted = false; v.volume = 1;
+      try { v.currentTime = 0; } catch (e) {}
+      const p = v.play(); if (p && p.catch) p.catch(() => {});
+    }
     this.setState({ homeVideoPlaying: true });
   };
   setVideo = (el) => {
