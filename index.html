@@ -139,7 +139,7 @@
   #boot-loader .bl-ring{width:52px;height:52px;border-radius:50%;border:2px solid rgba(216,166,87,.22);border-top-color:#e8c074;animation:blspin .9s linear infinite;}
   @keyframes blspin{to{transform:rotate(360deg)}}
   #boot-loader .bl-word{font-size:clamp(22px,4.4vw,30px);font-style:italic;color:#f0cd8a;text-align:center;padding:0 24px;}
-  #boot-loader .bl-sub{font-family:'Jost',-apple-system,BlinkMacSystemFont,sans-serif;font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:#9a8a6a;}
+  #boot-loader .bl-sub{font-family:'Jost',-apple-system,BlinkMacSystemFont,sans-serif;font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:#bca989;}
   #boot-loader #bl-enter{display:none;margin-top:8px;font-family:'Jost',-apple-system,sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);border:none;border-radius:30px;padding:12px 26px;cursor:pointer;}
 </style>
 <script>
@@ -186,16 +186,6 @@
   .ig-finale:hover .ig-glyph,.ig-finale:focus-visible .ig-glyph{opacity:1;filter:drop-shadow(0 0 28px rgba(248,210,130,.95));transform:scale(1.06)}
   .ig-finale span{opacity:.85;transition:opacity .45s ease}
   .ig-finale:hover span{opacity:1}
-  #ig-fab,#tt-fab{display:none}
-  @media (max-width:768px){
-    #ig-fab,#tt-fab{position:fixed;right:clamp(18px,5vw,46px);z-index:55;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(240,205,138,.5);background:radial-gradient(circle at 32% 28%,rgba(40,27,14,.94),rgba(11,8,7,.95));box-shadow:0 6px 22px rgba(0,0,0,.5),0 0 18px rgba(216,166,87,.22);-webkit-tap-highlight-color:transparent;transition:transform .25s ease}
-    #ig-fab{bottom:134px}
-    #tt-fab{bottom:190px}
-    #ig-fab:active,#tt-fab:active{transform:scale(.9)}
-    #ig-fab svg,#tt-fab svg{fill:#f0cd8a;display:block}
-    #ig-fab svg{width:23px;height:23px}
-    #tt-fab svg{width:21px;height:21px}
-  }
   @keyframes driftUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
   @keyframes floatHint{0%,100%{transform:translateX(-50%) translateY(0);opacity:.55}50%{transform:translateX(-50%) translateY(6px);opacity:1}}
   @keyframes cardReveal{0%{opacity:0;transform:translateY(14px) scale(.84) rotate(-3deg)}60%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
@@ -254,12 +244,12 @@
           </div>
 
           <div style="flex:1 1 340px;min-width:288px;max-width:540px;text-align:left;">
-            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#caa765;font-weight:300;">Taróloga Aquila</div>
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#dbb978;font-weight:300;">Taróloga Aquila</div>
             <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;color:#f4ecdc;font-size:clamp(27px,3.3vw,46px);line-height:1.1;letter-spacing:.004em;margin:14px 0 0;max-width:18ch;text-wrap:balance;">Quando as respostas não aparecem, o invisível pode revelar <span style="font-style:italic;color:#e8c074;">novos caminhos.</span></h1>
-            <p style="font-family:'Jost',sans-serif;font-weight:300;color:#a1937f;font-size:clamp(13.5px,1.25vw,15.5px);line-height:1.55;margin:clamp(17px,2.5vh,23px) 0 0;max-width:46ch;">Leitura de tarô e oráculos online para quem vive uma dúvida no amor, uma reconciliação ou uma decisão difícil — uma travessia entre o que você sente e o que ainda não consegue ver, conduzida com escuta, intuição e mais de dez oráculos.</p>
+            <p style="font-family:'Jost',sans-serif;font-weight:400;color:#c4b5a2;font-size:clamp(13.5px,1.25vw,15.5px);line-height:1.55;margin:clamp(17px,2.5vh,23px) 0 0;max-width:46ch;">Leitura de tarô e oráculos online para quem vive uma dúvida no amor, uma reconciliação ou uma decisão difícil — uma travessia entre o que você sente e o que ainda não consegue ver, conduzida com escuta, intuição e mais de dez oráculos.</p>
             <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:clamp(18px,2.8vh,30px);">
               <a href="{{ waHome }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:13px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:17px 40px;border-radius:40px;text-decoration:none;font-weight:500;">Agendar consulta</a>
-              <button onClick="{{ next }}" style="font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#caa765;background:transparent;border:none;cursor:pointer;font-weight:400;display:inline-flex;align-items:center;gap:9px;">O que você encontrará <span style="font-size:15px;">→</span></button>
+              <button onClick="{{ next }}" style="font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#dbb978;background:transparent;border:none;cursor:pointer;font-weight:400;display:inline-flex;align-items:center;gap:9px;">O que você encontrará <span style="font-size:15px;">→</span></button>
             </div>
           </div>
         </div>
@@ -280,7 +270,7 @@
 
           <!-- STACKED LIST -->
           <div style="position:relative;z-index:3;min-height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;gap:clamp(16px,3vh,34px);max-width:1040px;margin:0 auto;padding:clamp(70px,12vh,140px) clamp(24px,7vw,90px) clamp(60px,10vh,120px);box-sizing:border-box;">
-            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#caa765;font-weight:300;">Capítulo II</div>
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#dbb978;font-weight:300;">Capítulo II</div>
             <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f6efe0;font-size:clamp(23px,3.1vw,40px);line-height:1.1;margin:7px 0 clamp(10px,2vh,22px);text-wrap:balance;">O portal irá te revelar</h2>
             <sc-for list="{{ chapterList }}" as="c" hint-placeholder-count="6">
               <div style="display:flex;align-items:baseline;justify-content:center;gap:clamp(16px,2.4vw,32px);opacity:{{ c.op }};transform:translateY({{ c.tx }});transition:opacity 1.9s ease, transform 2s cubic-bezier(.2,.7,.2,1);will-change:opacity,transform;">
@@ -298,9 +288,9 @@
         <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1px 1px at 16% 26%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 72% 14%, rgba(255,244,224,.35), transparent),radial-gradient(1px 1px at 86% 64%, rgba(255,244,224,.4), transparent),radial-gradient(1px 1px at 32% 80%, rgba(255,244,224,.35), transparent);animation:twinkle 9s ease-in-out infinite;"></div>
 
         <div style="position:relative;z-index:2;text-align:center;max-width:760px;flex:none;">
-          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#caa765;font-weight:300;">Capítulo III</div>
+          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#dbb978;font-weight:300;">Capítulo III</div>
           <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecdc;font-size:clamp(26px,3.4vw,46px);line-height:1.12;margin:12px 0 0;text-wrap:balance;">Quem atravessou — e voltou para <span style="color:#e8c074;">contar.</span></h2>
-          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9b8f7c;font-size:clamp(12.5px,1.2vw,14.5px);line-height:1.5;margin:10px 0 0;letter-spacing:.02em;">Mensagens reais de quem consultou o Portal do Invisível.</p>
+          <p style="font-family:'Jost',sans-serif;font-weight:400;color:#bfb29c;font-size:clamp(12.5px,1.2vw,14.5px);line-height:1.5;margin:10px 0 0;letter-spacing:.02em;">Mensagens reais de quem consultou o Portal do Invisível.</p>
         </div>
 
         <div style="position:relative;z-index:2;width:100%;max-width:1180px;flex:1;min-height:0;margin-top:clamp(18px,3vh,30px);display:flex;gap:clamp(12px,1.4vw,20px);align-items:flex-start;-webkit-mask:linear-gradient(180deg, transparent 0, #000 9%, #000 88%, transparent 100%);mask:linear-gradient(180deg, transparent 0, #000 9%, #000 88%, transparent 100%);">
@@ -329,7 +319,7 @@
 
         <a href="{{ waDepo }}" target="_blank" rel="noopener" style="position:relative;z-index:2;flex:none;margin-top:clamp(14px,2vh,22px);display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:14px 34px;border-radius:40px;text-decoration:none;font-weight:500;">Quero a minha leitura</a>
 
-        <a href="https://www.google.com/maps?cid=10621991209135930616" target="_blank" rel="noopener" style="position:relative;z-index:2;flex:none;margin-top:16px;display:inline-flex;align-items:center;gap:7px;font-family:'Jost',sans-serif;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#caa765;text-decoration:none;border-bottom:1px solid rgba(216,166,87,.3);padding-bottom:3px;"><span style="color:#e8c074;font-size:13px;line-height:1;">★</span> Veja as nossas avaliações no Google</a>
+        <a href="https://www.google.com/maps?cid=10621991209135930616" target="_blank" rel="noopener" style="position:relative;z-index:2;flex:none;margin-top:16px;display:inline-flex;align-items:center;gap:7px;font-family:'Jost',sans-serif;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#dbb978;text-decoration:none;border-bottom:1px solid rgba(216,166,87,.3);padding-bottom:3px;"><span style="color:#e8c074;font-size:13px;line-height:1;">★</span> Veja as nossas avaliações no Google</a>
 
         <sc-if value="{{ showDepoLightbox }}" hint-placeholder-val="{{ false }}">
           <div onClick="{{ closeDepo }}" style="position:absolute;inset:0;z-index:20;background:rgba(5,3,2,.93);display:flex;align-items:center;justify-content:center;padding:clamp(20px,5vw,64px);cursor:zoom-out;animation:filmInSoft .3s ease both;">
@@ -349,9 +339,9 @@
 
         <!-- header -->
         <div style="position:relative;z-index:2;text-align:center;max-width:680px;flex:none;">
-          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#caa765;font-weight:300;">Capítulo IV</div>
+          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#dbb978;font-weight:300;">Capítulo IV</div>
           <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecdc;font-size:clamp(24px,3.2vw,42px);line-height:1.12;margin:10px 0 0;text-wrap:balance;">{{ tarotTitle }}</h2>
-          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9b8f7c;font-size:clamp(12px,1.15vw,14px);line-height:1.5;margin:9px 0 0;letter-spacing:.02em;">{{ tarotHint }}</p>
+          <p style="font-family:'Jost',sans-serif;font-weight:400;color:#bfb29c;font-size:clamp(12px,1.15vw,14px);line-height:1.5;margin:9px 0 0;letter-spacing:.02em;">{{ tarotHint }}</p>
         </div>
 
         <!-- spread (3 slots) -->
@@ -391,46 +381,46 @@
               </div>
             </sc-for>
           </div>
-          <div style="position:relative;z-index:2;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:#7d7058;margin-top:14px;flex:none;">{{ pickHint }}</div>
+          <div style="position:relative;z-index:2;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:#a3937a;margin-top:14px;flex:none;">{{ pickHint }}</div>
         </sc-if>
 
         <!-- loading -->
         <sc-if value="{{ showLoading }}" hint-placeholder-val="{{ false }}">
           <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:clamp(20px,3.4vh,32px);flex:none;animation:driftUp .5s ease both;">
             <div style="width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(216,166,87,.25);border-top-color:#f0cd8a;animation:spinSlow 1s linear infinite;"></div>
-            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(15px,1.6vw,20px);color:#cbb89a;letter-spacing:.02em;">Consultando o invisível…</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(15px,1.6vw,20px);color:#dccbb0;letter-spacing:.02em;">Consultando o invisível…</div>
           </div>
         </sc-if>
 
         <!-- result -->
         <sc-if value="{{ showResult }}" hint-placeholder-val="{{ false }}">
           <div style="position:relative;z-index:2;width:100%;max-width:660px;margin-top:clamp(14px,2.2vh,22px);flex:none;display:flex;flex-direction:column;gap:clamp(10px,1.6vh,15px);animation:driftUp .7s ease both;">
-            <div style="text-align:center;font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:#caa765;font-weight:300;">Breve interpretação</div>
+            <div style="text-align:center;font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:#dbb978;font-weight:300;">Breve interpretação</div>
             <div style="display:flex;flex-direction:column;gap:clamp(9px,1.3vh,13px);text-align:left;">
               <div style="display:flex;gap:14px;align-items:flex-start;">
                 <div style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(240,205,138,.5);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:16px;font-family:'Cormorant Garamond',serif;">♡</div>
                 <div>
-                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Amor <span style="color:#e8c074;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px;text-transform:none;letter-spacing:0;">· {{ readingAmorCard }}</span></div>
-                  <p style="font-family:'Jost',sans-serif;font-weight:300;color:#cdbfa9;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingAmor }}</p>
+                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#dbb978;font-weight:400;">Amor <span style="color:#e8c074;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px;text-transform:none;letter-spacing:0;">· {{ readingAmorCard }}</span></div>
+                  <p style="font-family:'Jost',sans-serif;font-weight:400;color:#ddd0bb;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingAmor }}</p>
                 </div>
               </div>
               <div style="display:flex;gap:14px;align-items:flex-start;">
                 <div style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(240,205,138,.5);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:16px;font-family:'Cormorant Garamond',serif;">✦</div>
                 <div>
-                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Trabalho <span style="color:#e8c074;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px;text-transform:none;letter-spacing:0;">· {{ readingTrabalhoCard }}</span></div>
-                  <p style="font-family:'Jost',sans-serif;font-weight:300;color:#cdbfa9;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingTrabalho }}</p>
+                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#dbb978;font-weight:400;">Trabalho <span style="color:#e8c074;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px;text-transform:none;letter-spacing:0;">· {{ readingTrabalhoCard }}</span></div>
+                  <p style="font-family:'Jost',sans-serif;font-weight:400;color:#ddd0bb;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingTrabalho }}</p>
                 </div>
               </div>
               <div style="display:flex;gap:14px;align-items:flex-start;">
                 <div style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(240,205,138,.5);display:flex;align-items:center;justify-content:center;color:#f0cd8a;font-size:16px;font-family:'Cormorant Garamond',serif;">☽</div>
                 <div>
-                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#caa765;font-weight:400;">Vida <span style="color:#e8c074;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px;text-transform:none;letter-spacing:0;">· {{ readingVidaCard }}</span></div>
-                  <p style="font-family:'Jost',sans-serif;font-weight:300;color:#cdbfa9;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingVida }}</p>
+                  <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#dbb978;font-weight:400;">Vida <span style="color:#e8c074;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px;text-transform:none;letter-spacing:0;">· {{ readingVidaCard }}</span></div>
+                  <p style="font-family:'Jost',sans-serif;font-weight:400;color:#ddd0bb;font-size:clamp(13px,1.2vw,15px);line-height:1.55;margin:6px 0 0;">{{ readingVida }}</p>
                 </div>
               </div>
             </div>
             <div style="padding:13px 18px;border:1px solid rgba(216,166,87,.2);border-radius:14px;background:rgba(216,166,87,.05);text-align:center;">
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(11.5px,1.05vw,13px);line-height:1.5;color:#9b8f7c;margin:0;">Esta é uma tiragem rápida, gratuita e de caráter geral — um convite à reflexão e ao autoconhecimento, não uma promessa de controlar o destino. Quer entender, com profundidade, o que está em jogo no seu amor, numa reconciliação ou numa decisão? Vamos conversar.</p>
+              <p style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(11.5px,1.05vw,13px);line-height:1.5;color:#bfb29c;margin:0;">Esta é uma tiragem rápida, gratuita e de caráter geral — um convite à reflexão e ao autoconhecimento, não uma promessa de controlar o destino. Quer entender, com profundidade, o que está em jogo no seu amor, numa reconciliação ou numa decisão? Vamos conversar.</p>
             </div>
             <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
               <a href="{{ waReading }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#0b0807;background:linear-gradient(180deg,#f4d99b,#d2992f);padding:14px 32px;border-radius:40px;text-decoration:none;font-weight:500;text-align:center;">Entre em contato e faça sua tiragem completa</a>
@@ -456,9 +446,9 @@
 
         <!-- header -->
         <div style="position:relative;z-index:5;text-align:center;flex:none;">
-          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo V</div>
+          <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#c8b9ea;font-weight:300;">Capítulo V</div>
           <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">Por que o Portal é diferente</h2>
-          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(12px,1.15vw,14.5px);margin:6px 0 0;letter-spacing:.03em;">Cinco forças que tornam cada leitura única.</p>
+          <p style="font-family:'Jost',sans-serif;font-weight:400;color:#b6adce;font-size:clamp(12px,1.15vw,14.5px);margin:6px 0 0;letter-spacing:.03em;">Cinco forças que tornam cada leitura única.</p>
         </div>
 
         <!-- solar system 3D · WebGL -->
@@ -469,27 +459,27 @@
 
             <div id="solar-label-0" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
               <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Atendimento por chamada de vídeo ou áudio</div>
-              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Tarô, runas, baralho cigano e muito mais — escolho o que melhor conversa com o seu caso.</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:400;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Tarô, runas, baralho cigano e muito mais — escolho o que melhor conversa com o seu caso.</div>
             </div>
 
             <div id="solar-label-1" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
               <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Áudio da leitura disponível para revisitar sempre que precisar</div>
-              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Acolhimento real: traduzo os símbolos para a sua realidade, sem respostas prontas.</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:400;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Acolhimento real: traduzo os símbolos para a sua realidade, sem respostas prontas.</div>
             </div>
 
             <div id="solar-label-2" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
               <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Possibilidade de aprofundar questões sobre terceiros</div>
-              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Começamos pela pergunta certa — uma tiragem feita só para o seu momento.</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:400;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Começamos pela pergunta certa — uma tiragem feita só para o seu momento.</div>
             </div>
 
             <div id="solar-label-3" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
               <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Uma leitura que considera o contexto completo da sua história</div>
-              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Antes das cartas, eu te escuto de verdade: sem pressa e sem julgamentos.</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:400;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">Antes das cartas, eu te escuto de verdade: sem pressa e sem julgamentos.</div>
             </div>
 
             <div id="solar-label-4" style="position:absolute;left:0;top:0;transform:translate(-50%,0);width:clamp(132px,16vw,188px);text-align:center;opacity:0;will-change:left,top,opacity;">
               <div style="font-family:var(--pt-font, 'Cormorant Garamond', serif);font-weight:var(--pt-weight, 500);font-style:var(--pt-style, italic);color:#ffffff;font-size:clamp(17px,2vw,25px);line-height:1.16;text-shadow:var(--pt-shadow, 0 0 4px rgba(0,0,0,.95), 0 1px 3px rgba(4,2,12,.98), 0 0 16px rgba(248,210,130,.68), 0 0 34px rgba(232,170,70,.48));">Atendimento individual e sem pressa</div>
-              <div style="display:none;font-family:'Jost',sans-serif;font-weight:300;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">De onde você estiver, o portal te alcança.</div>
+              <div style="display:none;font-family:'Jost',sans-serif;font-weight:400;color:#eae3fb;font-size:clamp(11.5px,1.1vw,13.5px);line-height:1.44;margin-top:4px;text-shadow:0 1px 3px rgba(4,2,12,.97), 0 0 12px rgba(160,130,240,.55), 0 0 22px rgba(110,86,190,.4);">De onde você estiver, o portal te alcança.</div>
             </div>
 
           </div>
@@ -509,9 +499,9 @@
         <div id="method-wrap" style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(92px,16vh,108px) clamp(16px,5vw,56px) 54px;box-sizing:border-box;">
         <!-- header -->
         <div style="position:relative;z-index:5;text-align:center;flex:none;">
-          <div style="font-family:'Jost',sans-serif;font-size:12.5px;letter-spacing:.5em;text-transform:uppercase;color:#c2a86a;font-weight:300;">Capítulo VI</div>
+          <div style="font-family:'Jost',sans-serif;font-size:12.5px;letter-spacing:.5em;text-transform:uppercase;color:#d6bb80;font-weight:300;">Capítulo VI</div>
           <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f6efe0;font-size:clamp(32px,4vw,56px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">A Metodologia</h2>
-          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9b8f7c;font-size:clamp(14px,1.5vw,17px);margin:7px 0 0;letter-spacing:.03em;max-width:46ch;">É por isso que cada encontro segue um caminho — um fio que se desenha, passo a passo.</p>
+          <p style="font-family:'Jost',sans-serif;font-weight:400;color:#bfb29c;font-size:clamp(14px,1.5vw,17px);margin:7px 0 0;letter-spacing:.03em;max-width:46ch;">É por isso que cada encontro segue um caminho — um fio que se desenha, passo a passo.</p>
         </div>
 
         <!-- journey stage -->
@@ -534,27 +524,27 @@
 
             <!-- LABELS -->
             <div id="method-label-0" style="position:absolute;left:0;top:0;transform:translate(-50%,-128%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
-              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Escuta</div>
+              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#d6bb80;font-weight:400;">Escuta</div>
               <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(15px,1.7vw,19px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">Você encontra acolhimento, sem julgamentos.</div>
             </div>
             <div id="method-label-1" style="position:absolute;left:0;top:0;transform:translate(-50%,28%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
-              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Intenção</div>
+              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#d6bb80;font-weight:400;">Intenção</div>
               <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(15px,1.7vw,19px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">A pergunta ganha forma.</div>
             </div>
             <div id="method-label-2" style="position:absolute;left:0;top:0;transform:translate(-50%,-128%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
-              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Oráculo</div>
+              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#d6bb80;font-weight:400;">Oráculo</div>
               <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(15px,1.7vw,19px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">O símbolo é escolhido.</div>
             </div>
             <div id="method-label-3" style="position:absolute;left:0;top:0;transform:translate(-50%,28%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
-              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Leitura</div>
+              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#d6bb80;font-weight:400;">Leitura</div>
               <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(15px,1.7vw,19px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">O invisível se revela.</div>
             </div>
             <div id="method-label-4" style="position:absolute;left:0;top:0;transform:translate(-50%,-128%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
-              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Interpretação</div>
+              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#d6bb80;font-weight:400;">Interpretação</div>
               <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(15px,1.7vw,19px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">O sentido emerge.</div>
             </div>
             <div id="method-label-5" style="position:absolute;left:0;top:0;transform:translate(-50%,28%);width:clamp(122px,14vw,168px);text-align:center;opacity:0;will-change:transform,opacity;">
-              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#c2a86a;font-weight:400;">Direcionamento</div>
+              <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#d6bb80;font-weight:400;">Direcionamento</div>
               <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;color:#f6efe0;font-size:clamp(15px,1.7vw,19px);line-height:1.3;margin-top:7px;text-shadow:0 1px 3px rgba(0,0,0,.8);">Um caminho se ilumina.</div>
             </div>
           </div>
@@ -575,23 +565,23 @@
 
           <!-- CLUBE DO PORTAL -->
           <div style="text-align:center;flex:none;max-width:760px;">
-            <div style="font-family:'Jost',sans-serif;font-size:12.5px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VIII</div>
+            <div style="font-family:'Jost',sans-serif;font-size:12.5px;letter-spacing:.5em;text-transform:uppercase;color:#c8b9ea;font-weight:300;">Capítulo VIII</div>
             <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(32px,4vw,56px);line-height:1.08;margin:7px 0 0;text-wrap:balance;">Clube do Portal</h2>
-            <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(14.5px,1.6vw,18px);margin:9px 0 0;letter-spacing:.02em;max-width:42ch;margin-left:auto;margin-right:auto;">Um grupo exclusivo no WhatsApp — um encontro contínuo, no seu tempo, entre uma consulta e outra.</p>
+            <p style="font-family:'Jost',sans-serif;font-weight:400;color:#b6adce;font-size:clamp(14.5px,1.6vw,18px);margin:9px 0 0;letter-spacing:.02em;max-width:42ch;margin-left:auto;margin-right:auto;">Um grupo exclusivo no WhatsApp — um encontro contínuo, no seu tempo, entre uma consulta e outra.</p>
           </div>
 
           <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(10px,1.6vw,16px);margin-top:clamp(20px,3vh,30px);max-width:820px;flex:none;">
-            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(13.5px,1.3vw,15.5px);">Acesso antecipado às vagas</span></div>
-            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(13.5px,1.3vw,15.5px);">Conteúdos exclusivos</span></div>
-            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(13.5px,1.3vw,15.5px);">Reflexões para momentos de pausa</span></div>
-            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(13.5px,1.3vw,15.5px);">Benefícios especiais para membros</span></div>
-            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:300;color:#d8ccb6;font-size:clamp(13.5px,1.3vw,15.5px);">Novidades em primeira mão</span></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:400;color:#e6dcc8;font-size:clamp(13.5px,1.3vw,15.5px);">Acesso antecipado às vagas</span></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:400;color:#e6dcc8;font-size:clamp(13.5px,1.3vw,15.5px);">Conteúdos exclusivos</span></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:400;color:#e6dcc8;font-size:clamp(13.5px,1.3vw,15.5px);">Reflexões para momentos de pausa</span></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:400;color:#e6dcc8;font-size:clamp(13.5px,1.3vw,15.5px);">Benefícios especiais para membros</span></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid rgba(216,166,87,.22);border-radius:40px;background:rgba(216,166,87,.05);"><span style="color:#e8c074;font-size:13px;">✦</span><span style="font-family:'Jost',sans-serif;font-weight:400;color:#e6dcc8;font-size:clamp(13.5px,1.3vw,15.5px);">Novidades em primeira mão</span></div>
           </div>
 
           <!-- divider -->
           <div style="display:flex;align-items:center;gap:16px;margin:clamp(30px,5vh,52px) 0 clamp(14px,2.4vh,26px);flex:none;">
             <div style="height:1px;width:clamp(40px,8vw,90px);background:linear-gradient(90deg, transparent, rgba(216,166,87,.5));"></div>
-            <div style="color:#caa765;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.3em;">✦</div>
+            <div style="color:#dbb978;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.3em;">✦</div>
             <div style="height:1px;width:clamp(40px,8vw,90px);background:linear-gradient(90deg, rgba(216,166,87,.5), transparent);"></div>
           </div>
 
@@ -605,7 +595,7 @@
                 <a href="https://www.instagram.com/portaldoinvisivel/" class="ig-finale" target="_blank" rel="noopener" aria-label="Instagram do Portal do Invisível" style="display:inline-flex;text-decoration:none;"><svg class="ig-glyph" width="44" height="44" viewBox="0 0 16 16" fill="#f4ecdc" aria-hidden="true"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.281.11-.705.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.599-.92c-.11-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg></a>
                 <a href="https://www.tiktok.com/@portal.do.invisivel" class="ig-finale" target="_blank" rel="noopener" aria-label="TikTok do Portal do Invisível" style="display:inline-flex;text-decoration:none;"><svg class="ig-glyph" width="40" height="40" viewBox="0 0 16 16" fill="#f4ecdc" aria-hidden="true"><path d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z"/></svg></a>
               </div>
-              <span style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#caa765;opacity:.85;">@portaldoinvisivel</span>
+              <span style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#dbb978;opacity:.85;">@portaldoinvisivel</span>
             </div>
           </div>
         </div>
@@ -621,9 +611,9 @@
         <div style="position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:84px clamp(20px,5vw,48px) 92px;box-sizing:border-box;">
           <!-- header -->
           <div style="text-align:center;flex:none;margin-bottom:clamp(18px,3vh,34px);">
-            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#b9a6e0;font-weight:300;">Capítulo VII</div>
+            <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#c8b9ea;font-weight:300;">Capítulo VII</div>
             <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;color:#f4ecff;font-size:clamp(28px,3.6vw,50px);line-height:1.08;margin:6px 0 0;text-wrap:balance;">Perguntas frequentes</h2>
-            <p style="font-family:'Jost',sans-serif;font-weight:300;color:#9890b4;font-size:clamp(12px,1.15vw,14.5px);margin:7px 0 0;letter-spacing:.03em;">Toque numa pergunta para abrir o portal da resposta.</p>
+            <p style="font-family:'Jost',sans-serif;font-weight:400;color:#b6adce;font-size:clamp(12px,1.15vw,14.5px);margin:7px 0 0;letter-spacing:.03em;">Toque numa pergunta para abrir o portal da resposta.</p>
           </div>
 
           <!-- accordion -->
@@ -635,10 +625,10 @@
                 <div style="flex:1;min-width:0;">
                   <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;">
                     <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:clamp(18px,2.1vw,26px);line-height:1.22;color:{{ it.qColor }};transition:color .4s ease;">{{ it.q }}</div>
-                    <div style="flex:none;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(22px,2.4vw,28px);color:#caa765;line-height:1;">{{ it.sign }}</div>
+                    <div style="flex:none;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(22px,2.4vw,28px);color:#dbb978;line-height:1;">{{ it.sign }}</div>
                   </div>
                   <div style="overflow:hidden;max-height:{{ it.maxH }};opacity:{{ it.op }};transition:max-height .55s cubic-bezier(.3,0,.2,1), opacity .45s ease;">
-                    <p style="font-family:'Jost',sans-serif;font-weight:300;color:#a89c86;font-size:clamp(13px,1.2vw,15px);line-height:1.6;margin:10px 0 4px;max-width:58ch;">{{ it.a }}</p>
+                    <p style="font-family:'Jost',sans-serif;font-weight:400;color:#c8bda7;font-size:clamp(13px,1.2vw,15px);line-height:1.6;margin:10px 0 4px;max-width:58ch;">{{ it.a }}</p>
                   </div>
                 </div>
               </div>
@@ -670,11 +660,6 @@
     <button onClick="{{ next }}" aria-label="Próxima página" style="position:absolute;bottom:22px;right:clamp(18px,5vw,46px);z-index:55;width:46px;height:46px;border-radius:50%;border:1px solid rgba(240,205,138,.55);background:linear-gradient(180deg,rgba(244,217,155,.22),rgba(210,153,47,.18));color:#f4d99b;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;animation:pulseGlow 4s ease-in-out infinite;">↓</button>
   </sc-if>
 
-  <!-- ============ INSTAGRAM (botão flutuante · só mobile · todas as telas) ============ -->
-  <a id="ig-fab" href="https://www.instagram.com/portaldoinvisivel/" target="_blank" rel="noopener" aria-label="Instagram do Portal do Invisível"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.281.11-.705.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.599-.92c-.11-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg></a>
-
-  <a id="tt-fab" href="https://www.tiktok.com/@portal.do.invisivel" target="_blank" rel="noopener" aria-label="TikTok do Portal do Invisível"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z"/></svg></a>
-
   <!-- ============ LOADING SCREEN (video) ============ -->
   <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
     <div style="position:absolute;inset:0;z-index:200;background:#000;overflow:hidden;">
@@ -683,7 +668,7 @@
       <sc-if value="{{ showVideoLoading }}" hint-placeholder-val="{{ true }}">
         <div style="position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;">
           <div style="width:48px;height:48px;border-radius:50%;border:2px solid rgba(216,166,87,.22);border-top-color:#e8c074;animation:spin .9s linear infinite;"></div>
-          <div style="font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:#9a8a6a;">Carregando</div>
+          <div style="font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:#bca989;">Carregando</div>
         </div>
       </sc-if>
 
@@ -695,7 +680,7 @@
       </sc-if>
 
       <sc-if value="{{ playing }}" hint-placeholder-val="{{ false }}">
-        <div onClick="{{ skip }}" style="position:absolute;bottom:28px;right:34px;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:#9a8b73;cursor:pointer;border:1px solid rgba(216,166,87,.3);padding:9px 18px;border-radius:30px;background:rgba(0,0,0,.3);">pular ⏭</div>
+        <div onClick="{{ skip }}" style="position:absolute;bottom:28px;right:34px;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:#bcab92;cursor:pointer;border:1px solid rgba(216,166,87,.3);padding:9px 18px;border-radius:30px;background:rgba(0,0,0,.3);">pular ⏭</div>
       </sc-if>
     </div>
   </sc-if>
