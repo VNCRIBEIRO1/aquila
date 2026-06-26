@@ -142,7 +142,7 @@
 <x-dc>
 <helmet>
 <link href="fonts/fonts.css" rel="stylesheet">
-<script src="vendor/three.min.js"></script>
+<!-- three.js é carregado sob demanda só ao chegar no Cap V (sistema solar) — ver ensureThree() -->
 <style>
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:#070504;}
@@ -894,7 +894,7 @@ class Component extends DCLogic {
         'float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+34.56); return fract(p.x*p.y); }',
         'float noise(vec2 x){ vec2 i=floor(x), f=fract(x); f=f*f*(3.0-2.0*f);',
         ' return mix(mix(hash(i+vec2(0.,0.)),hash(i+vec2(1.,0.)),f.x), mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x), f.y); }',
-        'float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }',
+        'float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<3;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }',
         'void main(){',
         ' vec2 p=vUv*2.0-1.0; float r=length(p); float ang=atan(p.y,p.x);',
         ' float swirl=ang + r*2.6 - time*0.22;',
@@ -942,23 +942,31 @@ class Component extends DCLogic {
     else if (!on && this._solar) this.disposeSolar();
   };
 
+  ensureThree = () => {
+    if (window.THREE || this._threeLoading) return;
+    this._threeLoading = true;
+    const s = document.createElement('script');
+    s.src = 'vendor/three.min.js'; s.async = true;
+    document.head.appendChild(s);
+  };
+
   initSolar = () => {
     if (this._solar) return;
     const THREE = window.THREE;
     const cv = document.getElementById('solar-canvas');
     const stage = document.getElementById('solar-stage');
     if (!cv || !stage) return;
-    if (!THREE) { this._solarPoll = setTimeout(this.initSolar, 150); return; }
+    if (!THREE) { this.ensureThree(); this._solarPoll = setTimeout(this.initSolar, 150); return; }
     const W = stage.clientWidth, H = stage.clientHeight;
     if (!W || !H) { this._solarPoll = setTimeout(this.initSolar, 120); return; }
 
     const isMobile = (typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '')) || Math.min(W, H) < 680;
     let renderer;
-    try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: !isMobile, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }); }
+    try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: false, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }); }
     catch (e) { this._solarPoll = setTimeout(this.initSolar, 200); return; }
     const gl = renderer.getContext();
     if (!gl || gl.isContextLost()) { try { renderer.dispose(); } catch (e) {} this._solarPoll = setTimeout(this.initSolar, 200); return; }
-    renderer.setPixelRatio(Math.min(isMobile ? 1.3 : 2, window.devicePixelRatio || 1));
+    renderer.setPixelRatio(Math.min(isMobile ? 1.2 : 1.5, window.devicePixelRatio || 1));
     renderer.setSize(W, H, false);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 240);
@@ -1011,7 +1019,7 @@ class Component extends DCLogic {
       const t = new THREE.CanvasTexture(cv); t.needsUpdate = true; t.anisotropy = 4; return t;
     })();
     const planets = defs.map((d) => {
-      const m = new THREE.Mesh(new THREE.SphereGeometry(d.sz, 48, 32), new THREE.MeshStandardMaterial({ color: d.col, map: planetTex, emissive: new THREE.Color(d.col), emissiveIntensity: 0.55, emissiveMap: planetTex, roughness: 0.72, metalness: 0.0 }));
+      const m = new THREE.Mesh(new THREE.SphereGeometry(d.sz, 16, 12), new THREE.MeshLambertMaterial({ color: d.col, map: planetTex, emissive: new THREE.Color(d.col), emissiveIntensity: 0.55, emissiveMap: planetTex }));
       group.add(m);
       const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: halo, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false }));
       sp.scale.set(d.sz * 5, d.sz * 5, 1);
@@ -1036,7 +1044,7 @@ class Component extends DCLogic {
     cv.style.touchAction = 'auto';
     cv.style.cursor = 'default';
 
-    this._solar = { renderer, scene, camera, group, portal, portalMat, sunGlow, stars, planets, labels, sunLabel, stage, cv, t0: performance.now(), last: performance.now(), w: W, h: H, paused: false, ang: 0, onEnter, onLeave };
+    this._solar = { renderer, scene, camera, group, portal, portalMat, sunGlow, stars, planets, labels, sunLabel, stage, cv, t0: performance.now(), last: performance.now(), w: W, h: H, paused: false, ang: 0, onEnter, onLeave, _v: new THREE.Vector3(), _wp: new THREE.Vector3() };
     this.animateSolar();
   };
 
@@ -1076,7 +1084,7 @@ class Component extends DCLogic {
     const ps = 1 + Math.sin(t * 0.9) * 0.04;
     if (S.sunGlow) S.sunGlow.scale.set(8.2 * ps, 8.2 * ps, 1);
     S.renderer.render(S.scene, S.camera);
-    const v = new THREE.Vector3(), wp = new THREE.Vector3();
+    const v = S._v, wp = S._wp;
     S.planets.forEach((p, i) => {
       const el = S.labels[i]; if (!el) return;
       p.mesh.getWorldPosition(wp); v.copy(wp).project(S.camera);
