@@ -12,6 +12,21 @@
   gtag('js', new Date());
   gtag('config', 'G-GBG75JFHRZ');
 </script>
+<script>
+  // GA4 — conversão: clique em qualquer link de WhatsApp (botões + grupo do Clube)
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (href.indexOf('wa.me') === -1 && href.indexOf('chat.whatsapp.com') === -1) return;
+    var tipo = href.indexOf('chat.whatsapp.com') !== -1 ? 'grupo_clube' : 'conversa';
+    try {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'contato_whatsapp', { tipo: tipo, botao: (a.textContent || '').trim().slice(0, 60), link_url: href });
+      }
+    } catch (err) {}
+  }, true);
+</script>
 
 <!-- ===================== SEO ===================== -->
 <!-- Domínio canônico oficial: https://aquilatarologa.com.br (apontar este domínio na Vercel + redirect 301 do *.vercel.app) -->
@@ -96,6 +111,8 @@
         { "@type": "Question", "name": "Quanto tempo dura?", "acceptedAnswer": { "@type": "Answer", "text": "O tempo que o seu momento pedir. Sem pressa e sem relógio apertado: o que importa é a sua clareza." } },
         { "@type": "Question", "name": "Preciso saber exatamente o que perguntar?", "acceptedAnswer": { "@type": "Answer", "text": "Não. Muitas pessoas chegam apenas com uma sensação, uma dúvida ou um problema. Eu ajudo você a transformar isso na pergunta certa antes da leitura começar." } },
         { "@type": "Question", "name": "O tarô pode errar?", "acceptedAnswer": { "@type": "Answer", "text": "O tarô não é uma sentença nem uma previsão imutável. Ele mostra tendências, padrões e energias presentes no momento da leitura, ajudando você a compreender melhor a situação e fazer escolhas mais conscientes." } },
+        { "@type": "Question", "name": "O tarô diz se ele(a) vai voltar?", "acceptedAnswer": { "@type": "Answer", "text": "O tarô não decreta o futuro nem garante uma volta. Ele mostra como está a energia entre vocês agora — o que ainda pulsa e o que pode estar travando — pra você seguir com mais clareza, e não no impulso da saudade." } },
+        { "@type": "Question", "name": "Serve para eu decidir se fico ou termino?", "acceptedAnswer": { "@type": "Answer", "text": "Serve pra enxergar com calma o que a emoção costuma embaralhar. As cartas trazem perspectivas; a decisão continua sua — e eu te acompanho nesse olhar, sem pressa e sem julgamentos." } },
         { "@type": "Question", "name": "Minha situação é muito complexa. Ainda assim a leitura funciona?", "acceptedAnswer": { "@type": "Answer", "text": "Sim. Questões emocionais, relacionamentos, decisões profissionais, conflitos familiares e momentos de transição costumam ser justamente os temas que mais se beneficiam de uma leitura aprofundada." } },
         { "@type": "Question", "name": "Preciso aparecer em vídeo?", "acceptedAnswer": { "@type": "Answer", "text": "Não. O atendimento pode ser realizado da forma mais confortável para você, conforme a modalidade escolhida." } },
         { "@type": "Question", "name": "Recebo gravação?", "acceptedAnswer": { "@type": "Answer", "text": "Se desejar, você recebe o registro do nosso encontro para revisitar com calma depois." } }
@@ -592,7 +609,7 @@
           <!-- accordion -->
           <div style="position:relative;width:100%;max-width:780px;flex:none;">
             <svg class="fqw-svg" style="position:absolute;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:visible;" aria-hidden="true"><path class="fqw-line" fill="none" stroke="#e8c074" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(216,166,87,.4));"></path><g class="fqw-dots"></g></svg>
-            <sc-for list="{{ faqItems }}" as="it" hint-placeholder-count="9">
+            <sc-for list="{{ faqItems }}" as="it" hint-placeholder-count="11">
               <div onClick="{{ it.toggle }}" style="position:relative;z-index:1;display:flex;gap:clamp(16px,2.4vw,26px);align-items:flex-start;cursor:pointer;padding:clamp(15px,2vh,21px) 2px;border-bottom:1px solid rgba(216,166,87,.12);">
                 <div class="faq-node" style="flex:none;width:44px;height:44px;margin-top:1px;"></div>
                 <div style="flex:1;min-width:0;">
@@ -678,6 +695,8 @@ class Component extends DCLogic {
     { q: 'Quanto tempo dura?', a: 'O tempo que o seu momento pedir. Sem pressa e sem relógio apertado: o que importa é a sua clareza.' },
     { q: 'Preciso saber exatamente o que perguntar?', a: 'Não. Muitas pessoas chegam apenas com uma sensação, uma dúvida ou um problema. Eu ajudo você a transformar isso na pergunta certa antes da leitura começar.' },
     { q: 'O tarô pode errar?', a: 'O tarô não é uma sentença nem uma previsão imutável. Ele mostra tendências, padrões e energias presentes no momento da leitura, ajudando você a compreender melhor a situação e fazer escolhas mais conscientes.' },
+    { q: 'O tarô diz se ele(a) vai voltar?', a: 'O tarô não decreta o futuro nem garante uma volta. Ele mostra como está a energia entre vocês agora — o que ainda pulsa e o que pode estar travando — pra você seguir com mais clareza, e não no impulso da saudade.' },
+    { q: 'Serve para eu decidir se fico ou termino?', a: 'Serve pra enxergar com calma o que a emoção costuma embaralhar. As cartas trazem perspectivas; a decisão continua sua — e eu te acompanho nesse olhar, sem pressa e sem julgamentos.' },
     { q: 'Minha situação é muito complexa. Ainda assim a leitura funciona?', a: 'Sim. Questões emocionais, relacionamentos, decisões profissionais, conflitos familiares e momentos de transição costumam ser justamente os temas que mais se beneficiam de uma leitura aprofundada.' },
     { q: 'Preciso aparecer em vídeo?', a: 'Não. O atendimento pode ser realizado da forma mais confortável para você, conforme a modalidade escolhida.' },
     { q: 'Recebo gravação?', a: 'Se desejar, você recebe o registro do nosso encontro para revisitar com calma depois.' }
