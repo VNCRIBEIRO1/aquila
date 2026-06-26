@@ -984,9 +984,11 @@ class Component extends DCLogic {
     S.bw = Math.round(W * S.dpr); S.bh = Math.round(H * S.dpr);
     S.cv.width = S.bw; S.cv.height = S.bh;
     S.ctx.setTransform(S.dpr, 0, 0, S.dpr, 0, 0);
-    S.orbU = H * 0.08;         // px (CSS) por unidade de raio de órbita
-    S.tilt = 0.60;            // achatamento vertical da elipse (a inclinação visual)
-    S.pRadCss = H * 0.22;     // raio do portal (CSS)
+    S.orbRx = H * 0.32;        // raio horizontal da órbita ÚNICA (todos os planetas na mesma linha)
+    S.orbRy = H * 0.32 * 0.56; // raio vertical (elipse achatada = a inclinação)
+    S.pRadCss = H * 0.19;      // raio do portal (CSS), bem centralizado
+    S.orbSpeed = 0.13;         // velocidade angular única (mantém o espaçamento igual)
+    S.planetR = H * 0.030;     // raio do disco do planeta
     if (S.portal) { S.portal.c.width = S.bw; S.portal.c.height = S.bh; S.portal.gl.viewport(0, 0, S.bw, S.bh); }
   };
 
@@ -1073,17 +1075,17 @@ class Component extends DCLogic {
     // planetas — órbita 2D (elipse achatada) em torno do portal, SEMPRE na frente (nunca por trás)
     const EM_DUR = 1.5;
     S.defs.forEach((p, i) => {
-      const delayI = 0.3 + 10 * (Math.pow(1.2, i) - 1);
+      const delayI = 0.3 + 0.85 * i;
       const k = Math.max(0, Math.min(1, (t - delayI) / EM_DUR));
       const em = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
       p._em = em;
-      const a = p.ph + (S.ang - delayI) * p.sp;
-      const Rx = p.r * S.orbU, Ry = p.r * S.orbU * S.tilt;
-      const px = cx + Math.cos(a) * Rx;
-      const py = cy + Math.sin(a) * Ry + (p.yOff || 0) * S.orbU * 0.14;
+      // todos na MESMA órbita, espaçados 72° e na mesma velocidade (mantêm o espaçamento)
+      const a = (-Math.PI / 2 + Math.PI / 5) + i * (2 * Math.PI / 5) + S.ang * S.orbSpeed;
+      const px = cx + Math.cos(a) * S.orbRx * em;
+      const py = cy + Math.sin(a) * S.orbRy * em;
       p._px = px; p._py = py; p._front = (Math.sin(a) + 1) / 2;
       if (em <= 0.001) return;
-      const rad = Math.max(2, p.sz * S.orbU * 1.05) * (0.4 + 0.6 * em);
+      const rad = S.planetR * (0.4 + 0.6 * em);
       const c0 = p.col.join(','), cd = [Math.round(p.col[0] * 0.32), Math.round(p.col[1] * 0.30), Math.round(p.col[2] * 0.42)].join(',');
       ctx.globalCompositeOperation = 'lighter';
       let hg = ctx.createRadialGradient(px, py, 0, px, py, rad * 3.4);
@@ -1107,10 +1109,13 @@ class Component extends DCLogic {
       el.style.filter = lit > 0.02
         ? 'brightness(' + (1 + lit * 0.85).toFixed(2) + ') drop-shadow(0 0 ' + Math.round(lit * 16) + 'px rgba(255,253,248,' + (lit * 0.6).toFixed(2) + '))'
         : 'none';
-      el.style.left = (p._px || 0) + 'px';
-      el.style.top = ((p._py || 0) + 18) + 'px';
+      const lpx = p._px || 0, lpy = p._py || 0;
+      const above = lpy < cy; // metade de cima -> rótulo acima; de baixo -> abaixo (espalha radialmente)
+      const gap = S.planetR + 15;
+      el.style.left = lpx + 'px';
+      el.style.top = (lpy + (above ? -gap : gap)) + 'px';
       el.style.transformOrigin = '50% 0';
-      el.style.transform = 'translate(-50%,0)';
+      el.style.transform = above ? 'translate(-50%,-100%)' : 'translate(-50%,0)';
       el.style.opacity = emOp.toFixed(2);
       el.style.zIndex = String(1000 + Math.round(front * 12));
     });
