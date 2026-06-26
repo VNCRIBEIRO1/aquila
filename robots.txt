@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tarologaaquila.vercel.app/sitemap.xml
+Sitemap: https://aquilatarologa.com.br/sitemap.xml

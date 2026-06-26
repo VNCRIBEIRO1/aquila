@@ -4,8 +4,8 @@ Lista organizada dos termos de busca que o site mira no Google. Use como guia pa
 posts e textos. Os termos em **negrito** já estão aplicados no `<title>`, na descrição,
 nas meta tags e/ou nos dados estruturados (JSON-LD).
 
-> Domínio canônico atual: `https://tarologaaquila.vercel.app`
-> (trocar para o domínio próprio `.com.br` quando ativar — está centralizado no `<head>`, no `robots.txt` e no `sitemap.xml`.)
+> Domínio canônico oficial: `https://aquilatarologa.com.br`
+> (aplicado no `<head>`, no `robots.txt` e no `sitemap.xml`. Apontar o domínio na Vercel e configurar redirect 301 do `*.vercel.app`.)
 
 ---
 
@@ -87,7 +87,7 @@ nas meta tags e/ou nos dados estruturados (JSON-LD).
 | Conteúdo da página (H1/H2) | "Taróloga Aquila", "Tornar visível aquilo que ainda está oculto", "Faça uma tiragem rápida e gratuita" |
 
 ## ✅ Próximos passos (fora do código)
-1. **Google Search Console** — adicionar a propriedade `tarologaaquila.vercel.app`, verificar e **enviar o `sitemap.xml`**.
+1. **Google Search Console** — adicionar a propriedade `aquilatarologa.com.br`, verificar e **enviar o `sitemap.xml`**.
 2. **Google Business / redes** — criar perfis e linkar (entram no `sameAs` do JSON-LD para reforçar a marca).
 3. Quando ativar o **domínio `.com.br`**: trocar a URL canônica no `<head>`, `robots.txt`, `sitemap.xml` e JSON-LD, e apontar o domínio na Vercel.
 4. (Opcional) Google Ads / posts usando os termos dos grupos 3 e 4 (maior intenção de compra).
