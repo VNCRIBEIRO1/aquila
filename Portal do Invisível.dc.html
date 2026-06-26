@@ -142,7 +142,7 @@
 <x-dc>
 <helmet>
 <link href="fonts/fonts.css" rel="stylesheet">
-<!-- three.js é carregado sob demanda só ao chegar no Cap V (sistema solar) — ver ensureThree() -->
+<!-- three.js removido: o sistema solar (Cap V) agora é Canvas 2D puro -->
 <style>
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:#070504;}
@@ -942,177 +942,195 @@ class Component extends DCLogic {
     else if (!on && this._solar) this.disposeSolar();
   };
 
-  ensureThree = () => {
-    if (window.THREE || this._threeLoading) return;
-    this._threeLoading = true;
-    const s = document.createElement('script');
-    s.src = 'vendor/three.min.js'; s.async = true;
-    document.head.appendChild(s);
-  };
-
+  // ===== Sistema solar em Canvas 2D puro (sem three.js) =====
   initSolar = () => {
     if (this._solar) return;
-    const THREE = window.THREE;
     const cv = document.getElementById('solar-canvas');
     const stage = document.getElementById('solar-stage');
     if (!cv || !stage) return;
-    if (!THREE) { this.ensureThree(); this._solarPoll = setTimeout(this.initSolar, 150); return; }
     const W = stage.clientWidth, H = stage.clientHeight;
     if (!W || !H) { this._solarPoll = setTimeout(this.initSolar, 120); return; }
+    const ctx = cv.getContext('2d');
+    if (!ctx) { this._solarPoll = setTimeout(this.initSolar, 150); return; }
 
     const isMobile = (typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '')) || Math.min(W, H) < 680;
-    let renderer;
-    try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: false, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }); }
-    catch (e) { this._solarPoll = setTimeout(this.initSolar, 200); return; }
-    const gl = renderer.getContext();
-    if (!gl || gl.isContextLost()) { try { renderer.dispose(); } catch (e) {} this._solarPoll = setTimeout(this.initSolar, 200); return; }
-    renderer.setPixelRatio(Math.min(isMobile ? 1.2 : 1.5, window.devicePixelRatio || 1));
-    renderer.setSize(W, H, false);
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 240);
-    camera.position.set(0, 16, 20.5);
-    camera.lookAt(0, 0, 0);
+    const dpr = Math.min(isMobile ? 1.3 : 1.6, window.devicePixelRatio || 1);
 
-    scene.add(new THREE.AmbientLight(0x6a4a3a, 0.7));
-    const sunLight = new THREE.PointLight(0xffca82, 2.8, 150, 1.5);
-    scene.add(sunLight);
-
-    // PORTAL nebuloso (centro) — quad voltado à câmera
-    const portalMat = this.makePortalMaterial(THREE);
-    const portal = new THREE.Mesh(new THREE.PlaneGeometry(9.2, 9.2), portalMat);
-    scene.add(portal);
-    // halo central removido
-    const sunGlow = null;
-
-    const group = new THREE.Group();
-    group.rotation.x = -0.30;
-    scene.add(group);
-
-    const halo = (() => {
-      const cv = document.createElement('canvas'); cv.width = cv.height = 160;
-      const g = cv.getContext('2d');
-      const grd = g.createRadialGradient(80, 80, 0, 80, 80, 80);
-      grd.addColorStop(0.00, 'rgba(248,244,255,0.98)');
-      grd.addColorStop(0.06, 'rgba(232,220,255,0.88)');
-      grd.addColorStop(0.13, 'rgba(196,170,248,0.52)');
-      grd.addColorStop(0.24, 'rgba(158,126,232,0.24)');
-      grd.addColorStop(0.40, 'rgba(126,98,206,0.10)');
-      grd.addColorStop(0.62, 'rgba(104,80,180,0.035)');
-      grd.addColorStop(1.00, 'rgba(90,70,160,0.0)');
-      g.fillStyle = grd; g.fillRect(0, 0, 160, 160);
-      const t = new THREE.CanvasTexture(cv); t.needsUpdate = true; return t;
-    })();
+    const hex = (h) => [(h >> 16) & 255, (h >> 8) & 255, h & 255];
     const defs = [
-      { r: 2.8, ph: Math.PI / 2 - 0.62 * 0, sp: 0.330, col: 0xeee2c6, sz: 0.44, yOff: 0.5 },
-      { r: 4.0, ph: Math.PI / 2 - 0.62 * 1, sp: 0.224, col: 0xf4ebd2, sz: 0.40, yOff: 4.5 },
-      { r: 5.0, ph: Math.PI / 2 - 0.62 * 2, sp: 0.160, col: 0xe8dcbe, sz: 0.44, yOff: 8.0 },
-      { r: 3.4, ph: Math.PI / 2 - 0.62 * 3, sp: 0.262, col: 0xece0c2, sz: 0.36, yOff: -3.0 },
-      { r: 4.4, ph: Math.PI / 2 - 0.62 * 4, sp: 0.192, col: 0xf2e8cc, sz: 0.40, yOff: 2.5 }
+      { r: 2.8, ph: Math.PI / 2 - 0.62 * 0, sp: 0.330, col: hex(0xeee2c6), sz: 0.44, yOff: 0.5, _em: 0 },
+      { r: 4.0, ph: Math.PI / 2 - 0.62 * 1, sp: 0.224, col: hex(0xf4ebd2), sz: 0.40, yOff: 4.5, _em: 0 },
+      { r: 5.0, ph: Math.PI / 2 - 0.62 * 2, sp: 0.160, col: hex(0xe8dcbe), sz: 0.44, yOff: 8.0, _em: 0 },
+      { r: 3.4, ph: Math.PI / 2 - 0.62 * 3, sp: 0.262, col: hex(0xece0c2), sz: 0.36, yOff: -3.0, _em: 0 },
+      { r: 4.4, ph: Math.PI / 2 - 0.62 * 4, sp: 0.192, col: hex(0xf2e8cc), sz: 0.40, yOff: 2.5, _em: 0 }
     ];
-    const planetTex = (() => {
-      const S = 256, cv = document.createElement('canvas'); cv.width = cv.height = S; const g = cv.getContext('2d');
-      g.fillStyle = '#9a93bd'; g.fillRect(0, 0, S, S);
-      const grd = g.createRadialGradient(S * 0.36, S * 0.30, S * 0.04, S * 0.52, S * 0.54, S * 0.78);
-      grd.addColorStop(0, 'rgba(255,255,255,0.95)'); grd.addColorStop(0.42, 'rgba(188,182,214,0.28)'); grd.addColorStop(0.74, 'rgba(96,88,128,0.45)'); grd.addColorStop(1, 'rgba(44,38,68,0.7)');
-      g.fillStyle = grd; g.fillRect(0, 0, S, S);
-      for (let i = 0; i < 80; i++) { const x = Math.random() * S, y = Math.random() * S, r = 10 + Math.random() * 54; const lite = Math.random() < 0.5; g.fillStyle = (lite ? 'rgba(255,255,255,' : 'rgba(38,28,66,') + (Math.random() * 0.05).toFixed(3) + ')'; g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
-      const t = new THREE.CanvasTexture(cv); t.needsUpdate = true; t.anisotropy = 4; return t;
-    })();
-    const planets = defs.map((d) => {
-      const m = new THREE.Mesh(new THREE.SphereGeometry(d.sz, 16, 12), new THREE.MeshLambertMaterial({ color: d.col, map: planetTex, emissive: new THREE.Color(d.col), emissiveIntensity: 0.55, emissiveMap: planetTex }));
-      group.add(m);
-      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: halo, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false }));
-      sp.scale.set(d.sz * 5, d.sz * 5, 1);
-      m.add(sp);
-      return Object.assign({}, d, { mesh: m });
-    });
 
-    const starTex = this.makeStarTexture(THREE);
-    const N = 420, pos = new Float32Array(N * 3);
-    for (let i = 0; i < N; i++) { const rr = 45 + Math.random() * 70, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1); pos[i * 3] = rr * Math.sin(ph) * Math.cos(th); pos[i * 3 + 1] = rr * Math.cos(ph); pos[i * 3 + 2] = rr * Math.sin(ph) * Math.sin(th); }
-    const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const stars = new THREE.Points(sg, new THREE.PointsMaterial({ map: starTex, color: 0xe6ecff, size: 0.7, sizeAttenuation: true, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending }));
-    scene.add(stars);
+    const stars = [];
+    for (let i = 0; i < 150; i++) { const rr = 45 + Math.random() * 70, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1); stars.push({ x: rr * Math.sin(ph) * Math.cos(th), y: rr * Math.cos(ph), z: rr * Math.sin(ph) * Math.sin(th), b: 0.4 + Math.random() * 0.55 }); }
 
     const labels = [0, 1, 2, 3, 4].map((i) => document.getElementById('solar-label-' + i));
     const sunLabel = document.getElementById('solar-label-sun');
-    const onEnter = () => {};
-    const onLeave = () => {};
-
-    // interatividade removida — os planetas seguem apenas o fluxo de órbita já definido (mais leve em todos os aparelhos)
     cv.style.pointerEvents = 'none';
-    cv.style.touchAction = 'auto';
-    cv.style.cursor = 'default';
-
-    this._solar = { renderer, scene, camera, group, portal, portalMat, sunGlow, stars, planets, labels, sunLabel, stage, cv, t0: performance.now(), last: performance.now(), w: W, h: H, paused: false, ang: 0, onEnter, onLeave, _v: new THREE.Vector3(), _wp: new THREE.Vector3() };
+    const g = -0.30;
+    this._solar = { mode: '2d', ctx, cv, stage, dpr, defs, stars, labels, sunLabel, neb: this._makeNebula(),
+      t0: performance.now(), last: performance.now(), w: 0, h: 0, ang: 0, frameT: 0, _cg: Math.cos(g), _sg: Math.sin(g) };
+    this.resizeSolar();
     this.animateSolar();
+  };
+
+  resizeSolar = () => {
+    const S = this._solar; if (!S) return;
+    const W = S.cv.clientWidth, H = S.cv.clientHeight; if (!W || !H) return;
+    S.w = W; S.h = H; S.cx = W / 2; S.cy = H / 2;
+    S.cv.width = Math.round(W * S.dpr); S.cv.height = Math.round(H * S.dpr);
+    S.ctx.setTransform(S.dpr, 0, 0, S.dpr, 0, 0);
+    S.focal = (H / 2) / Math.tan((42 * Math.PI / 180) / 2);
+  };
+
+  // projeção em perspectiva feita à mão — mesma câmera (0,16,20.5)/fov42 e inclinação -0.30 do antigo three.js
+  solProj = (S, x, y, z) => {
+    const y1 = y * S._cg - z * S._sg, z1 = y * S._sg + z * S._cg;
+    const rx = x - S.camX, ry = y1 - S.camY, rz = z1 - S.camZ;
+    const vx = rx * S.Rx + ry * S.Ry + rz * S.Rz;
+    const vy = rx * S.Ux + ry * S.Uy + rz * S.Uz;
+    const vz = rx * S.Fx + ry * S.Fy + rz * S.Fz;
+    const dist = Math.sqrt(rx * rx + ry * ry + rz * rz);
+    return { sx: S.cx + S.focal * vx / vz, sy: S.cy - S.focal * vy / vz, vz: vz, dist: dist, ps: S.focal / Math.max(0.001, vz) };
+  };
+
+  _makeNebula = () => {
+    const SZ = 240, cv = document.createElement('canvas'); cv.width = cv.height = SZ; const g = cv.getContext('2d');
+    const c = SZ / 2;
+    let grd = g.createRadialGradient(c, c, 0, c, c, c);
+    grd.addColorStop(0.00, 'rgba(255,238,205,0.95)');
+    grd.addColorStop(0.10, 'rgba(255,193,112,0.80)');
+    grd.addColorStop(0.30, 'rgba(226,128,50,0.40)');
+    grd.addColorStop(0.58, 'rgba(120,58,26,0.13)');
+    grd.addColorStop(1.00, 'rgba(40,20,10,0)');
+    g.fillStyle = grd; g.fillRect(0, 0, SZ, SZ);
+    g.globalCompositeOperation = 'lighter';
+    for (let k = 0; k < 560; k++) {
+      const a = k * 0.153, rad = Math.pow(k / 560, 0.85) * (c * 0.96);
+      const x = c + Math.cos(a) * rad, y = c + Math.sin(a) * rad;
+      const fade = 1 - rad / c, rr = 0.8 + Math.random() * 2.2;
+      const warm = Math.random() < 0.5 ? '255,206,122' : '255,150,72';
+      g.fillStyle = 'rgba(' + warm + ',' + (0.06 * fade).toFixed(3) + ')';
+      g.beginPath(); g.arc(x, y, rr, 0, 6.2832); g.fill();
+    }
+    g.globalCompositeOperation = 'destination-in';
+    let mg = g.createRadialGradient(c, c, 0, c, c, c);
+    mg.addColorStop(0, 'rgba(0,0,0,1)'); mg.addColorStop(0.72, 'rgba(0,0,0,0.92)'); mg.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = mg; g.fillRect(0, 0, SZ, SZ);
+    g.globalCompositeOperation = 'source-over';
+    return cv;
   };
 
   animateSolar = () => {
     const S = this._solar; if (!S) return;
-    const THREE = window.THREE;
     S.raf = requestAnimationFrame(this.animateSolar);
     const now = performance.now();
-    if (now - (S.frameT || 0) < 30) return; // ~30fps: órbita é lenta e time-based (velocidade preservada), bem mais leve
+    if (now - (S.frameT || 0) < 30) return; // ~30fps, time-based (velocidade preservada)
     S.frameT = now;
     const dt = Math.min(0.05, (now - S.last) / 1000); S.last = now;
     const t = (now - S.t0) / 1000;
     const W = S.cv.clientWidth, H = S.cv.clientHeight;
-    if (W !== S.w || H !== S.h) { S.w = W; S.h = H; S.camera.aspect = W / H; S.camera.updateProjectionMatrix(); S.renderer.setSize(W, H, false); }
+    if (W !== S.w || H !== S.h) this.resizeSolar();
     S.ang += dt;
+    const ctx = S.ctx;
+
+    // câmera (mesma do antigo) + base de projeção (right/up/forward)
+    S.camX = Math.sin(t * 0.06) * 2.2; S.camY = 16 + Math.sin(t * 0.05) * 0.7; S.camZ = 20.5;
+    const fl = Math.hypot(S.camX, S.camY, S.camZ);
+    S.Fx = -S.camX / fl; S.Fy = -S.camY / fl; S.Fz = -S.camZ / fl;
+    const rlx = -S.Fz, rlz = S.Fx, rl = Math.hypot(rlx, rlz); S.Rx = rlx / rl; S.Ry = 0; S.Rz = rlz / rl;
+    S.Ux = S.Ry * S.Fz - S.Rz * S.Fy; S.Uy = S.Rz * S.Fx - S.Rx * S.Fz; S.Uz = S.Rx * S.Fy - S.Ry * S.Fx;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // estrelas (rotação lenta em Y) — aditivas
+    const sr = t * 0.005, csr = Math.cos(sr), ssr = Math.sin(sr);
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < S.stars.length; i++) {
+      const st = S.stars[i]; const sx2 = st.x * csr - st.z * ssr, sz2 = st.x * ssr + st.z * csr;
+      const pr = this.solProj(S, sx2, st.y, sz2); if (pr.vz <= 0.1) continue;
+      const tw = st.b * (0.7 + 0.3 * Math.sin(t * 0.9 + i));
+      ctx.fillStyle = 'rgba(230,236,255,' + (tw * 0.85).toFixed(2) + ')';
+      ctx.fillRect(pr.sx, pr.sy, 1.4, 1.4);
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    // nebulosa central (o Portal)
+    const o = this.solProj(S, 0, 0, 0);
+    const nebR = H * 0.27;
+    ctx.save(); ctx.translate(o.sx, o.sy); ctx.rotate(t * 0.04);
+    ctx.drawImage(S.neb, -nebR, -nebR, nebR * 2, nebR * 2);
+    ctx.restore();
+    ctx.globalCompositeOperation = 'lighter';
+    const core = 1 + Math.sin(t * 0.9) * 0.05;
+    let cg = ctx.createRadialGradient(o.sx, o.sy, 0, o.sx, o.sy, nebR * 0.5 * core);
+    cg.addColorStop(0, 'rgba(255,228,172,0.55)'); cg.addColorStop(0.5, 'rgba(255,170,80,0.18)'); cg.addColorStop(1, 'rgba(255,150,70,0)');
+    ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(o.sx, o.sy, nebR * 0.5 * core, 0, 6.2832); ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+
+    // planetas — emergência + órbita (mesma matemática), desenhados do mais distante ao mais próximo
     const EM_DUR = 1.5;
-    S.planets.forEach((p, i) => {
+    const arr = S.defs.map((p, i) => {
       const delayI = 0.3 + 10 * (Math.pow(1.2, i) - 1);
       const k = Math.max(0, Math.min(1, (t - delayI) / EM_DUR));
       const em = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
       p._em = em;
-      p._delay = delayI;
-      if (!p._drag) {
-        const target = p.ph + (S.ang - delayI) * p.sp;
-        const a = (Math.PI / 2) + (target - (Math.PI / 2)) * em;
-        const rr = p.r * em;
-        p.mesh.position.set(Math.cos(a) * rr, ((p.yOff || 0) + Math.sin(t * 0.3 + i) * 0.5) * em, Math.sin(a) * rr);
-      }
-      p.mesh.scale.setScalar(0.08 + 0.92 * em);
+      const target = p.ph + (S.ang - delayI) * p.sp;
+      const a = (Math.PI / 2) + (target - (Math.PI / 2)) * em;
+      const rr = p.r * em;
+      const wx = Math.cos(a) * rr, wy = ((p.yOff || 0) + Math.sin(t * 0.3 + i) * 0.5) * em, wz = Math.sin(a) * rr;
+      return { p: p, i: i, em: em, sc: 0.08 + 0.92 * em, pr: this.solProj(S, wx, wy, wz) };
+    }).sort((A, B) => B.pr.dist - A.pr.dist);
+
+    arr.forEach((o2) => {
+      const p = o2.p, em = o2.em, pr = o2.pr;
+      const rad = Math.max(2, p.sz * o2.sc * pr.ps);
+      const c0 = p.col.join(','), cd = [Math.round(p.col[0] * 0.32), Math.round(p.col[1] * 0.30), Math.round(p.col[2] * 0.42)].join(',');
+      ctx.globalCompositeOperation = 'lighter';
+      let hg = ctx.createRadialGradient(pr.sx, pr.sy, 0, pr.sx, pr.sy, rad * 3.4);
+      hg.addColorStop(0, 'rgba(248,236,210,' + (0.42 * em).toFixed(2) + ')'); hg.addColorStop(0.5, 'rgba(232,196,140,' + (0.12 * em).toFixed(2) + ')'); hg.addColorStop(1, 'rgba(232,196,140,0)');
+      ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(pr.sx, pr.sy, rad * 3.4, 0, 6.2832); ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      let pg = ctx.createRadialGradient(pr.sx - rad * 0.34, pr.sy - rad * 0.34, rad * 0.1, pr.sx, pr.sy, rad);
+      pg.addColorStop(0, 'rgba(255,255,255,' + (0.98 * em).toFixed(2) + ')');
+      pg.addColorStop(0.42, 'rgba(' + c0 + ',' + (0.96 * em).toFixed(2) + ')');
+      pg.addColorStop(1, 'rgba(' + cd + ',' + (0.92 * em).toFixed(2) + ')');
+      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(pr.sx, pr.sy, rad, 0, 6.2832); ctx.fill();
     });
-    S.camera.position.x = Math.sin(t * 0.06) * 2.2;
-    S.camera.position.y = 16 + Math.sin(t * 0.05) * 0.7;
-    S.camera.lookAt(0, 0, 0);
-    if (S.portalMat) S.portalMat.uniforms.time.value = t;
-    if (S.portal) S.portal.quaternion.copy(S.camera.quaternion);
-    if (S.stars) S.stars.rotation.y = t * 0.005;
-    const ps = 1 + Math.sin(t * 0.9) * 0.04;
-    if (S.sunGlow) S.sunGlow.scale.set(8.2 * ps, 8.2 * ps, 1);
-    S.renderer.render(S.scene, S.camera);
-    const v = S._v, wp = S._wp;
-    S.planets.forEach((p, i) => {
+
+    // labels (mesma lógica de profundidade/opacidade/iluminação)
+    S.defs.forEach((p, i) => {
       const el = S.labels[i]; if (!el) return;
-      p.mesh.getWorldPosition(wp); v.copy(wp).project(S.camera);
-      const behind = v.z > 1;
-      const x = (v.x * 0.5 + 0.5) * W, y = (-v.y * 0.5 + 0.5) * H;
-      const dist = wp.distanceTo(S.camera.position);
-      const depthT = Math.max(0, Math.min(1, (dist - 15.5) / 12));
       const em = p._em || 0;
+      const delayI = 0.3 + 10 * (Math.pow(1.2, i) - 1);
+      const target = p.ph + (S.ang - delayI) * p.sp;
+      const a = (Math.PI / 2) + (target - (Math.PI / 2)) * em;
+      const rr = p.r * em;
+      const pr = this.solProj(S, Math.cos(a) * rr, ((p.yOff || 0) + Math.sin(t * 0.3 + i) * 0.5) * em, Math.sin(a) * rr);
+      const behind = pr.vz <= 0.1;
+      const depthT = Math.max(0, Math.min(1, (pr.dist - 15.5) / 12));
       const emOp = Math.max(0, Math.min(1, (em - 0.4) / 0.45));
       const op = (behind ? 0 : Math.max(0.5, 1 - depthT * 0.45)) * emOp;
       const sc = 1 - depthT * 0.2;
       const front = 1 - depthT;
-      // iluminação só quando o planeta passa na frente da tela (frente do portal); sem brilho constante no texto
       const lit = Math.max(0, (front - 0.5)) / 0.5;
       el.style.filter = lit > 0.02
         ? 'brightness(' + (1 + lit * 0.85).toFixed(2) + ') drop-shadow(0 0 ' + Math.round(lit * 16) + 'px rgba(255,253,248,' + (lit * 0.6).toFixed(2) + '))'
         : 'none';
-      el.style.left = x + 'px';
-      el.style.top = (y + 18) + 'px';
+      el.style.left = pr.sx + 'px';
+      el.style.top = (pr.sy + 18) + 'px';
       el.style.transformOrigin = '50% 0';
       el.style.transform = 'translate(-50%,0) scale(' + sc.toFixed(3) + ')';
       el.style.opacity = op.toFixed(2);
-      el.style.zIndex = String(1000 - Math.round(dist * 10));
+      el.style.zIndex = String(1000 - Math.round(pr.dist * 10));
     });
     if (S.sunLabel) {
-      v.set(0, 0, 0).project(S.camera);
-      S.sunLabel.style.left = ((v.x * 0.5 + 0.5) * W) + 'px';
-      S.sunLabel.style.top = ((-v.y * 0.5 + 0.5) * H + 34) + 'px';
+      S.sunLabel.style.left = o.sx + 'px';
+      S.sunLabel.style.top = (o.sy + 34) + 'px';
       S.sunLabel.style.opacity = '1';
     }
   };
@@ -1121,8 +1139,8 @@ class Component extends DCLogic {
     const S = this._solar; if (!S) { if (this._solarPoll) { clearTimeout(this._solarPoll); this._solarPoll = null; } return; }
     if (S.raf) cancelAnimationFrame(S.raf);
     if (this._solarPoll) { clearTimeout(this._solarPoll); this._solarPoll = null; }
-    try { S.stage.removeEventListener('pointerenter', S.onEnter); S.stage.removeEventListener('pointerleave', S.onLeave); } catch (e) {}
-    try { S.renderer.dispose(); } catch (e) {}
+    try { if (S.renderer) S.renderer.dispose(); } catch (e) {}
+    try { const c = S.ctx; if (c) c.clearRect(0, 0, S.w || 0, S.h || 0); } catch (e) {}
     (S.labels || []).forEach((el) => { if (el) el.style.opacity = '0'; });
     if (S.sunLabel) S.sunLabel.style.opacity = '0';
     this._solar = null;
