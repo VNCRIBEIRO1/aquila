@@ -82,7 +82,7 @@ nas meta tags e/ou nos dados estruturados (JSON-LD).
 | `meta description` | inclui *taróloga oraculista online, leitura de tarô, oráculos, tiragem de tarô grátis* |
 | `meta keywords` | lista dos grupos 1–5 acima |
 | Open Graph / Twitter | card com `og-image.jpg` (1200×630) + título e descrição |
-| JSON-LD `ProfessionalService` | nome, telefone (+55 11 99387-6192), `serviceType` (Leitura de Tarô, Oráculos), áreaServida=Brasil, WhatsApp |
+| JSON-LD `ProfessionalService` | nome, telefone (+55 12 99220-6795), `serviceType` (Leitura de Tarô, Oráculos), áreaServida=Brasil, WhatsApp |
 | JSON-LD `FAQPage` | as 6 perguntas do FAQ → elegíveis para snippet de perguntas no Google |
 | Conteúdo da página (H1/H2) | "Taróloga Aquila", "Tornar visível aquilo que ainda está oculto", "Faça uma tiragem rápida e gratuita" |
 
